@@ -1,0 +1,39 @@
+{
+  "name": "@process-engine-js/process_engine_client_processable_react",
+  "publishConfig": {
+    "registry": "https://www.npmjs.com"
+  },
+  "version": "1.0.0",
+  "description": "Provides an implementation of a processable in react!",
+  "license": "MIT",
+  "main": "dist/commonjs/index.js",
+  "typings": "dist/index.d.ts",
+  "contributors": [
+    "Sebastian Meier <sebastian.meier@5minds.de>",
+    "Patrick Pötschke <patrick.poetschke@quantusflow.com>",
+    "Simon Reymann <simon.reymann@quantusflow.com>"
+  ],
+  "dependencies": {
+    "@process-engine-js/frontend_mui": "^1.0.1",
+    "@process-engine-js/messagebus_contracts": "^1.0.11",
+    "babel-plugin-add-module-exports": "^0.2.1",
+    "babel-plugin-syntax-async-functions": "^6.13.0",
+    "babel-plugin-transform-decorators-legacy": "^1.3.4",
+    "babel-plugin-transform-react-display-name": "^6.25.0",
+    "babel-plugin-transform-regenerator": "^6.24.1",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
+    "babel-preset-stage-0": "^6.24.1",
+    "material-ui": "^0.18.3",
+    "mustache": "^2.3.0",
+    "react": "^15.6.1",
+    "react-dom": "^15.6.1",
+    "react-json-tree": "^0.10.9",
+    "react-tap-event-plugin": "^2.0.1"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "tsconfig": "^6.0.0"
+  }
+}

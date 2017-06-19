@@ -1,0 +1,10 @@
+{
+  "name": "@process-engine-js/frontend_mui",
+  "dependencies": {
+    "react": "registry:npm/react#15.0.1+20170104200836",
+    "react-dom": "registry:npm/react-dom#15.0.1+20160826174104"
+  },
+  "globalDependencies": {
+    "node": "registry:dt/node#7.0.0+20170322231424"
+  }
+}

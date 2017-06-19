@@ -1,0 +1,14 @@
+{
+  "typingOptions": {
+    "enableAutoDiscovery": true
+  },
+  "compilerOptions": {
+    "jsx": "react",
+    "module": "commonjs",
+    "target": "es5",
+    "lib": [
+      "es2017",
+      "dom"
+    ]
+  }
+}
