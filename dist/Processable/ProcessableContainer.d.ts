@@ -21,22 +21,28 @@ export interface IProcessableContainerState {
     processing?: boolean;
 }
 export declare class ProcessableContainer extends React.Component<IProcessableContainerProps, IProcessableContainerState> {
-    defaultProps: {
+    static defaultProps: {
         theme: string;
         muiProps: {};
         qflProps: {};
-        buttonTheme: any;
-        dialogTheme: any;
+        buttonTheme: string;
+        dialogTheme: string;
         modal: boolean;
-        formItemTheme: any;
-        widgetTheme: any;
-        confirmItemTheme: any;
+        formItemTheme: string;
+        widgetTheme: string;
+        confirmItemTheme: string;
         processableClassName: any;
         modalProcessableClassName: any;
         dialogMuiProps: any;
         dialogQflProps: any;
     };
+    static childContextTypes: {
+        muiTheme: any;
+    };
     constructor(props: IProcessableContainerProps);
+    protected getChildContext(): {
+        muiTheme: any;
+    };
     protected componentWillMount(): void;
     private widgetConfig;
     private handleCancel();

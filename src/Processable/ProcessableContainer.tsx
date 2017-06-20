@@ -1,9 +1,10 @@
 import * as React from 'react';
+import * as PropTypes from 'prop-types';
 
 import {RaisedButton, Dialog, buildTheme, Form, Confirm} from '@process-engine-js/frontend_mui';
+import { getMuiTheme } from 'material-ui/styles';
 
-import mustache from 'mustache';
-import JSONTree from 'react-json-tree';
+import * as mustache from 'mustache';
 import {IMUIProps} from '@process-engine-js/frontend_mui';
 import {IProcessInstance} from '@process-engine-js/process_engine_client_api';
 
@@ -30,21 +31,25 @@ export interface IProcessableContainerState {
 }
 
 export class ProcessableContainer extends React.Component<IProcessableContainerProps, IProcessableContainerState> {
-  public defaultProps = {
+  public static defaultProps = {
     theme: 'Default',
     muiProps: {},
     qflProps: {},
 
-    buttonTheme: null,
-    dialogTheme: null,
+    buttonTheme: 'Default',
+    dialogTheme: 'Default',
     modal: false,
-    formItemTheme: null,
-    widgetTheme: null,
-    confirmItemTheme: null,
+    formItemTheme: 'Default',
+    widgetTheme: 'Default',
+    confirmItemTheme: 'Default',
     processableClassName: null,
     modalProcessableClassName: null,
     dialogMuiProps: null,
     dialogQflProps: null
+  };
+
+  public static childContextTypes = {
+    muiTheme: PropTypes.object
   };
 
   constructor(props: IProcessableContainerProps) {
@@ -55,6 +60,12 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
       formData: {},
       canceled: false,
       processing: false
+    };
+  }
+
+  protected getChildContext() {
+    return {
+      muiTheme: getMuiTheme(this.props.theme)
     };
   }
 
@@ -344,15 +355,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
               left: '10px',
               padding: '0px'
             }}
-          >
-            <JSONTree
-              hideRoot={true}
-              style={{
-                padding: '10px !important'
-              }}
-              data={tokenData}
-            />
-          </div>
+          />
         );
       }
 

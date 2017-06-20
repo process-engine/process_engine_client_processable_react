@@ -13,6 +13,30 @@
     react-addons-update "^0.14.0 || <15.4.0"
     react-dom "^0.14.0 || <15.4.0"
 
+"@process-engine-js/core_contracts@^1.0.2", "@process-engine-js/core_contracts@^1.0.31", "@process-engine-js/core_contracts@^1.0.34", "@process-engine-js/core_contracts@^1.0.42":
+  version "1.0.42"
+  resolved "https://registry.yarnpkg.com/@process-engine-js/core_contracts/-/core_contracts-1.0.42.tgz#444432784908203b6d97235c19af64062db5cebb"
+  dependencies:
+    ramda "^0.23.0"
+    uuid "^3.0.1"
+
+"@process-engine-js/data_model_contracts@^1.0.46":
+  version "1.0.62"
+  resolved "https://registry.yarnpkg.com/@process-engine-js/data_model_contracts/-/data_model_contracts-1.0.62.tgz#39b9a6a5a0d1f8e41a3413590c9504fa478dcc6c"
+  dependencies:
+    "@process-engine-js/core_contracts" "^1.0.34"
+    "@process-engine-js/iam_contracts" "^1.0.16"
+    "@process-engine-js/invocation_contracts" "^1.0.1"
+    "@process-engine-js/metadata_contracts" "^1.0.2"
+    bluebird "^3.4.7"
+    deep-equal "^1.0.1"
+    deepcopy "^0.6.3"
+    loggerhythm "1.0.0"
+    string-hash "^1.1.3"
+    toposort "^1.0.3"
+    underscore "^1.8.3"
+    uuid "^3.0.1"
+
 "@process-engine-js/frontend_mui@^1.0.1":
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/@process-engine-js/frontend_mui/-/frontend_mui-1.0.1.tgz#70ba103f39e6217d6e9d48a623cc36647c07785d"
@@ -37,6 +61,40 @@
     react-json-tree "^0.10.9"
     react-router "^4.1.1"
     react-tap-event-plugin "^2.0.1"
+
+"@process-engine-js/iam_contracts@^1.0.16":
+  version "1.0.18"
+  resolved "https://registry.yarnpkg.com/@process-engine-js/iam_contracts/-/iam_contracts-1.0.18.tgz#7d42ab1f8a18c43bd9ced8708fb5f4e7b8871ac5"
+  dependencies:
+    "@process-engine-js/core_contracts" "^1.0.31"
+
+"@process-engine-js/invocation_contracts@^1.0.1":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@process-engine-js/invocation_contracts/-/invocation_contracts-1.0.3.tgz#db6229d7fcfd5cefe83e96a3bdde10392daad766"
+  dependencies:
+    "@process-engine-js/core_contracts" "^1.0.2"
+
+"@process-engine-js/messagebus_contracts@^1.0.11":
+  version "1.0.11"
+  resolved "https://registry.yarnpkg.com/@process-engine-js/messagebus_contracts/-/messagebus_contracts-1.0.11.tgz#bec6e02d9dc3bd366aa9a583c54a699e7c280a4e"
+  dependencies:
+    "@process-engine-js/data_model_contracts" "^1.0.46"
+    uuid "^3.0.1"
+
+"@process-engine-js/metadata_contracts@^1.0.2":
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/@process-engine-js/metadata_contracts/-/metadata_contracts-1.0.4.tgz#5b1b463f424353f2acbfea86556fc4a7c84520d9"
+  dependencies:
+    loggerhythm "1.0.0"
+    node-uuid "^1.4.7"
+    underscore "^1.8.3"
+
+"@process-engine-js/process_engine_client_api@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@process-engine-js/process_engine_client_api/-/process_engine_client_api-1.0.1.tgz#802b5d56a1ebd84406f2de22d02ee6c8c2864feb"
+  dependencies:
+    "@process-engine-js/core_contracts" "^1.0.42"
+    "@process-engine-js/messagebus_contracts" "^1.0.11"
 
 ansi-regex@^2.0.0:
   version "2.1.1"
@@ -83,6 +141,10 @@ array-unique@^0.2.1:
 asap@~2.0.3:
   version "2.0.5"
   resolved "https://registry.yarnpkg.com/asap/-/asap-2.0.5.tgz#522765b50c3510490e52d7dcfe085ef9ba96958f"
+
+async@~1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/async/-/async-1.0.0.tgz#f8fc04ca3a13784ade9e1641af98578cfbd647a9"
 
 babel-code-frame@^6.22.0:
   version "6.22.0"
@@ -729,6 +791,10 @@ beeper@^1.0.0:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/beeper/-/beeper-1.1.1.tgz#e6d5ea8c5dad001304a70b22638447f69cb2f809"
 
+bluebird@^3.4.7:
+  version "3.5.0"
+  resolved "https://registry.yarnpkg.com/bluebird/-/bluebird-3.5.0.tgz#791420d7f551eea2897453a8a77653f96606d67c"
+
 bowser@^1.6.0:
   version "1.7.0"
   resolved "https://registry.yarnpkg.com/bowser/-/bowser-1.7.0.tgz#169de4018711f994242bff9a8009e77a1f35e003"
@@ -786,6 +852,10 @@ clone@^2.1.1:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/clone/-/clone-2.1.1.tgz#d217d1e961118e3ac9a4b8bba3285553bf647cdb"
 
+colors@1.0.x:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/colors/-/colors-1.0.3.tgz#0433f44d809680fdeb60ed260f1b0c262e82a40b"
+
 concat-map@0.0.1:
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/concat-map/-/concat-map-0.0.1.tgz#d8a96bd77fd68df7793a73036a3ba0d5405d477b"
@@ -816,6 +886,10 @@ css-in-js-utils@^1.0.3:
   dependencies:
     hyphenate-style-name "^1.0.2"
 
+cycle@1.0.x:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/cycle/-/cycle-1.0.3.tgz#21e80b2be8580f98b468f379430662b046c34ad2"
+
 dateformat@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/dateformat/-/dateformat-2.0.0.tgz#2743e3abb5c3fc2462e527dca445e04e9f4dee17"
@@ -825,6 +899,14 @@ debug@^2.2.0:
   resolved "https://registry.yarnpkg.com/debug/-/debug-2.6.8.tgz#e731531ca2ede27d188222427da17821d68ff4fc"
   dependencies:
     ms "2.0.0"
+
+deep-equal@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/deep-equal/-/deep-equal-1.0.1.tgz#f5d260292b660e084eff4cdbc9f08ad3247448b5"
+
+deepcopy@^0.6.3:
+  version "0.6.3"
+  resolved "https://registry.yarnpkg.com/deepcopy/-/deepcopy-0.6.3.tgz#634780f2f8656ab771af8fa8431ed1ccee55c7b0"
 
 defaults@^1.0.0:
   version "1.0.3"
@@ -913,6 +995,10 @@ extglob@^0.3.1:
   resolved "https://registry.yarnpkg.com/extglob/-/extglob-0.3.2.tgz#2e18ff3d2f49ab2765cec9023f011daa8d8349a1"
   dependencies:
     is-extglob "^1.0.0"
+
+eyes@0.1.x:
+  version "0.1.8"
+  resolved "https://registry.yarnpkg.com/eyes/-/eyes-0.1.8.tgz#62cf120234c683785d902348a800ef3e0cc20bc0"
 
 fancy-log@^1.1.0:
   version "1.3.0"
@@ -1338,6 +1424,10 @@ isomorphic-fetch@^2.1.1:
     node-fetch "^1.0.1"
     whatwg-fetch ">=0.10.0"
 
+isstream@0.1.x:
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/isstream/-/isstream-0.1.2.tgz#47e63f7af55afa6f92e1500e690eb8b8529c099a"
+
 jquery@^3.2.1:
   version "3.2.1"
   resolved "https://registry.yarnpkg.com/jquery/-/jquery-3.2.1.tgz#5c4d9de652af6cd0a770154a631bba12b015c787"
@@ -1503,6 +1593,12 @@ lodash@~1.0.1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-1.0.2.tgz#8f57560c83b59fc270bd3d561b690043430e2551"
 
+loggerhythm@1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/loggerhythm/-/loggerhythm-1.0.0.tgz#26e779baba11d693af60747726cc3beb7ea3a3ba"
+  dependencies:
+    winston "^2.2.0"
+
 loose-envify@^1.0.0, loose-envify@^1.1.0, loose-envify@^1.2.0, loose-envify@^1.3.1:
   version "1.3.1"
   resolved "https://registry.yarnpkg.com/loose-envify/-/loose-envify-1.3.1.tgz#d1a8ad33fa9ce0e713d65fdd0ac8b748d478c848"
@@ -1602,6 +1698,10 @@ node-fetch@^1.0.1:
   dependencies:
     encoding "^0.1.11"
     is-stream "^1.0.1"
+
+node-uuid@^1.4.7:
+  version "1.4.8"
+  resolved "https://registry.yarnpkg.com/node-uuid/-/node-uuid-1.4.8.tgz#b040eb0923968afabf8d32fb1f17f1167fdab907"
 
 normalize-path@^2.0.1:
   version "2.1.1"
@@ -1734,6 +1834,10 @@ prop-types@^15.5.10, prop-types@^15.5.4, prop-types@^15.5.6, prop-types@^15.5.7,
 pure-color@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/pure-color/-/pure-color-1.2.0.tgz#702d2f2819dd545b1fde5116fca5f0c2dad2d18d"
+
+ramda@^0.23.0:
+  version "0.23.0"
+  resolved "https://registry.yarnpkg.com/ramda/-/ramda-0.23.0.tgz#ccd13fff73497a93974e3e86327bfd87bd6e8e2b"
 
 randomatic@^1.1.3:
   version "1.1.7"
@@ -2005,9 +2109,17 @@ sparkles@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/sparkles/-/sparkles-1.0.0.tgz#1acbbfb592436d10bbe8f785b7cc6f82815012c3"
 
+stack-trace@0.0.x:
+  version "0.0.10"
+  resolved "https://registry.yarnpkg.com/stack-trace/-/stack-trace-0.0.10.tgz#547c70b347e8d32b4e108ea1a2a159e5fdde19c0"
+
 stream-consume@~0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/stream-consume/-/stream-consume-0.1.0.tgz#a41ead1a6d6081ceb79f65b061901b6d8f3d1d0f"
+
+string-hash@^1.1.3:
+  version "1.1.3"
+  resolved "https://registry.yarnpkg.com/string-hash/-/string-hash-1.1.3.tgz#e8aafc0ac1855b4666929ed7dd1275df5d6c811b"
 
 string_decoder@~0.10.x:
   version "0.10.31"
@@ -2076,6 +2188,10 @@ to-fast-properties@^1.0.1:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/to-fast-properties/-/to-fast-properties-1.0.3.tgz#b83571fa4d8c25b82e231b06e3a3055de4ca1a47"
 
+toposort@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/toposort/-/toposort-1.0.3.tgz#f02cd8a74bd8be2fc0e98611c3bacb95a171869c"
+
 tsconfig@^6.0.0:
   version "6.0.0"
   resolved "https://registry.yarnpkg.com/tsconfig/-/tsconfig-6.0.0.tgz#6b0e8376003d7af1864f8df8f89dd0059ffcd032"
@@ -2091,6 +2207,10 @@ unc-path-regex@^0.1.0:
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/unc-path-regex/-/unc-path-regex-0.1.2.tgz#e73dd3d7b0d7c5ed86fbac6b0ae7d8c6a69d50fa"
 
+underscore@^1.8.3:
+  version "1.8.3"
+  resolved "https://registry.yarnpkg.com/underscore/-/underscore-1.8.3.tgz#4f3fb53b106e6097fcf9cb4109f2a5e9bdfa5022"
+
 unique-stream@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/unique-stream/-/unique-stream-1.0.0.tgz#d59a4a75427447d9aa6c91e70263f8d26a4b104b"
@@ -2102,6 +2222,10 @@ user-home@^1.1.1:
 util-deprecate@~1.0.1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/util-deprecate/-/util-deprecate-1.0.2.tgz#450d4dc9fa70de732762fbd2d4a28981419a0ccf"
+
+uuid@^3.0.1:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/uuid/-/uuid-3.1.0.tgz#3dd3d3e790abc24d7b0d3a034ffababe28ebbc04"
 
 v8flags@^2.0.2:
   version "2.1.1"
@@ -2156,6 +2280,17 @@ which@^1.2.12:
   resolved "https://registry.yarnpkg.com/which/-/which-1.2.14.tgz#9a87c4378f03e827cecaf1acdf56c736c01c14e5"
   dependencies:
     isexe "^2.0.0"
+
+winston@^2.2.0:
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/winston/-/winston-2.3.1.tgz#0b48420d978c01804cf0230b648861598225a119"
+  dependencies:
+    async "~1.0.0"
+    colors "1.0.x"
+    cycle "1.0.x"
+    eyes "0.1.x"
+    isstream "0.1.x"
+    stack-trace "0.0.x"
 
 wrappy@1:
   version "1.0.2"

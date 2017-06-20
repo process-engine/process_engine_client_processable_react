@@ -19,28 +19,14 @@ var __assign = (this && this.__assign) || Object.assign || function(t) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var React = require("react");
+var PropTypes = require("prop-types");
 var frontend_mui_1 = require("@process-engine-js/frontend_mui");
-var mustache_1 = require("mustache");
-var react_json_tree_1 = require("react-json-tree");
+var styles_1 = require("material-ui/styles");
+var mustache = require("mustache");
 var ProcessableContainer = (function (_super) {
     __extends(ProcessableContainer, _super);
     function ProcessableContainer(props) {
         var _this = _super.call(this, props) || this;
-        _this.defaultProps = {
-            theme: 'Default',
-            muiProps: {},
-            qflProps: {},
-            buttonTheme: null,
-            dialogTheme: null,
-            modal: false,
-            formItemTheme: null,
-            widgetTheme: null,
-            confirmItemTheme: null,
-            processableClassName: null,
-            modalProcessableClassName: null,
-            dialogMuiProps: null,
-            dialogQflProps: null
-        };
         _this.widgetConfig = null;
         _this.tokenData = null;
         _this.state = {
@@ -51,6 +37,11 @@ var ProcessableContainer = (function (_super) {
         };
         return _this;
     }
+    ProcessableContainer.prototype.getChildContext = function () {
+        return {
+            muiTheme: styles_1.getMuiTheme(this.props.theme)
+        };
+    };
     ProcessableContainer.prototype.componentWillMount = function () {
         var _this = this;
         var processInstance = this.props.processInstance;
@@ -163,7 +154,7 @@ var ProcessableContainer = (function (_super) {
                         }
                         if (processInstance.nextTaskDef && processInstance.nextTaskDef.extensions && processInstance.nextTaskDef.extensions.properties &&
                             confirmMessageArr && confirmMessageArr.length === 1) {
-                            confirmMessage = mustache_1.default.render(confirmMessageArr[0].value, tokenData);
+                            confirmMessage = mustache.render(confirmMessageArr[0].value, tokenData);
                         }
                         widget = {
                             component: frontend_mui_1.Confirm,
@@ -285,10 +276,7 @@ var ProcessableContainer = (function (_super) {
                         top: '170px',
                         left: '10px',
                         padding: '0px'
-                    } },
-                    React.createElement(react_json_tree_1.default, { hideRoot: true, style: {
-                            padding: '10px !important'
-                        }, data: tokenData })));
+                    } }));
             }
             if (processInstance.nextTaskDef && !this.state.processing) {
                 if (this.props.modal) {
@@ -334,6 +322,24 @@ var ProcessableContainer = (function (_super) {
     };
     return ProcessableContainer;
 }(React.Component));
+ProcessableContainer.defaultProps = {
+    theme: 'Default',
+    muiProps: {},
+    qflProps: {},
+    buttonTheme: 'Default',
+    dialogTheme: 'Default',
+    modal: false,
+    formItemTheme: 'Default',
+    widgetTheme: 'Default',
+    confirmItemTheme: 'Default',
+    processableClassName: null,
+    modalProcessableClassName: null,
+    dialogMuiProps: null,
+    dialogQflProps: null
+};
+ProcessableContainer.childContextTypes = {
+    muiTheme: PropTypes.object
+};
 exports.ProcessableContainer = ProcessableContainer;
 exports.default = ProcessableContainer;
 
