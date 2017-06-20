@@ -1,16 +1,15 @@
 import * as React from 'react';
 
 import {RaisedButton, Dialog, buildTheme, Form, Confirm} from '@process-engine-js/frontend_mui';
-import {IProcessable} from '@process-engine-js/process_engine_client_api';
 
 import mustache from 'mustache';
 import JSONTree from 'react-json-tree';
 import {IMUIProps} from '@process-engine-js/frontend_mui';
-import {IMessage} from '@process-engine-js/messagebus_contracts';
+import {IProcessInstance} from '@process-engine-js/process_engine_client_api';
 
 export interface IProcessableContainerProps extends IMUIProps {
-  subscription?: any;
-  mbClient?: any;
+  processInstance: IProcessInstance;
+
   buttonTheme?: any;
   dialogTheme?: any;
   modal?: boolean;
@@ -30,14 +29,12 @@ export interface IProcessableContainerState {
   processing?: boolean;
 }
 
-export class ProcessableContainer extends React.Component<IProcessableContainerProps, IProcessableContainerState> implements IProcessable {
+export class ProcessableContainer extends React.Component<IProcessableContainerProps, IProcessableContainerState> {
   public defaultProps = {
     theme: 'Default',
     muiProps: {},
     qflProps: {},
 
-    subscription: null,
-    mbClient: null,
     buttonTheme: null,
     dialogTheme: null,
     modal: false,
@@ -61,32 +58,22 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
     };
   }
 
-  public handleUserTask(message: IMessage) {
-    return;
-  }
-  public handleManualTask(message: IMessage) {
-    return;
-  }
-  public handleEndEvent(message: IMessage) {
-    return;
-  }
-
   protected componentWillMount() {
-    const { subscription } = this.props;
+    const { processInstance } = this.props;
 
     let widget = null;
     let widgetName = null;
-    const widgetNameArr = subscription.nextTask.extensions.properties.filter((property) => property.name === 'widgetName');
+    const widgetNameArr = processInstance.nextTaskDef.extensions.properties.filter((property) => property.name === 'widgetName');
 
-    if (subscription.nextTask && subscription.nextTask.extensions && subscription.nextTask.extensions.properties &&
+    if (processInstance.nextTaskDef && processInstance.nextTaskDef.extensions && processInstance.nextTaskDef.extensions.properties &&
       widgetNameArr && widgetNameArr.length === 1) {
       widgetName = widgetNameArr[0].value;
-      const tokenData = (subscription.nextTaskEntity && subscription.nextTaskEntity.processToken ? subscription.nextTaskEntity.processToken.data : null);
+      const tokenData = (processInstance.nextTaskEntity && processInstance.nextTaskEntity.processToken ? processInstance.nextTaskEntity.processToken.data : null);
       switch (widgetName) {
         case 'Form': {
           let formElements = [];
-          if (subscription.nextTask.extensions.formFields && subscription.nextTask.extensions.formFields.length > 0) {
-            formElements = subscription.nextTask.extensions.formFields.map((formField) => {
+          if (processInstance.nextTaskDef.extensions.formFields && processInstance.nextTaskDef.extensions.formFields.length > 0) {
+            formElements = processInstance.nextTaskDef.extensions.formFields.map((formField) => {
               let parsedType = null;
               const options: any = {};
               let formFieldWidgetNameArr;
@@ -170,13 +157,13 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
         }
         break;
         case 'Confirm': {
-          const confirmLayoutArr = subscription.nextTask.extensions.properties.filter((property) => property.name === 'confirmLayout');
-          const confirmMessageArr = subscription.nextTask.extensions.properties.filter((property) => property.name === 'confirmMessage');
+          const confirmLayoutArr = processInstance.nextTaskDef.extensions.properties.filter((property) => property.name === 'confirmLayout');
+          const confirmMessageArr = processInstance.nextTaskDef.extensions.properties.filter((property) => property.name === 'confirmMessage');
           let confirmLayout = [];
           let confirmMessage = '';
 
           let confirmElements = [];
-          if (subscription.nextTask && subscription.nextTask.extensions && subscription.nextTask.extensions.properties &&
+          if (processInstance.nextTaskDef && processInstance.nextTaskDef.extensions && processInstance.nextTaskDef.extensions.properties &&
             confirmMessageArr && confirmLayoutArr.length === 1) {
             confirmLayout = JSON.parse(confirmLayoutArr[0].value);
 
@@ -197,7 +184,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
               return elementObj;
             });
           }
-          if (subscription.nextTask && subscription.nextTask.extensions && subscription.nextTask.extensions.properties &&
+          if (processInstance.nextTaskDef && processInstance.nextTaskDef.extensions && processInstance.nextTaskDef.extensions.properties &&
             confirmMessageArr && confirmMessageArr.length === 1) {
             confirmMessage = mustache.render(confirmMessageArr[0].value, tokenData);
           }
@@ -226,21 +213,15 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
   private widgetConfig = null;
 
   private handleCancel() {
-    const { subscription } = this.props;
+    const { processInstance } = this.props;
 
     const fireCancel = () => {
-      let msg = {};
-      if (this.props.mbClient) {
-        msg = this.props.mbClient.createMessage({
-          action: 'cancel'
-        });
-      }
-
-      if (this.props.mbClient && subscription.taskChannelName) {
-        this.props.mbClient.publish(subscription.taskChannelName, msg);
-        this.setState({
-          canceled: true,
-          processing: true
+      if (processInstance) {
+        processInstance.doCancel().then(() => {
+          this.setState({
+            canceled: true,
+            processing: true
+          });
         });
       }
     };
@@ -254,19 +235,15 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
   }
 
   private handleProceed(tokenData) {
-    const { subscription } = this.props;
+    const { processInstance } = this.props;
 
     const fireProceed = () => {
-      const msg = this.props.mbClient.createMessage({
-        action: 'proceed',
-        token: tokenData
-      });
-
-      if (this.props.mbClient && subscription.taskChannelName) {
-        this.props.mbClient.publish(subscription.taskChannelName, msg);
-        this.setState({
-          canceled: false,
-          processing: true
+      if (processInstance) {
+        processInstance.doProceed(tokenData).then(() => {
+          this.setState({
+            canceled: false,
+            processing: true
+          });
         });
       }
     };
@@ -294,7 +271,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
       componentName: 'Processable'
     });
 
-    const { subscription } = this.props;
+    const { processInstance } = this.props;
 
     let proceedButton = null;
     let cancelButton = null;
@@ -349,11 +326,11 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
       widget = <this.widgetConfig.component onChoose={(key) => onChoose(key)} {...this.widgetConfig.props}/>;
     }
 
-    if (subscription) {
+    if (processInstance) {
       let tokenDataElement = null;
       let tokenData = null;
-      if (subscription && subscription.nextTaskEntity && subscription.nextTaskEntity.processToken && subscription.nextTaskEntity.processToken.data) {
-        tokenData = subscription.nextTaskEntity.processToken.data;
+      if (processInstance && processInstance.nextTaskEntity && processInstance.nextTaskEntity.processToken && processInstance.nextTaskEntity.processToken.data) {
+        tokenData = processInstance.nextTaskEntity.processToken.data;
       }
 
       if (tokenData) {
@@ -379,7 +356,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
         );
       }
 
-      if (subscription.nextTask && !this.state.processing) {
+      if (processInstance.nextTaskDef && !this.state.processing) {
         if (this.props.modal) {
           return (
             <div
@@ -393,7 +370,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
               <Dialog
                 theme={this.props.dialogTheme}
                 muiProps={{
-                  title: subscription.nextTask.name,
+                  title: processInstance.nextTaskDef.name,
                   actions: [cancelButton, proceedButton],
                   modal: true,
                   open: this.state.modalOpen,
@@ -417,7 +394,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
             }}
             {...qflProps}
           >
-            <h4>{subscription.nextTask.name}</h4>
+            <h4>{processInstance.nextTaskDef.name}</h4>
             {widget}<br/>
             {proceedButton}<br/>
             {tokenDataElement}

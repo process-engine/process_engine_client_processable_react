@@ -30,8 +30,6 @@ var ProcessableContainer = (function (_super) {
             theme: 'Default',
             muiProps: {},
             qflProps: {},
-            subscription: null,
-            mbClient: null,
             buttonTheme: null,
             dialogTheme: null,
             modal: false,
@@ -53,31 +51,22 @@ var ProcessableContainer = (function (_super) {
         };
         return _this;
     }
-    ProcessableContainer.prototype.handleUserTask = function (message) {
-        return;
-    };
-    ProcessableContainer.prototype.handleManualTask = function (message) {
-        return;
-    };
-    ProcessableContainer.prototype.handleEndEvent = function (message) {
-        return;
-    };
     ProcessableContainer.prototype.componentWillMount = function () {
         var _this = this;
-        var subscription = this.props.subscription;
+        var processInstance = this.props.processInstance;
         var widget = null;
         var widgetName = null;
-        var widgetNameArr = subscription.nextTask.extensions.properties.filter(function (property) { return property.name === 'widgetName'; });
-        if (subscription.nextTask && subscription.nextTask.extensions && subscription.nextTask.extensions.properties &&
+        var widgetNameArr = processInstance.nextTaskDef.extensions.properties.filter(function (property) { return property.name === 'widgetName'; });
+        if (processInstance.nextTaskDef && processInstance.nextTaskDef.extensions && processInstance.nextTaskDef.extensions.properties &&
             widgetNameArr && widgetNameArr.length === 1) {
             widgetName = widgetNameArr[0].value;
-            var tokenData = (subscription.nextTaskEntity && subscription.nextTaskEntity.processToken ? subscription.nextTaskEntity.processToken.data : null);
+            var tokenData = (processInstance.nextTaskEntity && processInstance.nextTaskEntity.processToken ? processInstance.nextTaskEntity.processToken.data : null);
             switch (widgetName) {
                 case 'Form':
                     {
                         var formElements = [];
-                        if (subscription.nextTask.extensions.formFields && subscription.nextTask.extensions.formFields.length > 0) {
-                            formElements = subscription.nextTask.extensions.formFields.map(function (formField) {
+                        if (processInstance.nextTaskDef.extensions.formFields && processInstance.nextTaskDef.extensions.formFields.length > 0) {
+                            formElements = processInstance.nextTaskDef.extensions.formFields.map(function (formField) {
                                 var parsedType = null;
                                 var options = {};
                                 var formFieldWidgetNameArr;
@@ -149,12 +138,12 @@ var ProcessableContainer = (function (_super) {
                     break;
                 case 'Confirm':
                     {
-                        var confirmLayoutArr = subscription.nextTask.extensions.properties.filter(function (property) { return property.name === 'confirmLayout'; });
-                        var confirmMessageArr = subscription.nextTask.extensions.properties.filter(function (property) { return property.name === 'confirmMessage'; });
+                        var confirmLayoutArr = processInstance.nextTaskDef.extensions.properties.filter(function (property) { return property.name === 'confirmLayout'; });
+                        var confirmMessageArr = processInstance.nextTaskDef.extensions.properties.filter(function (property) { return property.name === 'confirmMessage'; });
                         var confirmLayout = [];
                         var confirmMessage = '';
                         var confirmElements = [];
-                        if (subscription.nextTask && subscription.nextTask.extensions && subscription.nextTask.extensions.properties &&
+                        if (processInstance.nextTaskDef && processInstance.nextTaskDef.extensions && processInstance.nextTaskDef.extensions.properties &&
                             confirmMessageArr && confirmLayoutArr.length === 1) {
                             confirmLayout = JSON.parse(confirmLayoutArr[0].value);
                             confirmElements = confirmLayout.map(function (element) {
@@ -172,7 +161,7 @@ var ProcessableContainer = (function (_super) {
                                 return elementObj;
                             });
                         }
-                        if (subscription.nextTask && subscription.nextTask.extensions && subscription.nextTask.extensions.properties &&
+                        if (processInstance.nextTaskDef && processInstance.nextTaskDef.extensions && processInstance.nextTaskDef.extensions.properties &&
                             confirmMessageArr && confirmMessageArr.length === 1) {
                             confirmMessage = mustache_1.default.render(confirmMessageArr[0].value, tokenData);
                         }
@@ -197,19 +186,14 @@ var ProcessableContainer = (function (_super) {
     };
     ProcessableContainer.prototype.handleCancel = function () {
         var _this = this;
-        var subscription = this.props.subscription;
+        var processInstance = this.props.processInstance;
         var fireCancel = function () {
-            var msg = {};
-            if (_this.props.mbClient) {
-                msg = _this.props.mbClient.createMessage({
-                    action: 'cancel'
-                });
-            }
-            if (_this.props.mbClient && subscription.taskChannelName) {
-                _this.props.mbClient.publish(subscription.taskChannelName, msg);
-                _this.setState({
-                    canceled: true,
-                    processing: true
+            if (processInstance) {
+                processInstance.doCancel().then(function () {
+                    _this.setState({
+                        canceled: true,
+                        processing: true
+                    });
                 });
             }
         };
@@ -219,17 +203,14 @@ var ProcessableContainer = (function (_super) {
     };
     ProcessableContainer.prototype.handleProceed = function (tokenData) {
         var _this = this;
-        var subscription = this.props.subscription;
+        var processInstance = this.props.processInstance;
         var fireProceed = function () {
-            var msg = _this.props.mbClient.createMessage({
-                action: 'proceed',
-                token: tokenData
-            });
-            if (_this.props.mbClient && subscription.taskChannelName) {
-                _this.props.mbClient.publish(subscription.taskChannelName, msg);
-                _this.setState({
-                    canceled: false,
-                    processing: true
+            if (processInstance) {
+                processInstance.doProceed(tokenData).then(function () {
+                    _this.setState({
+                        canceled: false,
+                        processing: true
+                    });
                 });
             }
         };
@@ -251,7 +232,7 @@ var ProcessableContainer = (function (_super) {
             sourceQflProps: this.props.qflProps,
             componentName: 'Processable'
         }), muiProps = _a.muiProps, qflProps = _a.qflProps;
-        var subscription = this.props.subscription;
+        var processInstance = this.props.processInstance;
         var proceedButton = null;
         var cancelButton = null;
         var widget = null;
@@ -290,11 +271,11 @@ var ProcessableContainer = (function (_super) {
             };
             widget = React.createElement(this.widgetConfig.component, __assign({ onChoose: function (key) { return onChoose_1(key); } }, this.widgetConfig.props));
         }
-        if (subscription) {
+        if (processInstance) {
             var tokenDataElement = null;
             var tokenData = null;
-            if (subscription && subscription.nextTaskEntity && subscription.nextTaskEntity.processToken && subscription.nextTaskEntity.processToken.data) {
-                tokenData = subscription.nextTaskEntity.processToken.data;
+            if (processInstance && processInstance.nextTaskEntity && processInstance.nextTaskEntity.processToken && processInstance.nextTaskEntity.processToken.data) {
+                tokenData = processInstance.nextTaskEntity.processToken.data;
             }
             if (tokenData) {
                 tokenDataElement = (React.createElement("div", { style: {
@@ -309,14 +290,14 @@ var ProcessableContainer = (function (_super) {
                             padding: '10px !important'
                         }, data: tokenData })));
             }
-            if (subscription.nextTask && !this.state.processing) {
+            if (processInstance.nextTaskDef && !this.state.processing) {
                 if (this.props.modal) {
                     return (React.createElement("div", __assign({ style: {
                             display: 'inline-block',
                             padding: '10px',
                             textAlign: 'left'
                         } }, qflProps),
-                        React.createElement(frontend_mui_1.Dialog, { theme: this.props.dialogTheme, muiProps: __assign({ title: subscription.nextTask.name, actions: [cancelButton, proceedButton], modal: true, open: this.state.modalOpen }, this.props.dialogMuiProps), qflProps: __assign({}, this.props.dialogQflProps) },
+                        React.createElement(frontend_mui_1.Dialog, { theme: this.props.dialogTheme, muiProps: __assign({ title: processInstance.nextTaskDef.name, actions: [cancelButton, proceedButton], modal: true, open: this.state.modalOpen }, this.props.dialogMuiProps), qflProps: __assign({}, this.props.dialogQflProps) },
                             widget,
                             React.createElement("br", null)),
                         React.createElement("br", null),
@@ -325,7 +306,7 @@ var ProcessableContainer = (function (_super) {
                 return (React.createElement("div", __assign({ style: {
                         padding: '10px'
                     } }, qflProps),
-                    React.createElement("h4", null, subscription.nextTask.name),
+                    React.createElement("h4", null, processInstance.nextTaskDef.name),
                     widget,
                     React.createElement("br", null),
                     proceedButton,
