@@ -47,7 +47,6 @@ export declare class ProcessableContainer extends React.Component<IProcessableCo
     private widgetConfig;
     private handleCancel();
     private handleProceed(tokenData);
-    private tokenData;
     render(): JSX.Element;
 }
 export default ProcessableContainer;

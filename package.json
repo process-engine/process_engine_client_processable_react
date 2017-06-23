@@ -28,13 +28,15 @@
     "material-ui": "^0.18.3",
     "mustache": "^2.3.0",
     "prop-types": "^15.5.10",
-    "react": "^15.6.1",
-    "react-dom": "^15.6.1",
     "react-tap-event-plugin": "^2.0.1"
   },
   "devDependencies": {
     "@process-engine-js/gulptraum": "^1.2.5",
     "gulp": "^3.9.1",
     "tsconfig": "^6.0.0"
+  },
+  "peerDependencies": {
+    "react": "^15.6.1",
+    "react-dom": "^15.6.1"
   }
 }

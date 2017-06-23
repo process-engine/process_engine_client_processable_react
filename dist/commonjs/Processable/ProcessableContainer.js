@@ -20,15 +20,18 @@ var __assign = (this && this.__assign) || Object.assign || function(t) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var React = require("react");
 var PropTypes = require("prop-types");
-var frontend_mui_1 = require("@process-engine-js/frontend_mui");
-var styles_1 = require("material-ui/styles");
+var RaisedButton_js_1 = require("@process-engine-js/frontend_mui/dist/commonjs/Buttons/RaisedButton/RaisedButton.js");
+var Dialog_js_1 = require("@process-engine-js/frontend_mui/dist/commonjs/Dialogs/Dialog/Dialog.js");
+var themeBuilder_js_1 = require("@process-engine-js/frontend_mui/dist/commonjs/themeBuilder.js");
+var Form_js_1 = require("@process-engine-js/frontend_mui/dist/commonjs/InputForms/Form/Form.js");
+var Confirm_js_1 = require("@process-engine-js/frontend_mui/dist/commonjs/InputForms/Confirm/Confirm.js");
+var getMuiTheme_js_1 = require("material-ui/styles/getMuiTheme.js");
 var mustache = require("mustache");
 var ProcessableContainer = (function (_super) {
     __extends(ProcessableContainer, _super);
     function ProcessableContainer(props) {
         var _this = _super.call(this, props) || this;
         _this.widgetConfig = null;
-        _this.tokenData = null;
         _this.state = {
             modalOpen: props.modal,
             formData: {},
@@ -39,7 +42,7 @@ var ProcessableContainer = (function (_super) {
     }
     ProcessableContainer.prototype.getChildContext = function () {
         return {
-            muiTheme: styles_1.getMuiTheme(this.props.theme)
+            muiTheme: getMuiTheme_js_1.default(this.props.theme)
         };
     };
     ProcessableContainer.prototype.componentWillMount = function () {
@@ -85,7 +88,7 @@ var ProcessableContainer = (function (_super) {
                                             parsedType = formFieldWidgetNameArr[0].value;
                                         }
                                         if (parsedType === 'RadioBox') {
-                                            options.radioButtonMuiProps = frontend_mui_1.buildTheme({
+                                            options.radioButtonMuiProps = themeBuilder_js_1.buildTheme({
                                                 theme: _this.props.formItemTheme,
                                                 sourceMuiProps: {},
                                                 componentName: 'RadioButton'
@@ -118,7 +121,7 @@ var ProcessableContainer = (function (_super) {
                             }).filter(function (formField) { return (formField !== null); });
                         }
                         widget = {
-                            component: frontend_mui_1.Form,
+                            component: Form_js_1.default,
                             isModal: this.props.modal,
                             props: {
                                 theme: this.props.widgetTheme,
@@ -157,7 +160,7 @@ var ProcessableContainer = (function (_super) {
                             confirmMessage = mustache.render(confirmMessageArr[0].value, tokenData);
                         }
                         widget = {
-                            component: frontend_mui_1.Confirm,
+                            component: Confirm_js_1.default,
                             isModal: this.props.modal,
                             props: {
                                 theme: this.props.widgetTheme,
@@ -217,18 +220,19 @@ var ProcessableContainer = (function (_super) {
     };
     ProcessableContainer.prototype.render = function () {
         var _this = this;
-        var _a = frontend_mui_1.buildTheme({
+        var qflProps = themeBuilder_js_1.buildTheme({
             theme: this.props.theme,
             sourceMuiProps: this.props.muiProps,
             sourceQflProps: this.props.qflProps,
             componentName: 'Processable'
-        }), muiProps = _a.muiProps, qflProps = _a.qflProps;
+        }).qflProps;
+        debugger;
         var processInstance = this.props.processInstance;
         var proceedButton = null;
         var cancelButton = null;
         var widget = null;
         if (this.widgetConfig && this.widgetConfig.component && this.widgetConfig.component.name === 'Form') {
-            proceedButton = (React.createElement(frontend_mui_1.RaisedButton, { theme: this.props.buttonTheme, muiProps: {
+            proceedButton = (React.createElement(RaisedButton_js_1.default, { theme: this.props.buttonTheme, muiProps: {
                     label: 'Weiter',
                     primary: true
                 }, qflProps: {
@@ -237,7 +241,7 @@ var ProcessableContainer = (function (_super) {
                     }
                 } }));
             if (this.props.modal) {
-                cancelButton = (React.createElement(frontend_mui_1.RaisedButton, { theme: this.props.buttonTheme, muiProps: {
+                cancelButton = (React.createElement(RaisedButton_js_1.default, { theme: this.props.buttonTheme, muiProps: {
                         label: 'Abbrechen',
                         primary: true
                     }, qflProps: {
@@ -285,7 +289,7 @@ var ProcessableContainer = (function (_super) {
                             padding: '10px',
                             textAlign: 'left'
                         } }, qflProps),
-                        React.createElement(frontend_mui_1.Dialog, { theme: this.props.dialogTheme, muiProps: __assign({ title: processInstance.nextTaskDef.name, actions: [cancelButton, proceedButton], modal: true, open: this.state.modalOpen }, this.props.dialogMuiProps), qflProps: __assign({}, this.props.dialogQflProps) },
+                        React.createElement(Dialog_js_1.default, { theme: this.props.dialogTheme, muiProps: __assign({ title: processInstance.nextTaskDef.name, actions: [cancelButton, proceedButton], modal: true, open: this.state.modalOpen }, this.props.dialogMuiProps), qflProps: __assign({}, this.props.dialogQflProps) },
                             widget,
                             React.createElement("br", null)),
                         React.createElement("br", null),
@@ -320,26 +324,26 @@ var ProcessableContainer = (function (_super) {
         }
         return null;
     };
+    ProcessableContainer.defaultProps = {
+        theme: 'Default',
+        muiProps: {},
+        qflProps: {},
+        buttonTheme: 'Default',
+        dialogTheme: 'Default',
+        modal: false,
+        formItemTheme: 'Default',
+        widgetTheme: 'Default',
+        confirmItemTheme: 'Default',
+        processableClassName: null,
+        modalProcessableClassName: null,
+        dialogMuiProps: null,
+        dialogQflProps: null
+    };
+    ProcessableContainer.childContextTypes = {
+        muiTheme: PropTypes.object
+    };
     return ProcessableContainer;
 }(React.Component));
-ProcessableContainer.defaultProps = {
-    theme: 'Default',
-    muiProps: {},
-    qflProps: {},
-    buttonTheme: 'Default',
-    dialogTheme: 'Default',
-    modal: false,
-    formItemTheme: 'Default',
-    widgetTheme: 'Default',
-    confirmItemTheme: 'Default',
-    processableClassName: null,
-    modalProcessableClassName: null,
-    dialogMuiProps: null,
-    dialogQflProps: null
-};
-ProcessableContainer.childContextTypes = {
-    muiTheme: PropTypes.object
-};
 exports.ProcessableContainer = ProcessableContainer;
 exports.default = ProcessableContainer;
 

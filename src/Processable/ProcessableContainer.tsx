@@ -1,8 +1,13 @@
 import * as React from 'react';
 import * as PropTypes from 'prop-types';
 
-import {RaisedButton, Dialog, buildTheme, Form, Confirm} from '@process-engine-js/frontend_mui';
-import { getMuiTheme } from 'material-ui/styles';
+import RaisedButton from '@process-engine-js/frontend_mui/dist/commonjs/Buttons/RaisedButton/RaisedButton.js';
+import Dialog from '@process-engine-js/frontend_mui/dist/commonjs/Dialogs/Dialog/Dialog.js';
+import {buildTheme} from '@process-engine-js/frontend_mui/dist/commonjs/themeBuilder.js';
+import Form from '@process-engine-js/frontend_mui/dist/commonjs/InputForms/Form/Form.js';
+import Confirm from '@process-engine-js/frontend_mui/dist/commonjs/InputForms/Confirm/Confirm.js';
+
+import getMuiTheme from 'material-ui/styles/getMuiTheme.js';
 
 import * as mustache from 'mustache';
 import {IMUIProps} from '@process-engine-js/frontend_mui';
@@ -272,10 +277,8 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
     }
   }
 
-  private tokenData = null;
-
   public render() {
-    const { muiProps, qflProps } = buildTheme({
+    const { qflProps } = buildTheme({
       theme: this.props.theme,
       sourceMuiProps: this.props.muiProps,
       sourceQflProps: this.props.qflProps,
