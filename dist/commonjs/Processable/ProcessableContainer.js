@@ -226,7 +226,6 @@ var ProcessableContainer = (function (_super) {
             sourceQflProps: this.props.qflProps,
             componentName: 'Processable'
         }).qflProps;
-        debugger;
         var processInstance = this.props.processInstance;
         var proceedButton = null;
         var cancelButton = null;
