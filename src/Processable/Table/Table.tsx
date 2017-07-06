@@ -1,82 +1,126 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import * as React from 'react';
 
-import Table from '../../Tables/Table/Table';
-import RaisedButton from '../../Buttons/RaisedButton/RaisedButton';
-import TextField from '../../InputForms/TextField/TextField';
-import Processable from '../ProcessContainer';
-import DropDown from '../../InputForms/DropDown/DropDown';
+import Table from '@process-engine-js/frontend_mui/dist/commonjs/Tables/Table/Table.js';
+import RaisedButton from '@process-engine-js/frontend_mui/dist/commonjs/Buttons/RaisedButton/RaisedButton.js';
+import TextField from '@process-engine-js/frontend_mui/dist/commonjs/InputForms/TextField/TextField.js';
+import ProcessableContainer from '../ProcessableContainer';
+import DropDown from '@process-engine-js/frontend_mui/dist/commonjs/InputForms/DropDown/DropDown.js';
 
-import { MenuItem } from 'material-ui';
-import ExpandMoreIcon from 'material-ui/svg-icons/navigation/expand-more';
-import { TableOverlay } from './TableOverlay';
+import * as MenuItem from 'material-ui/MenuItem/MenuItem.js';
+import ExpandMoreIcon from 'material-ui/svg-icons/navigation/expand-more.js';
+import * as TableOverlay from './TableOverlay';
 
 import $ from 'jquery';
 
-class ProcessableTable extends Component {
-  static propTypes = {
-    title: PropTypes.string,
-    children: PropTypes.node,
-    frame: PropTypes.bool,
+import {IMUIProps} from '@process-engine-js/frontend_mui';
+import {IProcessable, IProcessEngineClientApi, IProcessInstance} from '@process-engine-js/process_engine_client_api';
+import {ExecutionContext} from '@process-engine-js/core_contracts';
 
-    createProcessKey: PropTypes.string,
-    createStartToken: PropTypes.any,
+export interface ITableProps extends IMUIProps {
+  dataClassName: string;
 
-    createButtonMuiProps: PropTypes.object,
-    createButtonQflProps: PropTypes.object,
-    createButtonProps: PropTypes.object,
+  context?: ExecutionContext;
+  processEngineClientApi?: IProcessEngineClientApi;
 
-    createButtonTheme: PropTypes.object,
-    createDialogTheme: PropTypes.object,
-    createFormItemTheme: PropTypes.object,
-    createConfirmTheme: PropTypes.object,
-    createWidgetTheme: PropTypes.object,
-    createTheme: PropTypes.object,
+  title?: string;
+  children?: React.ReactNode;
+  frame?: boolean;
 
-    itemBasedButtonTheme: PropTypes.object,
-    listBasedButtonTheme: PropTypes.object,
-    filterMenuTheme: PropTypes.object,
-    baseFilterMenuTheme: PropTypes.object,
-    searchFieldTheme: PropTypes.object,
+  createProcessKey?: string;
+  createStartToken?: any;
 
-    onSearch: PropTypes.func,
-    searchFieldMuiProps: PropTypes.object,
-    searchFieldQflProps: PropTypes.object,
-    searchFieldProps: PropTypes.object,
-    searchValue: PropTypes.string,
-    tableProps: PropTypes.object,
-    data: PropTypes.any,
-    searchKeyDelay: PropTypes.number,
-    controlledHeight: PropTypes.number,
+  createButtonMuiProps?: {};
+  createButtonQflProps?: {};
+  createButtonProps?: {};
 
-    dataClassName: PropTypes.string.required,
+  createButtonTheme?: {};
+  createDialogTheme?: {};
+  createFormItemTheme?: {};
+  createConfirmTheme?: {};
+  createWidgetTheme?: {};
+  createTheme?: {};
 
-    itemBasedButtonSchema: PropTypes.any,
-    itemBasedButtonMuiProps: PropTypes.object,
-    itemBasedButtonQflProps: PropTypes.object,
-    itemBasedButtonProps: PropTypes.object,
-    itemBasedMoreButtonMuiProps: PropTypes.object,
-    itemBasedMoreButtonQflProps: PropTypes.object,
-    itemBasedMoreButtonProps: PropTypes.object,
+  itemBasedButtonTheme?: {};
+  listBasedButtonTheme?: {};
+  filterMenuTheme?: {};
+  baseFilterMenuTheme?: {};
+  searchFieldTheme?: {};
 
-    listBasedButtonSchema: PropTypes.any,
-    filterMenuSchema: PropTypes.any,
-    onFilterChange: PropTypes.func,
+  onSearch?: Function;
+  searchFieldMuiProps?: {};
+  searchFieldQflProps?: {};
+  searchFieldProps?: {};
+  searchValue?: string;
+  tableProps?: {
+    rbtProps?: any;
+  };
+  data?: any;
+  searchKeyDelay?: number;
+  controlledHeight?: number;
 
-    baseFilterMenuSchema: PropTypes.any,
+  itemBasedButtonSchema?: any;
+  itemBasedButtonMuiProps?: {};
+  itemBasedButtonQflProps?: {};
+  itemBasedButtonProps?: {};
+  itemBasedMoreButtonMuiProps?: {};
+  itemBasedMoreButtonQflProps?: {};
+  itemBasedMoreButtonProps?: {};
 
-    onProcessEnded: PropTypes.func,
+  listBasedButtonSchema?: any;
+  filterMenuSchema?: any;
+  onFilterChange?: Function;
 
-    tableOverlayStyles: PropTypes.object,
+  baseFilterMenuSchema?: any;
 
-    tableStyles: PropTypes.object,
+  onProcessEnded?: Function;
 
-    theme: PropTypes.object,
-    tableTheme: PropTypes.object,
-    tableSelectorTheme: PropTypes.object
+  tableOverlayStyles?: {
+    menuHeaderClassName?: string;
+    menuItemClassName?: string;
   };
 
-  static defaultProps = {
+  tableStyles?: {
+    tableWithFrameClassName?: string;
+    tableWithoutFrameClassName?: string;
+    createButtonClassName?: string;
+    contentOverlayClassName?: string;
+    tableBarClassName?: string;
+    itemHeaderClassName?: string;
+    searchFieldClassName?: string;
+    itemBasedMoreButtonClassName?: string;
+    itemBasedButtonClassName?: string;
+    tableRowClassName?: string;
+    tableHeaderRowClassName?: string;
+    tableColumnSelectorClassName?: string;
+    tableHeaderColumnSelectorClassName?: string;
+  };
+
+  tableTheme?: {};
+  tableSelectorTheme?: {};
+}
+
+export interface ITableState {
+  isItemBasedMoreMenuOpened?: boolean;
+  selectedRows?: {};
+  searchValue?: string;
+
+  createOnProcessEnded?: Function;
+  createProcessInstance?: IProcessInstance;
+  createProcessableContainer?: ProcessableContainer;
+
+  currentItemProcessKey?: string;
+  currentItemOnProcessEnded?: Function;
+  itemProcessInstance?: IProcessInstance;
+  itemProcessableContainer?: ProcessableContainer;
+}
+
+class ProcessableTable extends React.Component<ITableProps, ITableState> implements IProcessable {
+  public static defaultProps = {
+    theme: null,
+    muiProps: {},
+    qflProps: {},
+
+    processEngineClientApi: null,
     title: null,
     frame: true,
     searchKeyDelay: 250,
@@ -98,119 +142,184 @@ class ProcessableTable extends Component {
     tableOverlayStyles: {
       menuHeaderClassName: null,
       menuItemClassName: null
-    }
-  };
+    },
 
-  static contextTypes = {
-    viewer: PropTypes.object
+    createProcessKey: null,
+    createStartToken: null,
+
+    createButtonMuiProps: null,
+    createButtonQflProps: null,
+    createButtonProps: null,
+
+    createButtonTheme: null,
+    createDialogTheme: null,
+    createFormItemTheme: null,
+    createConfirmTheme: null,
+    createWidgetTheme: null,
+    createTheme: null,
+
+    itemBasedButtonTheme: null,
+    listBasedButtonTheme: null,
+    filterMenuTheme: null,
+    baseFilterMenuTheme: null,
+    searchFieldTheme: null,
+
+    onSearch: null,
+    searchFieldMuiProps: null,
+    searchFieldQflProps: null,
+    searchFieldProps: null,
+    searchValue: null,
+    tableProps: {
+      rbtProps: null
+    },
+    data: null,
+    controlledHeight: null,
+
+    itemBasedButtonSchema: null,
+    itemBasedButtonMuiProps: null,
+    itemBasedButtonQflProps: null,
+    itemBasedButtonProps: null,
+    itemBasedMoreButtonMuiProps: null,
+    itemBasedMoreButtonQflProps: null,
+    itemBasedMoreButtonProps: null,
+
+    listBasedButtonSchema: null,
+    filterMenuSchema: null,
+    onFilterChange: null,
+
+    baseFilterMenuSchema: null,
+
+    onProcessEnded: null,
+
+    tableTheme: null,
+    tableSelectorTheme: null
   };
 
   constructor(props) {
     super(props);
 
     this.state = {
-      mbClient: props.mbClient,
-      subscriptions: {},
       isItemBasedMoreMenuOpened: false,
       selectedRows: {},
-      searchValue: props.searchValue
+      searchValue: props.searchValue,
+
+      createOnProcessEnded: null,
+      createProcessInstance: null,
+      createProcessableContainer: null,
+
+      currentItemProcessKey: null,
+      currentItemOnProcessEnded: null,
+      itemProcessInstance: null,
+      itemProcessableContainer: null
     };
   }
 
-  componentWillUnmount() {
-    if (this.state.subscriptions) {
-      Object.keys(this.state.subscriptions).forEach((subscription) => {
-        this.state.subscriptions[subscription].channel.cancel();
-      });
+  private renderProcessContainer(processKey) {
+    switch (processKey) {
+      case (this.props.createProcessKey + this.props.dataClassName):
+        const createProcessableContainer = (
+          <ProcessableContainer modal={true} key={this.state.createProcessInstance.nextTaskEntity.id}
+                                processInstance={this.state.createProcessInstance}/>
+        );
+        this.setState({
+          createProcessableContainer
+        });
+        break;
+      case (this.state.currentItemProcessKey):
+        const itemProcessableContainer = (
+          <ProcessableContainer modal={true} key={this.state.itemProcessInstance.nextTaskEntity.id}
+                                processInstance={this.state.itemProcessInstance}/>
+        );
+        this.setState({
+          itemProcessableContainer
+        });
+        break;
+      default:
     }
-  }
+  };
 
-  handleStart(subscriptionId, startToken, onProcessEnded, done) {
-    const participantUUID = this.state.mbClient._participantId;
-    const msg = this.state.mbClient.createMessage({
-      action: 'start',
-      key: subscriptionId,
-      token: startToken
-    });
+  public async handleUserTask(processKey: string, message: any) {
+    this.renderProcessContainer(processKey);
+  };
 
-    this.state.mbClient.publish('/processengine', msg);
-    const curChannelName = '/participant/' + participantUUID;
-    const subscription = {
-      channelName: curChannelName,
-      channel: this.state.mbClient.subscribe(curChannelName, (fayeMsg) => {
-        if (fayeMsg && fayeMsg.data && fayeMsg.data.action) {
-          const data = fayeMsg.data;
-          const processKey = subscriptionId;
-          switch (fayeMsg.data.action) {
-            case 'userTask': {
-              const nextTaskEntity = fayeMsg.data.data;
-              const nextTask = fayeMsg.data.data.nodeDef;
+  public async handleManualTask(processKey: string, message: any) {
+    return;
+  };
 
-              const curTaskChannelName = '/processengine/node/' + nextTaskEntity.id;
-              const currentSubscriptions = this.state.subscriptions;
-              currentSubscriptions[subscriptionId].started = true;
-              currentSubscriptions[subscriptionId].nextTask = nextTask;
-              currentSubscriptions[subscriptionId].nextTaskEntity = nextTaskEntity;
-              currentSubscriptions[subscriptionId].taskChannelName = curTaskChannelName;
-
-              this.setState({
-                subscriptions: currentSubscriptions
-              });
-              break;
+  public async handleEndEvent(processKey: string, message: any) {
+    switch (processKey) {
+      case (this.props.createProcessKey + this.props.dataClassName):
+        this.setState(
+          {
+            createProcessInstance: null,
+            createProcessableContainer: null
+          },
+          () => {
+            if (this.state.createOnProcessEnded) {
+              this.state.createOnProcessEnded();
             }
-            case 'endEvent': {
-              this.handleStop(subscriptionId);
-
-              this.setState({
-                currentOffset: 0
-              }, () => {
-                if (this.props.onProcessEnded) {
-                  this.props.onProcessEnded(processKey, data);
-                }
-                if (onProcessEnded) {
-                  onProcessEnded(processKey, data);
-                }
-              });
-
-              break;
-            }
-            default:
-              break;
           }
-        }
-      })
-    };
+        );
+        break;
+      case (this.state.currentItemProcessKey):
+        this.setState(
+          {
+            itemProcessInstance: null,
+            itemProcessableContainer: null
+          },
+          () => {
+            if (this.state.currentItemOnProcessEnded) {
+              this.state.currentItemOnProcessEnded();
+            }
+          }
+        );
+        break;
+      default:
+    }
+  };
 
-    subscription.channel.then(() => {
-      const currentSubscriptions = this.state.subscriptions;
-      currentSubscriptions[subscriptionId] = subscription;
-      this.setState({
-        subscriptions: currentSubscriptions
-      }, done);
+  private async handleStartCreate(startToken, onProcessEnded?: Function, done?: Function) {
+    const createProcessInstance = await this.props.processEngineClientApi.startProcess(
+      (this.props.createProcessKey + this.props.dataClassName),
+      this,
+      startToken,
+      this.props.context
+    );
+    if (done) {
+      done();
+    }
+    this.setState({
+      createOnProcessEnded: onProcessEnded,
+      createProcessInstance
     });
   }
 
-  handleStop(subscriptionId, done) {
-    const currentSubscriptions = this.state.subscriptions;
-    const currentSubscription = currentSubscriptions[subscriptionId];
-    currentSubscription.channel.cancel();
-
-    delete currentSubscriptions[subscriptionId];
-
+  private async handleStartItem(processKey, startToken, onProcessEnded?: Function, done?: Function) {
+    const itemProcessInstance = await this.props.processEngineClientApi.startProcess(
+      processKey,
+      this,
+      startToken,
+      this.props.context
+    );
+    if (done) {
+      done();
+    }
     this.setState({
-      subscriptions: currentSubscriptions
-    }, done);
+      currentItemOnProcessEnded: onProcessEnded,
+      currentItemProcessKey: processKey,
+      itemProcessInstance
+    });
   }
 
-  delay = (() => {
-    let timer = 0;
-    return (callback, ms) => {
+  private delay = (() => {
+    let timer: NodeJS.Timer = null;
+    return (callback: Function, ms: number) => {
       clearTimeout(timer);
       timer = setTimeout(callback, ms);
     };
   })();
 
-  handleItemClicked(item) {
+  private handleItemClicked(item) {
     this.setState({
       isItemBasedMoreMenuOpened: false
     });
@@ -237,31 +346,32 @@ class ProcessableTable extends Component {
           return resultToken;
         });
       }
-      this.handleStart(item.processableKey, startToken, item.onProcessEnded);
+      this.handleStartItem(item.processableKey, startToken, item.onProcessEnded);
     }
   }
 
-  handleSelectedRowsChanged(selectedRows) {
+  private handleSelectedRowsChanged(selectedRows) {
     this.setState({
       selectedRows
     });
   }
 
-  cleanSelected() {
-    if (this.refs && this.refs.listBoxTable && this.refs.listBoxTable.cleanSelected) {
-      this.refs.listBoxTable.cleanSelected();
+  public cleanSelected() {
+    const refs: any = this.refs;
+    if (refs && refs.listBoxTable && refs.listBoxTable.cleanSelected) {
+      refs.listBoxTable.cleanSelected();
     }
   }
 
-  handleFilterItemChange(key, oldValue, newValue, choosenElement, element) {
+  private handleFilterItemChange(key, oldValue, newValue, choosenElement, element) {
     if (this.props.onFilterChange) {
       this.props.onFilterChange(key, newValue, choosenElement, element);
     }
   }
 
-  itemBasedMoreMenuId = 'vorstartItemBasedMoreMenu';
+  public itemBasedMoreMenuId = 'itemBasedMoreMenu';
 
-  render() {
+  public render() {
     let newClassName = null;
     if (this.props.frame === true) {
       newClassName = this.props.tableStyles.tableWithFrameClassName;
@@ -289,7 +399,7 @@ class ProcessableTable extends Component {
               borderRadius: '0px'
             },
             onClick: (e) => {
-              this.handleStart(this.props.createProcessKey + this.props.dataClassName, this.props.createStartToken);
+              this.handleStartCreate(this.props.createStartToken);
             },
             ...this.props.createButtonMuiProps
           }}
@@ -307,18 +417,7 @@ class ProcessableTable extends Component {
         />
       );
 
-      let createProcessContainer = null;
-      const createProcessable = ((this.state.subscriptions && this.state.subscriptions['Create' + this.props.dataClassName]) || null);
-      if (createProcessable && createProcessable.started && createProcessable.taskChannelName) {
-        createProcessContainer = (
-          <Processable modal key={createProcessable.nextTaskEntity.id} processable={createProcessable}
-                       buttonTheme={this.props.createButtonTheme} dialogTheme={this.props.createDialogTheme}
-                       formItemTheme={this.props.createFormItemTheme} confirmTheme={this.props.createConfirmTheme}
-                       widgetTheme={this.props.createWidgetTheme} theme={this.props.createTheme}
-                       mbClient={this.state.mbClient}/>
-        );
-      }
-
+      let createProcessContainer = this.state.createProcessableContainer;
       processables.push(createProcessContainer);
     }
 
@@ -338,7 +437,8 @@ class ProcessableTable extends Component {
             floatingLabelText: filterMenuSchemaItem.label,
             ...filterMenuSchemaItem.muiProps
           }}
-          onChange={(event, index, oldValue, newValue) => this.handleFilterItemChange(filterMenuSchemaItem.key, oldValue, newValue, filterMenuSchemaItem.items[index], filterMenuSchemaItem)}
+          onChange={(event, index, oldValue, newValue) => this.handleFilterItemChange(
+            filterMenuSchemaItem.key, oldValue, newValue, filterMenuSchemaItem.items[index], filterMenuSchemaItem)}
           qflProps={{
             style: {
               paddingTop: this.props.theme.distances.primary,
@@ -361,25 +461,7 @@ class ProcessableTable extends Component {
           }
           return !buttonSchemaItem.isMore;
         }).map((buttonSchemaItem, buttonSchemaIdx) => {
-          let itemBasedButtonProcessContainer = null;
-          const itemBasedButtonProcessable = ((this.state.subscriptions && this.state.subscriptions[buttonSchemaItem.processableKey]) || null);
-          if (itemBasedButtonProcessable && itemBasedButtonProcessable.started && itemBasedButtonProcessable.taskChannelName) {
-            itemBasedButtonProcessContainer = (
-              <Processable
-                modal
-                key={itemBasedButtonProcessable.nextTaskEntity.id}
-                processable={itemBasedButtonProcessable}
-                buttonTheme={buttonSchemaItem.themes.buttonTheme}
-                dialogTheme={buttonSchemaItem.themes.dialogTheme}
-                formItemTheme={buttonSchemaItem.themes.formItemTheme}
-                confirmTheme={buttonSchemaItem.themes.confirmTheme}
-                widgetTheme={buttonSchemaItem.themes.widgetTheme}
-                theme={buttonSchemaItem.themes.theme}
-                mbClient={this.state.mbClient}
-              />
-            );
-          }
-
+          let itemBasedButtonProcessContainer = this.state.itemProcessableContainer;
           processables.push(itemBasedButtonProcessContainer);
 
           return (
@@ -423,26 +505,9 @@ class ProcessableTable extends Component {
           const menuSchema = [{
             sectionName: null,
             items: itemBasedMoreButtons.map((buttonSchemaItem) => {
-              let itemBasedButtonProcessContainer = null;
-              const itemBasedButtonProcessable = ((this.state.subscriptions && this.state.subscriptions[buttonSchemaItem.processableKey]) || null);
-              if (itemBasedButtonProcessable && itemBasedButtonProcessable.started && itemBasedButtonProcessable.taskChannelName) {
-                itemBasedButtonProcessContainer = (
-                  <Processable
-                    modal
-                    key={itemBasedButtonProcessable.nextTaskEntity.id}
-                    processable={itemBasedButtonProcessable}
-                    buttonTheme={buttonSchemaItem.themes.buttonTheme}
-                    dialogTheme={buttonSchemaItem.themes.dialogTheme}
-                    formItemTheme={buttonSchemaItem.themes.formItemTheme}
-                    confirmTheme={buttonSchemaItem.themes.confirmTheme}
-                    widgetTheme={buttonSchemaItem.themes.widgetTheme}
-                    theme={buttonSchemaItem.themes.theme}
-                    mbClient={this.state.mbClient}
-                  />
-                );
-              }
-
+              let itemBasedButtonProcessContainer = this.state.itemProcessableContainer;
               processables.push(itemBasedButtonProcessContainer);
+
               return {
                 label: buttonSchemaItem.name,
                 key: buttonSchemaItem.key
@@ -506,7 +571,7 @@ class ProcessableTable extends Component {
                   color: 'black',
                   backgroundColor: 'white',
                   padding: this.props.theme.distances.halfPrimary,
-                  marginLeft: this.props.theme.distances.halfPrimary,
+                  marginLeft: this.props.theme.distances.halfPrimary
                 }}
               >
                 <TableOverlay
@@ -554,9 +619,12 @@ class ProcessableTable extends Component {
           {...this.props.searchFieldProps}
           onChange={(oldValue, newValue, e) => {
             if (this.props.onSearch) {
-              this.delay(() => {
-                this.props.onSearch(newValue);
-              }, (e && e.keyCode === 13 ? 0 : this.props.searchKeyDelay));
+              this.delay(
+                () => {
+                  this.props.onSearch(newValue);
+                },
+                (e && e.keyCode === 13 ? 0 : this.props.searchKeyDelay)
+              );
             }
           }}
         />
@@ -605,7 +673,7 @@ class ProcessableTable extends Component {
         />
 
         <Table
-          ref="listBoxTable"
+          ref='listBoxTable'
           theme={this.props.tableTheme}
           selectorTheme={this.props.tableSelectorTheme}
           onSelectedRowsChanged={(selectedRows) => {
