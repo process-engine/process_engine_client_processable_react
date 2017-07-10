@@ -271,10 +271,10 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
           },
           () => {
             if (this.state.currentItemOnProcessEnded) {
-              this.state.currentItemOnProcessEnded();
+              this.state.currentItemOnProcessEnded(this.state.currentItemProcessKey, message);
             }
             if (this.props.onItemProcessEnded) {
-              this.props.onItemProcessEnded();
+              this.props.onItemProcessEnded(this.state.currentItemProcessKey, message);
             }
           }
         );

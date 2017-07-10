@@ -145,10 +145,10 @@ var ProcessableTable = (function (_super) {
                             itemProcessableContainer: null
                         }, function () {
                             if (_this.state.currentItemOnProcessEnded) {
-                                _this.state.currentItemOnProcessEnded();
+                                _this.state.currentItemOnProcessEnded(_this.state.currentItemProcessKey, message);
                             }
                             if (_this.props.onItemProcessEnded) {
-                                _this.props.onItemProcessEnded();
+                                _this.props.onItemProcessEnded(_this.state.currentItemProcessKey, message);
                             }
                         });
                         break;

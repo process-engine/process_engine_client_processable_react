@@ -452,7 +452,7 @@ class ProcessableCrudTable extends React.Component<IProcessableCrudTableProps, I
               hasReloaded: true
             },
             () => {
-              if (processKey === ('delete' + this.props.entityTypeName) && data.data === true) {
+              if (processKey === ('Delete' + this.props.entityTypeName)) {
                 this.cleanSelectedEntities();
               }
             }

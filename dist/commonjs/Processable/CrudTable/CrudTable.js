@@ -319,7 +319,7 @@ var ProcessableCrudTable = (function (_super) {
                     isFetching: false,
                     hasReloaded: true
                 }, function () {
-                    if (processKey === ('delete' + _this.props.entityTypeName) && data.data === true) {
+                    if (processKey === ('Delete' + _this.props.entityTypeName)) {
                         _this.cleanSelectedEntities();
                     }
                 });
