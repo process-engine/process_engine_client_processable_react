@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { IMUIProps } from '@process-engine-js/frontend_mui';
+import { IMUIProps } from '@process-engine-js/frontend_mui/dist/interfaces';
 import { IProcessInstance } from '@process-engine-js/process_engine_client_api';
 export interface IProcessableContainerProps extends IMUIProps {
     processInstance: IProcessInstance;

@@ -3,14 +3,14 @@ import * as PropTypes from 'prop-types';
 
 import RaisedButton from '@process-engine-js/frontend_mui/dist/commonjs/Buttons/RaisedButton/RaisedButton.js';
 import Dialog from '@process-engine-js/frontend_mui/dist/commonjs/Dialogs/Dialog/Dialog.js';
-import {buildTheme} from '@process-engine-js/frontend_mui/dist/commonjs/themeBuilder.js';
 import Form from '@process-engine-js/frontend_mui/dist/commonjs/InputForms/Form/Form.js';
 import Confirm from '@process-engine-js/frontend_mui/dist/commonjs/InputForms/Confirm/Confirm.js';
 
+import {buildTheme} from '@process-engine-js/frontend_mui/dist/commonjs/themeBuilder.js';
 import getMuiTheme from 'material-ui/styles/getMuiTheme.js';
 
 import * as mustache from 'mustache';
-import {IMUIProps} from '@process-engine-js/frontend_mui';
+import {IMUIProps} from '@process-engine-js/frontend_mui/dist/interfaces';
 import {IProcessInstance} from '@process-engine-js/process_engine_client_api';
 
 export interface IProcessableContainerProps extends IMUIProps {
