@@ -62,7 +62,7 @@ var DropDown_js_1 = require("@process-engine-js/frontend_mui/dist/commonjs/Input
 var MenuItem_js_1 = require("material-ui/MenuItem/MenuItem.js");
 var expand_more_js_1 = require("material-ui/svg-icons/navigation/expand-more.js");
 var TableOverlay_1 = require("./TableOverlay");
-var $ = require('jquery'); // tslint:disable-line no-var-requires
+var $ = require('jquery');
 var ProcessableTable = (function (_super) {
     __extends(ProcessableTable, _super);
     function ProcessableTable(props) {
@@ -111,7 +111,7 @@ var ProcessableTable = (function (_super) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 this.renderProcessContainer(processKey);
-                return [2 /*return*/];
+                return [2];
             });
         });
     };
@@ -119,7 +119,7 @@ var ProcessableTable = (function (_super) {
     ProcessableTable.prototype.handleManualTask = function (processKey, message) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                return [2 /*return*/];
+                return [2];
             });
         });
     };
@@ -154,7 +154,7 @@ var ProcessableTable = (function (_super) {
                         break;
                     default:
                 }
-                return [2 /*return*/];
+                return [2];
             });
         });
     };
@@ -165,8 +165,8 @@ var ProcessableTable = (function (_super) {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        if (!this.props.processEngineClientApi) return [3 /*break*/, 2];
-                        return [4 /*yield*/, this.props.processEngineClientApi.startProcess((this.props.createProcessKey + this.props.dataClassName), this, startToken, this.props.context)];
+                        if (!this.props.processEngineClientApi) return [3, 2];
+                        return [4, this.props.processEngineClientApi.startProcess((this.props.createProcessKey + this.props.dataClassName), this, startToken, this.props.context)];
                     case 1:
                         createProcessInstance = _a.sent();
                         if (done) {
@@ -177,7 +177,7 @@ var ProcessableTable = (function (_super) {
                             createProcessInstance: createProcessInstance
                         });
                         _a.label = 2;
-                    case 2: return [2 /*return*/];
+                    case 2: return [2];
                 }
             });
         });
@@ -188,8 +188,8 @@ var ProcessableTable = (function (_super) {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        if (!this.props.processEngineClientApi) return [3 /*break*/, 2];
-                        return [4 /*yield*/, this.props.processEngineClientApi.startProcess(processKey, this, startToken, this.props.context)];
+                        if (!this.props.processEngineClientApi) return [3, 2];
+                        return [4, this.props.processEngineClientApi.startProcess(processKey, this, startToken, this.props.context)];
                     case 1:
                         itemProcessInstance = _a.sent();
                         if (done) {
@@ -201,7 +201,7 @@ var ProcessableTable = (function (_super) {
                             itemProcessInstance: itemProcessInstance
                         });
                         _a.label = 2;
-                    case 2: return [2 /*return*/];
+                    case 2: return [2];
                 }
             });
         });
