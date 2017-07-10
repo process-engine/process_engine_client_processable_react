@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { IMUIProps } from '@process-engine-js/frontend_mui';
+import { IMUIProps } from '@process-engine-js/frontend_mui/dist/interfaces';
 export interface ITableOverlayProps extends IMUIProps {
     menuSchema: Array<any>;
     isCheckBox: boolean;

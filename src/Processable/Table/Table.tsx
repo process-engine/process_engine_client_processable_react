@@ -6,13 +6,13 @@ import TextField from '@process-engine-js/frontend_mui/dist/commonjs/InputForms/
 import ProcessableContainer from '../ProcessableContainer';
 import DropDown from '@process-engine-js/frontend_mui/dist/commonjs/InputForms/DropDown/DropDown.js';
 
-import * as MenuItem from 'material-ui/MenuItem/MenuItem.js';
+import MenuItem from 'material-ui/MenuItem/MenuItem.js';
 import ExpandMoreIcon from 'material-ui/svg-icons/navigation/expand-more.js';
-import * as TableOverlay from './TableOverlay';
+import TableOverlay from './TableOverlay';
 
-import $ from 'jquery';
+const $ = require('jquery'); // tslint:disable-line no-var-requires
 
-import {IMUIProps} from '@process-engine-js/frontend_mui';
+import {IMUIProps} from '@process-engine-js/frontend_mui/dist/interfaces';
 import {IProcessable, IProcessEngineClientApi, IProcessInstance} from '@process-engine-js/process_engine_client_api';
 import {ExecutionContext} from '@process-engine-js/core_contracts';
 
@@ -72,7 +72,8 @@ export interface ITableProps extends IMUIProps {
 
   baseFilterMenuSchema?: any;
 
-  onProcessEnded?: Function;
+  onCreateProcessEnded?: Function;
+  onItemProcessEnded?: Function;
 
   tableOverlayStyles?: {
     menuHeaderClassName?: string;
@@ -189,7 +190,8 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
 
     baseFilterMenuSchema: null,
 
-    onProcessEnded: null,
+    onCreateProcessEnded: null,
+    onItemProcessEnded: null,
 
     tableTheme: null,
     tableSelectorTheme: null
@@ -271,6 +273,9 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
             if (this.state.currentItemOnProcessEnded) {
               this.state.currentItemOnProcessEnded();
             }
+            if (this.props.onItemProcessEnded) {
+              this.props.onItemProcessEnded();
+            }
           }
         );
         break;
@@ -279,36 +284,40 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
   };
 
   private async handleStartCreate(startToken, onProcessEnded?: Function, done?: Function) {
-    const createProcessInstance = await this.props.processEngineClientApi.startProcess(
-      (this.props.createProcessKey + this.props.dataClassName),
-      this,
-      startToken,
-      this.props.context
-    );
-    if (done) {
-      done();
+    if (this.props.processEngineClientApi) {
+      const createProcessInstance = await this.props.processEngineClientApi.startProcess(
+        (this.props.createProcessKey + this.props.dataClassName),
+        this,
+        startToken,
+        this.props.context
+      );
+      if (done) {
+        done();
+      }
+      this.setState({
+        createOnProcessEnded: onProcessEnded,
+        createProcessInstance
+      });
     }
-    this.setState({
-      createOnProcessEnded: onProcessEnded,
-      createProcessInstance
-    });
   }
 
   private async handleStartItem(processKey, startToken, onProcessEnded?: Function, done?: Function) {
-    const itemProcessInstance = await this.props.processEngineClientApi.startProcess(
-      processKey,
-      this,
-      startToken,
-      this.props.context
-    );
-    if (done) {
-      done();
+    if (this.props.processEngineClientApi) {
+      const itemProcessInstance = await this.props.processEngineClientApi.startProcess(
+        processKey,
+        this,
+        startToken,
+        this.props.context
+      );
+      if (done) {
+        done();
+      }
+      this.setState({
+        currentItemOnProcessEnded: onProcessEnded,
+        currentItemProcessKey: processKey,
+        itemProcessInstance
+      });
     }
-    this.setState({
-      currentItemOnProcessEnded: onProcessEnded,
-      currentItemProcessKey: processKey,
-      itemProcessInstance
-    });
   }
 
   private delay = (() => {
@@ -399,7 +408,7 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
               borderRadius: '0px'
             },
             onClick: (e) => {
-              this.handleStartCreate(this.props.createStartToken);
+              this.handleStartCreate(this.props.createStartToken, this.props.onCreateProcessEnded);
             },
             ...this.props.createButtonMuiProps
           }}

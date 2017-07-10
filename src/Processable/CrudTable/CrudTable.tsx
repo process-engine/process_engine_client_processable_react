@@ -1,65 +1,116 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import * as React from 'react';
 
-import { buildTheme } from '../../themeBuilder';
 import ProcessableTable from '../Table/Table';
+import {buildTheme} from '@process-engine-js/frontend_mui/dist/commonjs/themeBuilder.js';
+import {IMUIProps} from '@process-engine-js/frontend_mui/dist/interfaces';
 
-class ProcessableCrudTable extends Component {
-  static propTypes = {
-    children: PropTypes.node,
-    title: PropTypes.string,
+import {IColumnSchema} from '../../interfaces';
+import {IProcessEngineClientApi} from '@process-engine-js/process_engine_client_api';
 
-    mbClient: PropTypes.object,
-    entityCollection: PropTypes.object,
-    fetcher: PropTypes.func.required,
-    fetchingMode: PropTypes.object,
-    baseFilter: PropTypes.func,
+export interface IProcessableCrudTableProps extends IMUIProps {
+  fetcher: Function;
 
-    pageSize: PropTypes.number,
-    entityTypeName: PropTypes.string,
-    onRowDoubleClick: PropTypes.func,
+  rbtProps?: any;
+  entityCollection?: Array<{}>;
+  processEngineClientApi?: IProcessEngineClientApi;
 
-    createStartToken: PropTypes.object,
-    createButtonTheme: PropTypes.object,
-    createDialogTheme: PropTypes.object,
-    createFormItemTheme: PropTypes.object,
-    createConfirmTheme: PropTypes.object,
-    createWidgetTheme: PropTypes.object,
-    createTheme: PropTypes.object,
+  title?: string;
+  fetchingMode?: {};
+  baseFilter?: Function;
 
-    itemBasedButtonSchema: PropTypes.arrayOf(PropTypes.object),
-    listBasedButtonSchema: PropTypes.arrayOf(PropTypes.object),
-    filterMenuSchema: PropTypes.arrayOf(PropTypes.object),
-    baseFilterMenuSchema: PropTypes.arrayOf(PropTypes.object),
+  pageSize?: number;
+  entityTypeName?: string;
+  defaultSortName?: string;
+  defaultSortOrder?: string;
+  onRowDoubleClick?: Function;
 
-    itemBasedButtonTheme: PropTypes.object,
-    listBasedButtonTheme: PropTypes.object,
-    filterMenuTheme: PropTypes.object,
-    baseFilterMenuTheme: PropTypes.object,
+  createStartToken?: {};
+  createButtonTheme?: {};
+  createDialogTheme?: {};
+  createFormItemTheme?: {};
+  createConfirmTheme?: {};
+  createWidgetTheme?: {};
+  createTheme?: {};
 
-    searchFieldTheme: PropTypes.object,
+  itemBasedButtonSchema?: Array<{}>;
+  listBasedButtonSchema?: Array<{}>;
+  filterMenuSchema?: Array<{}>;
+  baseFilterMenuSchema?: Array<{}>;
 
-    defaultSortName: PropTypes.string,
-    defaultSortOrder: PropTypes.string,
+  itemBasedButtonTheme?: {};
+  listBasedButtonTheme?: {};
+  filterMenuTheme?: {};
+  baseFilterMenuTheme?: {};
 
-    columnSchema: PropTypes.arrayOf(PropTypes.object),
+  searchFieldTheme?: {};
 
-    tableOverlayStyles: PropTypes.object,
-    tableStyles: PropTypes.object,
+  columnSchema?: Array<IColumnSchema>;
 
-    theme: PropTypes.object,
-    tableTheme: PropTypes.object,
-    tableSelectorTheme: PropTypes.object
-  };
+  tableOverlayStyles?: {};
+  tableStyles?: {};
 
-  static defaultProps = {
-    pageSize: 16,
+  theme?: {};
+  tableTheme?: {};
+  tableSelectorTheme?: {};
+}
+
+export interface IProcessableCrudTableState {
+  currentOffset?: number;
+  currentFirst?: number;
+  isFetching?: boolean;
+  hasLoadedMore?: boolean;
+  hasReloaded?: boolean;
+  hasLoaded?: boolean;
+  synced?: boolean;
+  entityCollection?: Array<{}>;
+}
+
+class ProcessableCrudTable extends React.Component<IProcessableCrudTableProps, IProcessableCrudTableState> {
+  public static defaultProps = {
+    rbtProps: null,
+    entityCollection: [],
+    processEngineClientApi: null,
+
+    title: null,
     fetchingMode: 'initial',
+    baseFilter: null,
+
+    pageSize: 16,
     entityTypeName: 'Entity',
     defaultSortName: 'id',
-    defaultSortOrder: 'asc'
+    defaultSortOrder: 'asc',
+    onRowDoubleClick: null,
+
+    createStartToken: null,
+    createButtonTheme: null,
+    createDialogTheme: null,
+    createFormItemTheme: null,
+    createConfirmTheme: null,
+    createWidgetTheme: null,
+    createTheme: null,
+
+    itemBasedButtonSchema: [],
+    listBasedButtonSchema: [],
+    filterMenuSchema: [],
+    baseFilterMenuSchema: [],
+
+    itemBasedButtonTheme: null,
+    listBasedButtonTheme: null,
+    filterMenuTheme: null,
+    baseFilterMenuTheme: null,
+
+    searchFieldTheme: null,
+
+    columnSchema: [],
+
+    tableOverlayStyles: null,
+    tableStyles: null,
+
+    theme: null,
+    tableTheme: null,
+    tableSelectorTheme: null
   };
-  
+
   constructor(props) {
     super(props);
 
@@ -75,37 +126,39 @@ class ProcessableCrudTable extends Component {
     };
   }
 
-  componentDidMount() {
-
-    this.props.fetcher({
-      mode: 'load',
-      offset: this.state.currentOffset,
-      first: this.props.pageSize,
-      query: JSON.stringify({
-        operator: 'and',
-        queries: (this.props.baseFilter
-          ? [
-            this.props.baseFilter()
-          ] : []
-        )
-      })
-    }, (e) => {
-      if (e.mounted && !e.done) {
-        this.setState({
-          isFetching: true,
-          hasLoaded: false,
-          synced: false
-        });
-      } else if (e.mounted && e.done) {
-        this.setState({
-          isFetching: false,
-          hasLoaded: true
-        });
+  public componentDidMount() {
+    this.props.fetcher(
+      {
+        mode: 'load',
+        offset: this.state.currentOffset,
+        first: this.props.pageSize,
+        query: JSON.stringify({
+          operator: 'and',
+          queries: (this.props.baseFilter
+            ? [
+              this.props.baseFilter()
+            ] : []
+          )
+        })
+      },
+      (e) => {
+        if (e.mounted && !e.done) {
+          this.setState({
+            isFetching: true,
+            hasLoaded: false,
+            synced: false
+          });
+        } else if (e.mounted && e.done) {
+          this.setState({
+            isFetching: false,
+            hasLoaded: true
+          });
+        }
       }
-    });
+    );
   }
 
-  getGlobalSearchFilter(searchValue, ignoreCase) {
+  public getGlobalSearchFilter(searchValue, ignoreCase) {
     const searchFilter = this.props.columnSchema.filter((element) => (element.searchable)).map((element) => {
       if (element.searchableType === 'float' || element.searchableType === 'integer') {
         const parsedSearchValue = (element.searchableType === 'float' ? parseFloat(searchValue) : parseInt(searchValue));
@@ -113,13 +166,13 @@ class ProcessableCrudTable extends Component {
           return null;
         }
         searchValue = parsedSearchValue;
-        
+
         return {
           attribute: element.thcProps.dataField,
           type: 'number',
           operator: '=',
           value: searchValue
-        }
+        };
       }
 
       return {
@@ -127,13 +180,13 @@ class ProcessableCrudTable extends Component {
         operator: 'contains',
         value: searchValue,
         ignoreCase
-      }
-    }).filter((element) => (element != null));
+      };
+    }).filter((element) => (element !== null && element !== undefined));
 
     return searchFilter;
   }
 
-  initCollection(firstCall) {
+  private initCollection(firstCall) {
     let newEntityCollection = (this.state.entityCollection || []);
     const { entityCollection } = this.props;
 
@@ -141,17 +194,20 @@ class ProcessableCrudTable extends Component {
       newEntityCollection = entityCollection.edges.map((item) => item.node);
     }
 
-    setTimeout(() => {
-      this.setState({
-        entityCollection: newEntityCollection,
-        synced: true
-      });
-    }, 0);
+    setTimeout(
+      () => {
+        this.setState({
+          entityCollection: newEntityCollection,
+          synced: true
+        });
+      },
+      0
+    );
 
     return newEntityCollection;
   }
 
-  extendCollection() {
+  private extendCollection() {
     const currentEntityCollection = (this.state.entityCollection || []);
     let newEntityCollection = currentEntityCollection;
     const { entityCollection } = this.props;
@@ -159,18 +215,21 @@ class ProcessableCrudTable extends Component {
       newEntityCollection = currentEntityCollection.concat(entityCollection.edges.map((item) => item.node));
     }
 
-    setTimeout(() => {
-      this.setState({
-        currentOffset: (this.state.currentOffset + this.props.pageSize),
-        entityCollection: newEntityCollection,
-        synced: true
-      });
-    }, 0);
+    setTimeout(
+      () => {
+        this.setState({
+          currentOffset: (this.state.currentOffset + this.props.pageSize),
+          entityCollection: newEntityCollection,
+          synced: true
+        });
+      },
+      0
+    );
 
     return newEntityCollection;
   }
 
-  prepareCollection() {
+  private prepareCollection() {
     if (!this.state.synced) {
       if (!this.state.isFetching) {
         if (this.state.hasLoaded && this.props.fetchingMode === 'load') {
@@ -188,170 +247,222 @@ class ProcessableCrudTable extends Component {
     return (this.state.entityCollection || []);
   }
 
-  handleRowDoubleClick(row) {
+  private handleRowDoubleClick(row) {
     if (this.props.onRowDoubleClick) {
       this.props.onRowDoubleClick(row);
     }
   }
 
-  handleSearch(searchValue) {
-    this.setState({
-      currentOffset: 0
-    }, () => {
-      if (searchValue) {
-        this.props.fetcher({
-          mode: 'reload',
-          offset: this.state.currentOffset,
-          first: this.state.currentFirst,
-          query: JSON.stringify({
-            operator: 'and',
-            queries: (this.props.baseFilter
-              ? [
-                this.props.baseFilter(), {
-                  operator: 'or',
-                  queries: this.getGlobalSearchFilter(searchValue, true)
-                }
-              ] : [
-                this.getGlobalSearchFilter(searchValue, true)
-              ]
-            )
-          })
-        }, (e) => {
-          if (e.mounted && !e.done) {
-            this.setState({
-              synced: false,
-              isFetching: true,
-              hasReloaded: false
-            });
-          } else if (e.mounted && e.done) {
-            this.setState({
-              isFetching: false,
-              hasReloaded: true
-            });
-          }
-        });
-      } else {
-        this.props.fetcher({
-          mode: 'reload',
-          offset: this.state.currentOffset,
-          first: this.state.currentFirst,
-          query: JSON.stringify({
-            operator: 'and',
-            queries: (this.props.baseFilter()
-              ? [
-                this.props.baseFilter()
-              ] : []
-            )
-          })
-        }, (e) => {
-          if (e.mounted && !e.done) {
-            this.setState({
-              synced: false,
-              isFetching: true,
-              hasReloaded: false
-            });
-          } else if (e.mounted && e.done) {
-            this.setState({
-              isFetching: false,
-              hasReloaded: true
-            });
-          }
-        });
+  private handleSearch(searchValue) {
+    this.setState(
+      {
+        currentOffset: 0
+      },
+      () => {
+        if (searchValue) {
+          this.props.fetcher(
+            {
+              mode: 'reload',
+              offset: this.state.currentOffset,
+              first: this.state.currentFirst,
+              query: JSON.stringify({
+                operator: 'and',
+                queries: (this.props.baseFilter
+                  ? [
+                    this.props.baseFilter(), {
+                      operator: 'or',
+                      queries: this.getGlobalSearchFilter(searchValue, true)
+                    }
+                  ] : [
+                    this.getGlobalSearchFilter(searchValue, true)
+                  ]
+                )
+              })
+            },
+            (e) => {
+              if (e.mounted && !e.done) {
+                this.setState({
+                  synced: false,
+                  isFetching: true,
+                  hasReloaded: false
+                });
+              } else if (e.mounted && e.done) {
+                this.setState({
+                  isFetching: false,
+                  hasReloaded: true
+                });
+              }
+            }
+          );
+        } else {
+          this.props.fetcher(
+            {
+              mode: 'reload',
+              offset: this.state.currentOffset,
+              first: this.state.currentFirst,
+              query: JSON.stringify({
+                operator: 'and',
+                queries: (this.props.baseFilter()
+                  ? [
+                    this.props.baseFilter()
+                  ] : []
+                )
+              })
+            },
+            (e) => {
+              if (e.mounted && !e.done) {
+                this.setState({
+                  synced: false,
+                  isFetching: true,
+                  hasReloaded: false
+                });
+              } else if (e.mounted && e.done) {
+                this.setState({
+                  isFetching: false,
+                  hasReloaded: true
+                });
+              }
+            }
+          );
+        }
       }
-    });
-
+    );
   }
 
-  handleSortChange(sortName, sortOrder) {
+  private handleSortChange(sortName, sortOrder) {
     if (sortName && sortOrder) {
-      this.setState({
-        currentOffset: 0
-      }, () => {
-        this.props.fetcher({
-          mode: 'reload',
-          offset: this.state.currentOffset,
-          first: this.state.currentFirst,
-          orderBy: JSON.stringify({ attributes: [{ attribute: sortName, order: sortOrder }] })
-        }, (e) => {
-          if (e.mounted && !e.done) {
-            this.setState({
-              synced: false,
-              isFetching: true,
-              hasReloaded: false
-            });
-          } else if (e.mounted && e.done) {
-            this.setState({
-              isFetching: false,
-              hasReloaded: true
-            });
-          }
-        });
-      });
+      this.setState(
+        {
+          currentOffset: 0
+        },
+        () => {
+          this.props.fetcher(
+            {
+              mode: 'reload',
+              offset: this.state.currentOffset,
+              first: this.state.currentFirst,
+              orderBy: JSON.stringify({ attributes: [{ attribute: sortName, order: sortOrder }] })
+            },
+            (e) => {
+              if (e.mounted && !e.done) {
+                this.setState({
+                  synced: false,
+                  isFetching: true,
+                  hasReloaded: false
+                });
+              } else if (e.mounted && e.done) {
+                this.setState({
+                  isFetching: false,
+                  hasReloaded: true
+                });
+              }
+            }
+          );
+        }
+      );
     }
   }
 
-  handleLoadMore() {
+  private handleLoadMore() {
     const { entityCollection } = this.props;
 
     if (!this.state.isFetching && entityCollection && entityCollection.pageInfo && entityCollection.pageInfo.hasNextPage) {
       const currentOffset = this.state.currentOffset;
       const newOffset = (currentOffset + this.props.pageSize);
       const newFirst = (this.props.pageSize + newOffset);
-      this.setState({
-        currentFirst: newFirst
-      }, () => {
-        this.props.fetcher({
-          mode: 'more',
-          offset: newOffset
-        }, (e) => {
-          if (e.mounted && !e.done) {
-            this.setState({
-              synced: false,
-              isFetching: true,
-              hasLoadedMore: false
-            });
-          } else if (e.mounted && e.done) {
-            this.setState({
+      this.setState(
+        {
+          currentFirst: newFirst
+        },
+        () => {
+          this.props.fetcher(
+            {
+              mode: 'more',
+              offset: newOffset
+            },
+            (e) => {
+              if (e.mounted && !e.done) {
+                this.setState({
+                  synced: false,
+                  isFetching: true,
+                  hasLoadedMore: false
+                });
+              } else if (e.mounted && e.done) {
+                this.setState({
+                  isFetching: false,
+                  hasLoadedMore: true
+                });
+              }
+            }
+          );
+        }
+      );
+    }
+  }
+
+  public cleanSelectedEntities() {
+    const refs: any = this.refs;
+    if (refs && refs.entitiesTable && refs.entitiesTable.cleanSelected) {
+      refs.entitiesTable.cleanSelected();
+    }
+  }
+
+  private handleCreateProcessEnded(processKey, data) {
+    this.props.fetcher(
+      {
+        mode: 'reload',
+        offset: this.state.currentOffset
+      },
+      (e) => {
+        if (e.mounted && !e.done) {
+          this.setState({
+            synced: false,
+            isFetching: true,
+            hasReloaded: false
+          });
+        } else if (e.mounted && e.done) {
+          this.setState(
+            {
               isFetching: false,
-              hasLoadedMore: true
-            });
-          }
-        });
-      });
-    }
-  }
-
-  cleanSelectedEntities() {
-    if (this.refs && this.refs.entitiesTable && this.refs.entitiesTable.cleanSelected) {
-      this.refs.entitiesTable.cleanSelected();
-    }
-  }
-
-  handleProcessEnded(processKey, data) {
-    this.props.fetcher({
-      mode: 'reload',
-      offset: this.state.currentOffset
-    }, (e) => {
-      if (e.mounted && !e.done) {
-        this.setState({
-          synced: false,
-          isFetching: true,
-          hasReloaded: false
-        });
-      } else if (e.mounted && e.done) {
-        this.setState({
-          isFetching: false,
-          hasReloaded: true
-        }, () => {
-          if (processKey === ('delete' + this.props.entityTypeName) && data.data === true) {
-            this.cleanSelectedEntities();
-          }
-        });
+              hasReloaded: true
+            }
+          );
+        }
       }
-    });
+    );
   }
 
-  render() {
+  private handleItemProcessEnded(processKey, data) {
+    this.props.fetcher(
+      {
+        mode: 'reload',
+        offset: this.state.currentOffset
+      },
+      (e) => {
+        if (e.mounted && !e.done) {
+          this.setState({
+            synced: false,
+            isFetching: true,
+            hasReloaded: false
+          });
+        } else if (e.mounted && e.done) {
+          this.setState(
+            {
+              isFetching: false,
+              hasReloaded: true
+            },
+            () => {
+              if (processKey === ('delete' + this.props.entityTypeName) && data.data === true) {
+                this.cleanSelectedEntities();
+              }
+            }
+          );
+        }
+      }
+    );
+  }
+
+  public render() {
     const { children } = this.props;
 
     const { qflProps, rbtProps } = buildTheme({
@@ -365,19 +476,20 @@ class ProcessableCrudTable extends Component {
     if (this.state.hasLoaded) {
       tableElement = (
         <ProcessableTable
-          mbClient={this.props.mbClient}
-
           tableOverlayStyles={this.props.tableOverlayStyles}
           tableStyles={this.props.tableStyles}
 
+          processEngineClientApi={this.props.processEngineClientApi}
+
           theme={this.props.theme}
 
-          ref="entitiesTable"
+          ref='entitiesTable'
           dataClassName={this.props.entityTypeName}
           frame={false}
           onSearch={(searchValue) => this.handleSearch(searchValue)}
-          onProcessEnded={(processKey, data) => this.handleProcessEnded(processKey, data)}
-          createProcessKey="Create"
+          onCreateProcessEnded={(processKey, data) => this.handleCreateProcessEnded(processKey, data)}
+          onItemProcessEnded={(processKey, data) => this.handleItemProcessEnded(processKey, data)}
+          createProcessKey='Create'
           createStartToken={this.props.createStartToken}
 
           createButtonTheme={this.props.createButtonTheme}

@@ -1,12 +1,13 @@
 import * as React from 'react';
 
-import * as Link from '@process-engine-js/frontend_mui/dist/commonjs/Buttons/Link/Link.js';
-import * as ToolBar from '@process-engine-js/frontend_mui/dist/commonjs/Bars/ToolBar/Toolbar.js';
-import * as CheckBox from '@process-engine-js/frontend_mui/dist/commonjs/InputForms/CheckBox/Checkbox.js';
+import Link from '@process-engine-js/frontend_mui/dist/commonjs/Buttons/Link/Link.js';
+import ToolBar from '@process-engine-js/frontend_mui/dist/commonjs/Bars/ToolBar/ToolBar.js';
+import CheckBox from '@process-engine-js/frontend_mui/dist/commonjs/InputForms/CheckBox/CheckBox.js';
+import {IMUIProps} from '@process-engine-js/frontend_mui/dist/interfaces';
 
-import * as ToolbarGroup from 'material-ui/Toolbar/ToolbarGroup.js';
-import * as ToolbarSeparator from 'material-ui/Toolbar/ToolbarSeparator.js';
-import {IMUIProps, buildTheme} from '@process-engine-js/frontend_mui';
+import {buildTheme} from '@process-engine-js/frontend_mui/dist/commonjs/themeBuilder.js';
+
+import {ToolbarGroup, ToolbarSeparator} from 'material-ui/Toolbar/index.js';
 
 export interface ITableOverlayProps extends IMUIProps {
   menuSchema: Array<any>;

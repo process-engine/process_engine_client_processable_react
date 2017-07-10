@@ -19,12 +19,11 @@ var __assign = (this && this.__assign) || Object.assign || function(t) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var React = require("react");
-var Link = require("@process-engine-js/frontend_mui/dist/commonjs/Buttons/Link/Link.js");
-var ToolBar = require("@process-engine-js/frontend_mui/dist/commonjs/Bars/ToolBar/Toolbar.js");
-var CheckBox = require("@process-engine-js/frontend_mui/dist/commonjs/InputForms/CheckBox/Checkbox.js");
-var ToolbarGroup = require("material-ui/Toolbar/ToolbarGroup.js");
-var ToolbarSeparator = require("material-ui/Toolbar/ToolbarSeparator.js");
-var frontend_mui_1 = require("@process-engine-js/frontend_mui");
+var Link_js_1 = require("@process-engine-js/frontend_mui/dist/commonjs/Buttons/Link/Link.js");
+var ToolBar_js_1 = require("@process-engine-js/frontend_mui/dist/commonjs/Bars/ToolBar/ToolBar.js");
+var CheckBox_js_1 = require("@process-engine-js/frontend_mui/dist/commonjs/InputForms/CheckBox/CheckBox.js");
+var themeBuilder_js_1 = require("@process-engine-js/frontend_mui/dist/commonjs/themeBuilder.js");
+var index_js_1 = require("material-ui/Toolbar/index.js");
 var TableOverlay = (function (_super) {
     __extends(TableOverlay, _super);
     function TableOverlay() {
@@ -60,20 +59,20 @@ var TableOverlay = (function (_super) {
     };
     TableOverlay.prototype.render = function () {
         var _this = this;
-        var _a = frontend_mui_1.buildTheme({
+        var _a = themeBuilder_js_1.buildTheme({
             theme: this.props.theme,
             sourceMuiProps: this.props.muiProps,
             sourceQflProps: this.props.qflProps,
             componentName: 'TableOverlay'
         }), theme = _a.theme, qflProps = _a.qflProps, muiProps = _a.muiProps;
         return (React.createElement("div", __assign({}, qflProps),
-            React.createElement(ToolBar, { theme: this.props.theme, muiProps: muiProps }, this.props.menuSchema.map(function (section, sectionIdx) {
+            React.createElement(ToolBar_js_1.default, { theme: this.props.theme, muiProps: muiProps }, this.props.menuSchema.map(function (section, sectionIdx) {
                 var elements = [];
                 var menuHeaderElement = null;
                 if (section.sectionName) {
                     menuHeaderElement = (React.createElement("h1", { className: _this.props.tableOverlayStyles.menuHeaderClassName }, section.sectionName));
                 }
-                elements.push(React.createElement(ToolbarGroup, { key: sectionIdx, firstChild: (sectionIdx === 0), style: {
+                elements.push(React.createElement(index_js_1.ToolbarGroup, { key: sectionIdx, firstChild: (sectionIdx === 0), style: {
                         marginLeft: (sectionIdx === 0 ? theme.distances.secondary : theme.distances.tertiary),
                         display: 'block'
                     } },
@@ -81,7 +80,7 @@ var TableOverlay = (function (_super) {
                     React.createElement("span", { className: _this.props.menuItemClassName }, section.items.map(function (item, itemIdx) {
                         var content = null;
                         if (item.isCheckBox === true) {
-                            content = (React.createElement(CheckBox, { key: itemIdx, theme: _this.props.checkBoxTheme, muiProps: { label: item.label }, dataKey: item.key, value: _this.state.selectedMenuItems[item.key], onChange: function (e, oldValue, newValue, dataKey) {
+                            content = (React.createElement(CheckBox_js_1.default, { key: itemIdx, theme: _this.props.checkBoxTheme, muiProps: { label: item.label }, dataKey: item.key, value: _this.state.selectedMenuItems[item.key], onChange: function (e, oldValue, newValue, dataKey) {
                                     _this.handleChange(e, oldValue, newValue, dataKey);
                                 } }));
                         }
@@ -91,7 +90,7 @@ var TableOverlay = (function (_super) {
                                 to = item.to();
                             }
                             content =
-                                React.createElement(Link, { key: itemIdx, theme: _this.props.linkTheme, to: to, label: item.label });
+                                React.createElement(Link_js_1.default, { key: itemIdx, theme: _this.props.linkTheme, to: to, label: item.label });
                         }
                         else {
                             content = (React.createElement("span", { key: itemIdx, style: {
@@ -103,7 +102,7 @@ var TableOverlay = (function (_super) {
                         return content;
                     }))));
                 if (sectionIdx < _this.props.menuSchema.length - 1) {
-                    elements.push(React.createElement(ToolbarSeparator, { key: sectionIdx + '_seperator', style: {
+                    elements.push(React.createElement(index_js_1.ToolbarSeparator, { key: sectionIdx + '_seperator', style: {
                             top: '0px',
                             bottom: '0px',
                             height: 'initial',

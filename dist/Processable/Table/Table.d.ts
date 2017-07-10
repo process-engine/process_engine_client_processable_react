@@ -1,6 +1,6 @@
 import * as React from 'react';
 import ProcessableContainer from '../ProcessableContainer';
-import { IMUIProps } from '@process-engine-js/frontend_mui';
+import { IMUIProps } from '@process-engine-js/frontend_mui/dist/interfaces';
 import { IProcessable, IProcessEngineClientApi, IProcessInstance } from '@process-engine-js/process_engine_client_api';
 import { ExecutionContext } from '@process-engine-js/core_contracts';
 export interface ITableProps extends IMUIProps {
@@ -48,7 +48,8 @@ export interface ITableProps extends IMUIProps {
     filterMenuSchema?: any;
     onFilterChange?: Function;
     baseFilterMenuSchema?: any;
-    onProcessEnded?: Function;
+    onCreateProcessEnded?: Function;
+    onItemProcessEnded?: Function;
     tableOverlayStyles?: {
         menuHeaderClassName?: string;
         menuItemClassName?: string;
@@ -148,7 +149,8 @@ declare class ProcessableTable extends React.Component<ITableProps, ITableState>
         filterMenuSchema: any;
         onFilterChange: any;
         baseFilterMenuSchema: any;
-        onProcessEnded: any;
+        onCreateProcessEnded: any;
+        onItemProcessEnded: any;
         tableTheme: any;
         tableSelectorTheme: any;
     };

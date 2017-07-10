@@ -59,10 +59,10 @@ var RaisedButton_js_1 = require("@process-engine-js/frontend_mui/dist/commonjs/B
 var TextField_js_1 = require("@process-engine-js/frontend_mui/dist/commonjs/InputForms/TextField/TextField.js");
 var ProcessableContainer_1 = require("../ProcessableContainer");
 var DropDown_js_1 = require("@process-engine-js/frontend_mui/dist/commonjs/InputForms/DropDown/DropDown.js");
-var MenuItem = require("material-ui/MenuItem/MenuItem.js");
+var MenuItem_js_1 = require("material-ui/MenuItem/MenuItem.js");
 var expand_more_js_1 = require("material-ui/svg-icons/navigation/expand-more.js");
-var TableOverlay = require("./TableOverlay");
-var jquery_1 = require("jquery");
+var TableOverlay_1 = require("./TableOverlay");
+var $ = require('jquery'); // tslint:disable-line no-var-requires
 var ProcessableTable = (function (_super) {
     __extends(ProcessableTable, _super);
     function ProcessableTable(props) {
@@ -111,7 +111,7 @@ var ProcessableTable = (function (_super) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 this.renderProcessContainer(processKey);
-                return [2];
+                return [2 /*return*/];
             });
         });
     };
@@ -119,7 +119,7 @@ var ProcessableTable = (function (_super) {
     ProcessableTable.prototype.handleManualTask = function (processKey, message) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                return [2];
+                return [2 /*return*/];
             });
         });
     };
@@ -147,11 +147,14 @@ var ProcessableTable = (function (_super) {
                             if (_this.state.currentItemOnProcessEnded) {
                                 _this.state.currentItemOnProcessEnded();
                             }
+                            if (_this.props.onItemProcessEnded) {
+                                _this.props.onItemProcessEnded();
+                            }
                         });
                         break;
                     default:
                 }
-                return [2];
+                return [2 /*return*/];
             });
         });
     };
@@ -161,7 +164,9 @@ var ProcessableTable = (function (_super) {
             var createProcessInstance;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4, this.props.processEngineClientApi.startProcess((this.props.createProcessKey + this.props.dataClassName), this, startToken, this.props.context)];
+                    case 0:
+                        if (!this.props.processEngineClientApi) return [3 /*break*/, 2];
+                        return [4 /*yield*/, this.props.processEngineClientApi.startProcess((this.props.createProcessKey + this.props.dataClassName), this, startToken, this.props.context)];
                     case 1:
                         createProcessInstance = _a.sent();
                         if (done) {
@@ -171,7 +176,8 @@ var ProcessableTable = (function (_super) {
                             createOnProcessEnded: onProcessEnded,
                             createProcessInstance: createProcessInstance
                         });
-                        return [2];
+                        _a.label = 2;
+                    case 2: return [2 /*return*/];
                 }
             });
         });
@@ -181,7 +187,9 @@ var ProcessableTable = (function (_super) {
             var itemProcessInstance;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4, this.props.processEngineClientApi.startProcess(processKey, this, startToken, this.props.context)];
+                    case 0:
+                        if (!this.props.processEngineClientApi) return [3 /*break*/, 2];
+                        return [4 /*yield*/, this.props.processEngineClientApi.startProcess(processKey, this, startToken, this.props.context)];
                     case 1:
                         itemProcessInstance = _a.sent();
                         if (done) {
@@ -192,7 +200,8 @@ var ProcessableTable = (function (_super) {
                             currentItemProcessKey: processKey,
                             itemProcessInstance: itemProcessInstance
                         });
-                        return [2];
+                        _a.label = 2;
+                    case 2: return [2 /*return*/];
                 }
             });
         });
@@ -263,7 +272,7 @@ var ProcessableTable = (function (_super) {
             createButton = (React.createElement(RaisedButton_js_1.default, __assign({ theme: this.props.createButtonTheme, muiProps: __assign({ label: '+', primary: true, className: this.props.tableStyles.createButtonClassName, style: {
                         borderRadius: '0px'
                     }, onClick: function (e) {
-                        _this.handleStartCreate(_this.props.createStartToken);
+                        _this.handleStartCreate(_this.props.createStartToken, _this.props.onCreateProcessEnded);
                     } }, this.props.createButtonMuiProps), qflProps: __assign({ style: {
                         paddingTop: '9px',
                         width: 'auto',
@@ -276,7 +285,7 @@ var ProcessableTable = (function (_super) {
         }
         var filterMenuElements = [];
         if (this.props.filterMenuSchema && this.props.filterMenuSchema.length > 0) {
-            filterMenuElements = this.props.filterMenuSchema.map(function (filterMenuSchemaItem) { return (React.createElement(DropDown_js_1.default, { key: filterMenuSchemaItem.key, theme: filterMenuSchemaItem.theme, value: filterMenuSchemaItem.currentValue, items: filterMenuSchemaItem.items.map(function (dropDownItem, dropDownItemIdx) { return React.createElement(MenuItem, { key: filterMenuSchemaItem.key + '-' + dropDownItemIdx, value: dropDownItem.value, primaryText: dropDownItem.label }); }), muiProps: __assign({ floatingLabelText: filterMenuSchemaItem.label }, filterMenuSchemaItem.muiProps), onChange: function (event, index, oldValue, newValue) { return _this.handleFilterItemChange(filterMenuSchemaItem.key, oldValue, newValue, filterMenuSchemaItem.items[index], filterMenuSchemaItem); }, qflProps: __assign({ style: {
+            filterMenuElements = this.props.filterMenuSchema.map(function (filterMenuSchemaItem) { return (React.createElement(DropDown_js_1.default, { key: filterMenuSchemaItem.key, theme: filterMenuSchemaItem.theme, value: filterMenuSchemaItem.currentValue, items: filterMenuSchemaItem.items.map(function (dropDownItem, dropDownItemIdx) { return React.createElement(MenuItem_js_1.default, { key: filterMenuSchemaItem.key + '-' + dropDownItemIdx, value: dropDownItem.value, primaryText: dropDownItem.label }); }), muiProps: __assign({ floatingLabelText: filterMenuSchemaItem.label }, filterMenuSchemaItem.muiProps), onChange: function (event, index, oldValue, newValue) { return _this.handleFilterItemChange(filterMenuSchemaItem.key, oldValue, newValue, filterMenuSchemaItem.items[index], filterMenuSchemaItem); }, qflProps: __assign({ style: {
                         paddingTop: _this.props.theme.distances.primary,
                         display: 'inline-block',
                         width: '150px',
@@ -334,9 +343,9 @@ var ProcessableTable = (function (_super) {
                                         borderRadius: '0px'
                                     }, onClick: function (e) {
                                         if (!_this.state.isItemBasedMoreMenuOpened) {
-                                            jquery_1.default(window.document).on('click', function (ce) {
+                                            $(window.document).on('click', function (ce) {
                                                 if (ce.originalEvent && ce.originalEvent.path.filter(function (item) { return item.id === _this.itemBasedMoreMenuId; }).length === 0) {
-                                                    jquery_1.default(window.document).off('click');
+                                                    $(window.document).off('click');
                                                     _this.setState({
                                                         isItemBasedMoreMenuOpened: false
                                                     });
@@ -362,7 +371,7 @@ var ProcessableTable = (function (_super) {
                                     padding: this.props.theme.distances.halfPrimary,
                                     marginLeft: this.props.theme.distances.halfPrimary
                                 } },
-                                React.createElement(TableOverlay, { menuSchema: menuSchema, tableOverlayStyles: this.props.tableOverlayStyles, onMenuItemClicked: function (key) {
+                                React.createElement(TableOverlay_1.default, { menuSchema: menuSchema, tableOverlayStyles: this.props.tableOverlayStyles, onMenuItemClicked: function (key) {
                                         var matchedButtonSchemaItems = itemBasedMoreButtons_1.filter(function (buttonSchemaItem) { return (buttonSchemaItem.key === key); });
                                         var buttonSchemaItem = null;
                                         if (matchedButtonSchemaItems.length === 1) {
@@ -501,7 +510,8 @@ var ProcessableTable = (function (_super) {
         filterMenuSchema: null,
         onFilterChange: null,
         baseFilterMenuSchema: null,
-        onProcessEnded: null,
+        onCreateProcessEnded: null,
+        onItemProcessEnded: null,
         tableTheme: null,
         tableSelectorTheme: null
     };
