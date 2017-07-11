@@ -178,12 +178,12 @@ var ProcessableContainer = (function (_super) {
             this.widgetConfig = widget;
         }
     };
-    ProcessableContainer.prototype.handleCancel = function () {
+    ProcessableContainer.prototype.handleCancel = function (executionContext) {
         var _this = this;
         var processInstance = this.props.processInstance;
         var fireCancel = function () {
             if (processInstance) {
-                processInstance.doCancel().then(function () {
+                processInstance.doCancel(executionContext).then(function () {
                     _this.setState({
                         canceled: true,
                         processing: true
@@ -195,12 +195,12 @@ var ProcessableContainer = (function (_super) {
             modalOpen: false
         }, fireCancel);
     };
-    ProcessableContainer.prototype.handleProceed = function (tokenData) {
+    ProcessableContainer.prototype.handleProceed = function (executionContext, tokenData) {
         var _this = this;
         var processInstance = this.props.processInstance;
         var fireProceed = function () {
             if (processInstance) {
-                processInstance.doProceed(tokenData).then(function () {
+                processInstance.doProceed(executionContext, tokenData).then(function () {
                     _this.setState({
                         canceled: false,
                         processing: true
@@ -236,7 +236,7 @@ var ProcessableContainer = (function (_super) {
                     primary: true
                 }, qflProps: {
                     onClick: function (e) {
-                        _this.handleProceed({ formData: _this.state.formData });
+                        _this.handleProceed(_this.props.executionContext, { formData: _this.state.formData });
                     }
                 } }));
             if (this.props.modal) {
@@ -245,7 +245,7 @@ var ProcessableContainer = (function (_super) {
                         primary: true
                     }, qflProps: {
                         onClick: function (e) {
-                            _this.handleCancel();
+                            _this.handleCancel(_this.props.executionContext);
                         }
                     } }));
             }
@@ -261,7 +261,7 @@ var ProcessableContainer = (function (_super) {
                 var confirmData = {
                     key: key
                 };
-                _this.handleProceed({ confirmData: confirmData });
+                _this.handleProceed(_this.props.executionContext, { confirmData: confirmData });
             };
             widget = React.createElement(this.widgetConfig.component, __assign({ onChoose: function (key) { return onChoose_1(key); } }, this.widgetConfig.props));
         }

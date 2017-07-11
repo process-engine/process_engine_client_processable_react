@@ -1,8 +1,10 @@
 import * as React from 'react';
 import { IMUIProps } from '@process-engine-js/frontend_mui/dist/interfaces';
 import { IProcessInstance } from '@process-engine-js/process_engine_client_api';
+import { ExecutionContext } from '@process-engine-js/core_contracts';
 export interface IProcessableContainerProps extends IMUIProps {
     processInstance: IProcessInstance;
+    executionContext: ExecutionContext;
     buttonTheme?: any;
     dialogTheme?: any;
     modal?: boolean;
@@ -45,8 +47,8 @@ export declare class ProcessableContainer extends React.Component<IProcessableCo
     };
     protected componentWillMount(): void;
     private widgetConfig;
-    private handleCancel();
-    private handleProceed(tokenData);
+    private handleCancel(executionContext);
+    private handleProceed(executionContext, tokenData);
     render(): JSX.Element;
 }
 export default ProcessableContainer;

@@ -12,9 +12,11 @@ import getMuiTheme from 'material-ui/styles/getMuiTheme.js';
 import * as mustache from 'mustache';
 import {IMUIProps} from '@process-engine-js/frontend_mui/dist/interfaces';
 import {IProcessInstance} from '@process-engine-js/process_engine_client_api';
+import {ExecutionContext} from '@process-engine-js/core_contracts';
 
 export interface IProcessableContainerProps extends IMUIProps {
   processInstance: IProcessInstance;
+  executionContext: ExecutionContext;
 
   buttonTheme?: any;
   dialogTheme?: any;
@@ -228,12 +230,12 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
 
   private widgetConfig = null;
 
-  private handleCancel() {
+  private handleCancel(executionContext) {
     const { processInstance } = this.props;
 
     const fireCancel = () => {
       if (processInstance) {
-        processInstance.doCancel().then(() => {
+        processInstance.doCancel(executionContext).then(() => {
           this.setState({
             canceled: true,
             processing: true
@@ -250,12 +252,12 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
     );
   }
 
-  private handleProceed(tokenData) {
+  private handleProceed(executionContext, tokenData) {
     const { processInstance } = this.props;
 
     const fireProceed = () => {
       if (processInstance) {
-        processInstance.doProceed(tokenData).then(() => {
+        processInstance.doProceed(executionContext, tokenData).then(() => {
           this.setState({
             canceled: false,
             processing: true
@@ -301,7 +303,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
           }}
           qflProps={{
             onClick: (e) => {
-              this.handleProceed({ formData: this.state.formData });
+              this.handleProceed(this.props.executionContext, { formData: this.state.formData });
             }
           }}
         />
@@ -317,7 +319,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
             }}
             qflProps={{
               onClick: (e) => {
-                this.handleCancel();
+                this.handleCancel(this.props.executionContext);
               }
             }}
           />
@@ -335,7 +337,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
         const confirmData = {
           key
         };
-        this.handleProceed({ confirmData });
+        this.handleProceed(this.props.executionContext, { confirmData });
       };
       widget = <this.widgetConfig.component onChoose={(key) => onChoose(key)} {...this.widgetConfig.props}/>;
     }
