@@ -67,7 +67,7 @@ export interface IProcessableCrudTableState {
 
 class ProcessableCrudTable extends React.Component<IProcessableCrudTableProps, IProcessableCrudTableState> {
   public static defaultProps = {
-    rbtProps: null,
+    rbtProps: {},
     entityCollection: [],
     processEngineClientApi: null,
 

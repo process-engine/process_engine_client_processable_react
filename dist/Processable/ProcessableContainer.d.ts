@@ -19,6 +19,7 @@ export interface IProcessableContainerProps extends IMUIProps {
 export interface IProcessableContainerState {
     modalOpen?: boolean;
     formData?: any;
+    selectedItem?: any;
     canceled?: boolean;
     processing?: boolean;
 }

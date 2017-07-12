@@ -4,6 +4,7 @@ import * as PropTypes from 'prop-types';
 import RaisedButton from '@process-engine-js/frontend_mui/dist/commonjs/Buttons/RaisedButton/RaisedButton.js';
 import Dialog from '@process-engine-js/frontend_mui/dist/commonjs/Dialogs/Dialog/Dialog.js';
 import Form from '@process-engine-js/frontend_mui/dist/commonjs/InputForms/Form/Form.js';
+import Table from '@process-engine-js/frontend_mui/dist/commonjs/Tables/Table/Table.js';
 import Confirm from '@process-engine-js/frontend_mui/dist/commonjs/InputForms/Confirm/Confirm.js';
 
 import {buildTheme} from '@process-engine-js/frontend_mui/dist/commonjs/themeBuilder.js';
@@ -33,6 +34,7 @@ export interface IProcessableContainerProps extends IMUIProps {
 export interface IProcessableContainerState {
   modalOpen?: boolean;
   formData?: any;
+  selectedItem?: any;
   canceled?: boolean;
   processing?: boolean;
 }
@@ -88,6 +90,32 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
       widgetName = widgetNameArr[0].value;
       const tokenData = (processInstance.nextTaskEntity && processInstance.nextTaskEntity.processToken ? processInstance.nextTaskEntity.processToken.data : null);
       switch (widgetName) {
+        case 'SelectableList': {
+          const selectableListDataSourceArr = processInstance.nextTaskDef.extensions.properties.filter((property) => property.name === 'selectableListDataSource');
+          const selectableListColumnSchemaArr = processInstance.nextTaskDef.extensions.properties.filter((property) => property.name === 'selectableListColumnSchema');
+          let selectableListDataSource = null;
+          let selectableListColumnSchema = null;
+          if (processInstance.nextTaskDef && processInstance.nextTaskDef.extensions && processInstance.nextTaskDef.extensions.properties &&
+            selectableListDataSourceArr && selectableListDataSourceArr.length === 1 && selectableListColumnSchemaArr && selectableListColumnSchemaArr.length === 1) {
+            selectableListDataSource = JSON.parse(selectableListDataSourceArr[0].value);
+            selectableListColumnSchema = JSON.parse(selectableListColumnSchemaArr[0].value);
+          }
+
+          widget = {
+            component: Table,
+            props: {
+              dataSource: selectableListDataSource,
+              thcSchema: selectableListColumnSchema,
+              theme: this.props.widgetTheme,
+              rbtProps: {
+                selectRow: {
+                  mode: 'radio'
+                }
+              }
+            }
+          };
+        }
+        break;
         case 'Form': {
           let formElements = [];
           if (processInstance.nextTaskDef.extensions.formFields && processInstance.nextTaskDef.extensions.formFields.length > 0) {
@@ -293,7 +321,39 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
     let cancelButton = null;
 
     let widget = null;
-    if (this.widgetConfig && this.widgetConfig.component && this.widgetConfig.component.name === 'Form') {
+    if (this.widgetConfig && this.widgetConfig.component && this.widgetConfig.component.name === 'Table') {
+      proceedButton = (
+        <RaisedButton
+          theme={this.props.buttonTheme}
+          muiProps={{
+            label: 'Auswählen',
+            primary: true
+          }}
+          qflProps={{
+            onClick: (e) => {
+              this.handleProceed(this.props.executionContext, { selectedItem: this.state.selectedItem });
+            }
+          }}
+        />
+      );
+
+      const onSelect = (selectedItems) => {
+        let selectedItem = null;
+        if (selectedItems) {
+          Object.keys(selectedItems).map((item) => {
+            selectedItem = selectedItems[item];
+          });
+
+          if (selectedItem) {
+            this.setState({
+              selectedItem
+            });
+          }
+        }
+
+      };
+      widget = <this.widgetConfig.component onSelectedRowsChanged={(selectedItem) => onSelect(selectedItem)} {...this.widgetConfig.props}/>;
+    } else if (this.widgetConfig && this.widgetConfig.component && this.widgetConfig.component.name === 'Form') {
       proceedButton = (
         <RaisedButton
           theme={this.props.buttonTheme}

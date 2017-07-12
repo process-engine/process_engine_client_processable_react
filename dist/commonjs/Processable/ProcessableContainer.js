@@ -23,6 +23,7 @@ var PropTypes = require("prop-types");
 var RaisedButton_js_1 = require("@process-engine-js/frontend_mui/dist/commonjs/Buttons/RaisedButton/RaisedButton.js");
 var Dialog_js_1 = require("@process-engine-js/frontend_mui/dist/commonjs/Dialogs/Dialog/Dialog.js");
 var Form_js_1 = require("@process-engine-js/frontend_mui/dist/commonjs/InputForms/Form/Form.js");
+var Table_js_1 = require("@process-engine-js/frontend_mui/dist/commonjs/Tables/Table/Table.js");
 var Confirm_js_1 = require("@process-engine-js/frontend_mui/dist/commonjs/InputForms/Confirm/Confirm.js");
 var themeBuilder_js_1 = require("@process-engine-js/frontend_mui/dist/commonjs/themeBuilder.js");
 var getMuiTheme_js_1 = require("material-ui/styles/getMuiTheme.js");
@@ -56,6 +57,32 @@ var ProcessableContainer = (function (_super) {
             widgetName = widgetNameArr[0].value;
             var tokenData = (processInstance.nextTaskEntity && processInstance.nextTaskEntity.processToken ? processInstance.nextTaskEntity.processToken.data : null);
             switch (widgetName) {
+                case 'SelectableList':
+                    {
+                        var selectableListDataSourceArr = processInstance.nextTaskDef.extensions.properties.filter(function (property) { return property.name === 'selectableListDataSource'; });
+                        var selectableListColumnSchemaArr = processInstance.nextTaskDef.extensions.properties.filter(function (property) { return property.name === 'selectableListColumnSchema'; });
+                        var selectableListDataSource = null;
+                        var selectableListColumnSchema = null;
+                        if (processInstance.nextTaskDef && processInstance.nextTaskDef.extensions && processInstance.nextTaskDef.extensions.properties &&
+                            selectableListDataSourceArr && selectableListDataSourceArr.length === 1 && selectableListColumnSchemaArr && selectableListColumnSchemaArr.length === 1) {
+                            selectableListDataSource = JSON.parse(selectableListDataSourceArr[0].value);
+                            selectableListColumnSchema = JSON.parse(selectableListColumnSchemaArr[0].value);
+                        }
+                        widget = {
+                            component: Table_js_1.default,
+                            props: {
+                                dataSource: selectableListDataSource,
+                                thcSchema: selectableListColumnSchema,
+                                theme: this.props.widgetTheme,
+                                rbtProps: {
+                                    selectRow: {
+                                        mode: 'radio'
+                                    }
+                                }
+                            }
+                        };
+                    }
+                    break;
                 case 'Form':
                     {
                         var formElements = [];
@@ -230,7 +257,33 @@ var ProcessableContainer = (function (_super) {
         var proceedButton = null;
         var cancelButton = null;
         var widget = null;
-        if (this.widgetConfig && this.widgetConfig.component && this.widgetConfig.component.name === 'Form') {
+        if (this.widgetConfig && this.widgetConfig.component && this.widgetConfig.component.name === 'Table') {
+            proceedButton = (React.createElement(RaisedButton_js_1.default, { theme: this.props.buttonTheme, muiProps: {
+                    label: 'Auswählen',
+                    primary: true
+                }, qflProps: {
+                    onClick: function (e) {
+                        debugger;
+                        _this.handleProceed(_this.props.executionContext, { selectedItem: _this.state.selectedItem });
+                    }
+                } }));
+            var onSelect_1 = function (selectedItems) {
+                debugger;
+                var selectedItem = null;
+                if (selectedItems) {
+                    Object.keys(selectedItems).map(function (item) {
+                        selectedItem = selectedItems[item];
+                    });
+                    if (selectedItem) {
+                        _this.setState({
+                            selectedItem: selectedItem
+                        });
+                    }
+                }
+            };
+            widget = React.createElement(this.widgetConfig.component, __assign({ onSelectedRowsChanged: function (selectedItem) { return onSelect_1(selectedItem); } }, this.widgetConfig.props));
+        }
+        else if (this.widgetConfig && this.widgetConfig.component && this.widgetConfig.component.name === 'Form') {
             proceedButton = (React.createElement(RaisedButton_js_1.default, { theme: this.props.buttonTheme, muiProps: {
                     label: 'Weiter',
                     primary: true

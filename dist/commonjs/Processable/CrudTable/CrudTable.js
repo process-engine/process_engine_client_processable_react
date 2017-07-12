@@ -348,7 +348,7 @@ var ProcessableCrudTable = (function (_super) {
             children));
     };
     ProcessableCrudTable.defaultProps = {
-        rbtProps: null,
+        rbtProps: {},
         entityCollection: [],
         processEngineClientApi: null,
         title: null,
