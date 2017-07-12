@@ -263,12 +263,10 @@ var ProcessableContainer = (function (_super) {
                     primary: true
                 }, qflProps: {
                     onClick: function (e) {
-                        debugger;
                         _this.handleProceed(_this.props.executionContext, { selectedItem: _this.state.selectedItem });
                     }
                 } }));
             var onSelect_1 = function (selectedItems) {
-                debugger;
                 var selectedItem = null;
                 if (selectedItems) {
                     Object.keys(selectedItems).map(function (item) {
