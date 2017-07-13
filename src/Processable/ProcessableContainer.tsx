@@ -97,7 +97,11 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
           let selectableListColumnSchema = null;
           if (processInstance.nextTaskDef && processInstance.nextTaskDef.extensions && processInstance.nextTaskDef.extensions.properties &&
             selectableListDataSourceArr && selectableListDataSourceArr.length === 1 && selectableListColumnSchemaArr && selectableListColumnSchemaArr.length === 1) {
-            selectableListDataSource = JSON.parse(selectableListDataSourceArr[0].value);
+            if (selectableListDataSourceArr[0].value.indexOf('$token.') === 0) {
+              eval('selectableListDataSource = ' + selectableListDataSourceArr[0].value.replace(/\$token\./gi, 'processInstance.nextTaskEntity.processToken.data.') + ';');
+            } else {
+              selectableListDataSource = JSON.parse(selectableListDataSourceArr[0].value);
+            }
             selectableListColumnSchema = JSON.parse(selectableListColumnSchemaArr[0].value);
           }
 
