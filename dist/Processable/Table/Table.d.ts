@@ -1,12 +1,11 @@
 import * as React from 'react';
-import ProcessableContainer from '../ProcessableContainer';
 import { IMUIProps } from '@process-engine-js/frontend_mui/dist/interfaces';
 import { IProcessable, IProcessEngineClientApi, IProcessInstance } from '@process-engine-js/process_engine_client_api';
 import { ExecutionContext } from '@process-engine-js/core_contracts';
 export interface ITableProps extends IMUIProps {
     dataClassName: string;
-    context?: ExecutionContext;
-    processEngineClientApi?: IProcessEngineClientApi;
+    executionContext: ExecutionContext;
+    processEngineClientApi: IProcessEngineClientApi;
     title?: string;
     children?: React.ReactNode;
     frame?: boolean;
@@ -77,19 +76,16 @@ export interface ITableState {
     selectedRows?: {};
     searchValue?: string;
     createOnProcessEnded?: Function;
-    createProcessInstance?: IProcessInstance;
-    createProcessableContainer?: ProcessableContainer;
+    createProcessableContainer?: React.ReactNode;
     currentItemProcessKey?: string;
     currentItemOnProcessEnded?: Function;
-    itemProcessInstance?: IProcessInstance;
-    itemProcessableContainer?: ProcessableContainer;
+    itemProcessableContainer?: React.ReactNode;
 }
 declare class ProcessableTable extends React.Component<ITableProps, ITableState> implements IProcessable {
     static defaultProps: {
         theme: any;
         muiProps: {};
         qflProps: {};
-        processEngineClientApi: any;
         title: any;
         frame: boolean;
         searchKeyDelay: number;
@@ -134,7 +130,7 @@ declare class ProcessableTable extends React.Component<ITableProps, ITableState>
         searchFieldProps: any;
         searchValue: any;
         tableProps: {
-            rbtProps: any;
+            rbtProps: {};
         };
         data: any;
         controlledHeight: any;
@@ -155,10 +151,10 @@ declare class ProcessableTable extends React.Component<ITableProps, ITableState>
         tableSelectorTheme: any;
     };
     constructor(props: any);
-    private renderProcessContainer(processKey);
-    handleUserTask(processKey: string, message: any): Promise<void>;
-    handleManualTask(processKey: string, message: any): Promise<void>;
-    handleEndEvent(processKey: string, message: any): Promise<void>;
+    private renderProcessContainer(processInstance, uiName, uiConfig?, uiData?);
+    handleUserTask(processInstance: IProcessInstance, uiName: string, uiConfig?: any, uiData?: any): Promise<void>;
+    handleManualTask(processInstance: IProcessInstance, uiName: string, uiConfig?: any, uiData?: any): Promise<void>;
+    handleEndEvent(processInstance: IProcessInstance, endEventData?: any): Promise<void>;
     private handleStartCreate(startToken, onProcessEnded?, done?);
     private handleStartItem(processKey, startToken, onProcessEnded?, done?);
     private delay;

@@ -6,13 +6,15 @@ import {IMUIProps} from '@process-engine-js/frontend_mui/dist/interfaces';
 
 import {IColumnSchema} from '../../interfaces';
 import {IProcessEngineClientApi} from '@process-engine-js/process_engine_client_api';
+import {ExecutionContext} from '@process-engine-js/core_contracts';
 
 export interface IProcessableCrudTableProps extends IMUIProps {
   fetcher: Function;
+  executionContext: ExecutionContext;
+  processEngineClientApi: IProcessEngineClientApi;
 
   rbtProps?: any;
-  entityCollection?: Array<{}>;
-  processEngineClientApi?: IProcessEngineClientApi;
+  entityCollection?: { edges?: Array<{ node: {}}>, pageInfo?: { hasNextPage?: boolean, hasPreviousPage?: boolean } };
 
   title?: string;
   fetchingMode?: {};
@@ -68,8 +70,7 @@ export interface IProcessableCrudTableState {
 class ProcessableCrudTable extends React.Component<IProcessableCrudTableProps, IProcessableCrudTableState> {
   public static defaultProps = {
     rbtProps: {},
-    entityCollection: [],
-    processEngineClientApi: null,
+    entityCollection: {},
 
     title: null,
     fetchingMode: 'initial',
@@ -479,6 +480,7 @@ class ProcessableCrudTable extends React.Component<IProcessableCrudTableProps, I
           tableOverlayStyles={this.props.tableOverlayStyles}
           tableStyles={this.props.tableStyles}
 
+          executionContext={this.props.executionContext}
           processEngineClientApi={this.props.processEngineClientApi}
 
           theme={this.props.theme}

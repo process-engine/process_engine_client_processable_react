@@ -2,8 +2,6 @@ import * as React from 'react';
 import { IMUIProps } from '@process-engine-js/frontend_mui/dist/interfaces';
 export interface ITableOverlayProps extends IMUIProps {
     menuSchema: Array<any>;
-    isCheckBox: boolean;
-    onSelectedMenuItemsChange: Function;
     onMenuItemClicked: Function;
     tableOverlayStyles: any;
     title?: string;
@@ -13,9 +11,13 @@ export interface ITableOverlayProps extends IMUIProps {
     menuItemClassName?: string;
     checkBoxTheme?: {};
     linkTheme?: {};
+    onSelectedMenuItemsChange?: Function;
 }
 export interface ITableOverlayState {
     selectedMenuItems?: {};
+}
+export interface ITableOverlayChildContext {
+    muiTheme?: {};
 }
 declare class TableOverlay extends React.Component<ITableOverlayProps, ITableOverlayState> {
     static defaultProps: {
@@ -29,6 +31,7 @@ declare class TableOverlay extends React.Component<ITableOverlayProps, ITableOve
         menuItemClassName: any;
         checkBoxTheme: any;
         linkTheme: any;
+        onSelectedMenuItemsChange: any;
     };
     constructor();
     private handleChange(e, oldValue, newValue, dataKey);

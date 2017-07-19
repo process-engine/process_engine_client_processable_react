@@ -11,8 +11,6 @@ import {ToolbarGroup, ToolbarSeparator} from 'material-ui/Toolbar/index.js';
 
 export interface ITableOverlayProps extends IMUIProps {
   menuSchema: Array<any>;
-  isCheckBox: boolean;
-  onSelectedMenuItemsChange: Function;
   onMenuItemClicked: Function;
   tableOverlayStyles: any;
 
@@ -23,10 +21,15 @@ export interface ITableOverlayProps extends IMUIProps {
   menuItemClassName?: string;
   checkBoxTheme?: {};
   linkTheme?: {};
+  onSelectedMenuItemsChange?: Function;
 }
 
 export interface ITableOverlayState {
   selectedMenuItems?: {};
+}
+
+export interface ITableOverlayChildContext {
+  muiTheme?: {};
 }
 
 class TableOverlay extends React.Component<ITableOverlayProps, ITableOverlayState> {
@@ -41,7 +44,8 @@ class TableOverlay extends React.Component<ITableOverlayProps, ITableOverlayStat
     isCheckBox: false,
     menuItemClassName: null,
     checkBoxTheme: null,
-    linkTheme: null
+    linkTheme: null,
+    onSelectedMenuItemsChange: null
   };
 
   constructor() {

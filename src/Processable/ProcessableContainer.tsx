@@ -1,5 +1,4 @@
-import * as React from 'react';
-import * as PropTypes from 'prop-types';
+import * as React  from 'react';
 
 import RaisedButton from '@process-engine-js/frontend_mui/dist/commonjs/Buttons/RaisedButton/RaisedButton.js';
 import Dialog from '@process-engine-js/frontend_mui/dist/commonjs/Dialogs/Dialog/Dialog.js';
@@ -8,7 +7,6 @@ import Table from '@process-engine-js/frontend_mui/dist/commonjs/Tables/Table/Ta
 import Confirm from '@process-engine-js/frontend_mui/dist/commonjs/InputForms/Confirm/Confirm.js';
 
 import {buildTheme} from '@process-engine-js/frontend_mui/dist/commonjs/themeBuilder.js';
-import getMuiTheme from 'material-ui/styles/getMuiTheme.js';
 
 import * as mustache from 'mustache';
 import {IMUIProps} from '@process-engine-js/frontend_mui/dist/interfaces';
@@ -18,6 +16,7 @@ import {ExecutionContext} from '@process-engine-js/core_contracts';
 export interface IProcessableContainerProps extends IMUIProps {
   processInstance: IProcessInstance;
   executionContext: ExecutionContext;
+  uiName: string;
 
   buttonTheme?: any;
   dialogTheme?: any;
@@ -29,17 +28,24 @@ export interface IProcessableContainerProps extends IMUIProps {
   modalProcessableClassName?: string;
   dialogMuiProps?: {};
   dialogQflProps?: {};
+
+  uiConfig?: any;
+  uiData?: any;
 }
 
 export interface IProcessableContainerState {
   modalOpen?: boolean;
-  formData?: any;
-  selectedItem?: any;
+  uiData?: any;
   canceled?: boolean;
   processing?: boolean;
 }
 
+export interface IProcessableContainerChildContext {
+  muiTheme?: {};
+}
+
 export class ProcessableContainer extends React.Component<IProcessableContainerProps, IProcessableContainerState> {
+
   public static defaultProps = {
     theme: 'Default',
     muiProps: {},
@@ -54,11 +60,10 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
     processableClassName: null,
     modalProcessableClassName: null,
     dialogMuiProps: null,
-    dialogQflProps: null
-  };
+    dialogQflProps: null,
 
-  public static childContextTypes = {
-    muiTheme: PropTypes.object
+    uiConfig: null,
+    uiData: {}
   };
 
   constructor(props: IProcessableContainerProps) {
@@ -66,43 +71,32 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
 
     this.state = {
       modalOpen: props.modal,
-      formData: {},
+      uiData: props.uiData,
       canceled: false,
       processing: false
     };
   }
 
-  protected getChildContext() {
-    return {
-      muiTheme: getMuiTheme(this.props.theme)
-    };
-  }
-
-  protected componentWillMount() {
+  public componentWillMount(): void {
     const { processInstance } = this.props;
 
     let widget = null;
-    let widgetName = null;
-    const widgetNameArr = processInstance.nextTaskDef.extensions.properties.filter((property) => property.name === 'widgetName');
+    let widgetName = this.props.uiName;
 
-    if (processInstance.nextTaskDef && processInstance.nextTaskDef.extensions && processInstance.nextTaskDef.extensions.properties &&
-      widgetNameArr && widgetNameArr.length === 1) {
-      widgetName = widgetNameArr[0].value;
-      const tokenData = (processInstance.nextTaskEntity && processInstance.nextTaskEntity.processToken ? processInstance.nextTaskEntity.processToken.data : null);
+    if (widgetName) {
+      const tokenData = processInstance;
+
       switch (widgetName) {
         case 'SelectableList': {
-          const selectableListDataSourceArr = processInstance.nextTaskDef.extensions.properties.filter((property) => property.name === 'selectableListDataSource');
-          const selectableListColumnSchemaArr = processInstance.nextTaskDef.extensions.properties.filter((property) => property.name === 'selectableListColumnSchema');
           let selectableListDataSource = null;
           let selectableListColumnSchema = null;
-          if (processInstance.nextTaskDef && processInstance.nextTaskDef.extensions && processInstance.nextTaskDef.extensions.properties &&
-            selectableListDataSourceArr && selectableListDataSourceArr.length === 1 && selectableListColumnSchemaArr && selectableListColumnSchemaArr.length === 1) {
-            if (selectableListDataSourceArr[0].value.indexOf('$token.') === 0) {
-              eval('selectableListDataSource = ' + selectableListDataSourceArr[0].value.replace(/\$token\./gi, 'processInstance.nextTaskEntity.processToken.data.') + ';');
-            } else {
-              selectableListDataSource = JSON.parse(selectableListDataSourceArr[0].value);
+          if (typeof this.props.uiConfig === 'object' && this.props.uiConfig) {
+            if (this.props.uiConfig.hasOwnProperty('dataSource')) {
+              selectableListDataSource = this.props.uiConfig.dataSource;
             }
-            selectableListColumnSchema = JSON.parse(selectableListColumnSchemaArr[0].value);
+            if (this.props.uiConfig.hasOwnProperty('thcSchema')) {
+              selectableListColumnSchema = this.props.uiConfig.thcSchema;
+            }
           }
 
           widget = {
@@ -119,7 +113,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
             }
           };
         }
-        break;
+          break;
         case 'Form': {
           let formElements = [];
           if (processInstance.nextTaskDef.extensions.formFields && processInstance.nextTaskDef.extensions.formFields.length > 0) {
@@ -205,19 +199,13 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
             }
           };
         }
-        break;
+          break;
         case 'Confirm': {
-          const confirmLayoutArr = processInstance.nextTaskDef.extensions.properties.filter((property) => property.name === 'confirmLayout');
-          const confirmMessageArr = processInstance.nextTaskDef.extensions.properties.filter((property) => property.name === 'confirmMessage');
-          let confirmLayout = [];
+          let confirmElements = [];
           let confirmMessage = '';
 
-          let confirmElements = [];
-          if (processInstance.nextTaskDef && processInstance.nextTaskDef.extensions && processInstance.nextTaskDef.extensions.properties &&
-            confirmMessageArr && confirmLayoutArr.length === 1) {
-            confirmLayout = JSON.parse(confirmLayoutArr[0].value);
-
-            confirmElements = confirmLayout.map((element) => {
+          const convertLayout = (confirmLayout) => {
+            return confirmLayout.map((element) => {
               const elementObj: any = {
                 theme: this.props.confirmItemTheme,
                 key: element.key,
@@ -233,10 +221,27 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
 
               return elementObj;
             });
-          }
-          if (processInstance.nextTaskDef && processInstance.nextTaskDef.extensions && processInstance.nextTaskDef.extensions.properties &&
-            confirmMessageArr && confirmMessageArr.length === 1) {
-            confirmMessage = mustache.render(confirmMessageArr[0].value, tokenData);
+          };
+
+          if (this.props.uiConfig) {
+            if (this.props.uiConfig.hasOwnProperty('message')) {
+              confirmMessage = mustache.render(this.props.uiConfig.message, tokenData);
+            }
+            if (this.props.uiConfig.hasOwnProperty('layout')) {
+              confirmElements = convertLayout(this.props.uiConfig.layout);
+            }
+          } else {
+            const confirmLayoutArr = processInstance.nextTaskDef.extensions.properties.filter((property) => property.name === 'confirmLayout');
+            const confirmMessageArr = processInstance.nextTaskDef.extensions.properties.filter((property) => property.name === 'confirmMessage');
+
+            if (processInstance.nextTaskDef && processInstance.nextTaskDef.extensions && processInstance.nextTaskDef.extensions.properties &&
+              confirmMessageArr && confirmLayoutArr.length === 1) {
+              confirmElements = convertLayout(JSON.parse(confirmLayoutArr[0].value));
+            }
+            if (processInstance.nextTaskDef && processInstance.nextTaskDef.extensions && processInstance.nextTaskDef.extensions.properties &&
+              confirmMessageArr && confirmMessageArr.length === 1) {
+              confirmMessage = mustache.render(confirmMessageArr[0].value, tokenData);
+            }
           }
 
           widget = {
@@ -249,7 +254,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
             }
           };
         }
-        break;
+          break;
         default:
           break;
       }
@@ -284,12 +289,12 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
     );
   }
 
-  private handleProceed(executionContext, tokenData) {
+  private handleProceed(executionContext) {
     const { processInstance } = this.props;
 
     const fireProceed = () => {
       if (processInstance) {
-        processInstance.doProceed(executionContext, tokenData).then(() => {
+        processInstance.doProceed(executionContext).then(() => {
           this.setState({
             canceled: false,
             processing: true
@@ -335,7 +340,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
           }}
           qflProps={{
             onClick: (e) => {
-              this.handleProceed(this.props.executionContext, { selectedItem: this.state.selectedItem });
+              this.handleProceed(this.props.executionContext);
             }
           }}
         />
@@ -349,8 +354,9 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
           });
 
           if (selectedItem) {
+            const mergedUiData = Object.assign(this.state.uiData, selectedItem);
             this.setState({
-              selectedItem
+              uiData: mergedUiData
             });
           }
         }
@@ -367,7 +373,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
           }}
           qflProps={{
             onClick: (e) => {
-              this.handleProceed(this.props.executionContext, { formData: this.state.formData });
+              this.handleProceed(this.props.executionContext);
             }
           }}
         />
@@ -391,8 +397,9 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
       }
 
       const onChange = (formData) => {
+        const mergedUiData = Object.assign(this.state.uiData, formData);
         this.setState({
-          formData
+          uiData: mergedUiData
         });
       };
       widget = <this.widgetConfig.component onChange={(formData) => onChange(formData)} {...this.widgetConfig.props}/>;
@@ -401,7 +408,14 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
         const confirmData = {
           key
         };
-        this.handleProceed(this.props.executionContext, { confirmData });
+        const mergedUiData = Object.assign(this.state.uiData, confirmData);
+        this.setState(
+        {
+          uiData: mergedUiData
+        },
+        () => {
+          this.handleProceed(this.props.executionContext);
+        });
       };
       widget = <this.widgetConfig.component onChoose={(key) => onChoose(key)} {...this.widgetConfig.props}/>;
     }
