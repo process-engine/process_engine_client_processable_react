@@ -1,77 +1,42 @@
 "use strict";
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var __assign = (this && this.__assign) || Object.assign || function(t) {
-    for (var s, i = 1, n = arguments.length; i < n; i++) {
-        s = arguments[i];
-        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-            t[p] = s[p];
-    }
-    return t;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-var React = require("react");
-var PropTypes = require("prop-types");
-var RaisedButton_js_1 = require("@process-engine-js/frontend_mui/dist/commonjs/Buttons/RaisedButton/RaisedButton.js");
-var Dialog_js_1 = require("@process-engine-js/frontend_mui/dist/commonjs/Dialogs/Dialog/Dialog.js");
-var Form_js_1 = require("@process-engine-js/frontend_mui/dist/commonjs/InputForms/Form/Form.js");
-var Table_js_1 = require("@process-engine-js/frontend_mui/dist/commonjs/Tables/Table/Table.js");
-var Confirm_js_1 = require("@process-engine-js/frontend_mui/dist/commonjs/InputForms/Confirm/Confirm.js");
-var themeBuilder_js_1 = require("@process-engine-js/frontend_mui/dist/commonjs/themeBuilder.js");
-var getMuiTheme_js_1 = require("material-ui/styles/getMuiTheme.js");
-var mustache = require("mustache");
-var ProcessableContainer = (function (_super) {
-    __extends(ProcessableContainer, _super);
-    function ProcessableContainer(props) {
-        var _this = _super.call(this, props) || this;
-        _this.widgetConfig = null;
-        _this.state = {
+const React = require("react");
+const RaisedButton_js_1 = require("@process-engine-js/frontend_mui/dist/commonjs/Buttons/RaisedButton/RaisedButton.js");
+const Dialog_js_1 = require("@process-engine-js/frontend_mui/dist/commonjs/Dialogs/Dialog/Dialog.js");
+const Form_js_1 = require("@process-engine-js/frontend_mui/dist/commonjs/InputForms/Form/Form.js");
+const Table_js_1 = require("@process-engine-js/frontend_mui/dist/commonjs/Tables/Table/Table.js");
+const Confirm_js_1 = require("@process-engine-js/frontend_mui/dist/commonjs/InputForms/Confirm/Confirm.js");
+const themeBuilder_js_1 = require("@process-engine-js/frontend_mui/dist/commonjs/themeBuilder.js");
+const mustache = require("mustache");
+class ProcessableContainer extends React.Component {
+    constructor(props) {
+        super(props);
+        this.widgetConfig = null;
+        this.state = {
             modalOpen: props.modal,
-            formData: {},
+            uiData: props.uiData,
             canceled: false,
             processing: false
         };
-        return _this;
     }
-    ProcessableContainer.prototype.getChildContext = function () {
-        return {
-            muiTheme: getMuiTheme_js_1.default(this.props.theme)
-        };
-    };
-    ProcessableContainer.prototype.componentWillMount = function () {
-        var _this = this;
-        var processInstance = this.props.processInstance;
-        var widget = null;
-        var widgetName = null;
-        var widgetNameArr = processInstance.nextTaskDef.extensions.properties.filter(function (property) { return property.name === 'widgetName'; });
-        if (processInstance.nextTaskDef && processInstance.nextTaskDef.extensions && processInstance.nextTaskDef.extensions.properties &&
-            widgetNameArr && widgetNameArr.length === 1) {
-            widgetName = widgetNameArr[0].value;
-            var tokenData = (processInstance.nextTaskEntity && processInstance.nextTaskEntity.processToken ? processInstance.nextTaskEntity.processToken.data : null);
+    componentWillMount() {
+        const { processInstance } = this.props;
+        let widget = null;
+        let widgetName = this.props.uiName;
+        if (widgetName) {
+            const tokenData = processInstance;
             switch (widgetName) {
                 case 'SelectableList':
                     {
-                        var selectableListDataSourceArr = processInstance.nextTaskDef.extensions.properties.filter(function (property) { return property.name === 'selectableListDataSource'; });
-                        var selectableListColumnSchemaArr = processInstance.nextTaskDef.extensions.properties.filter(function (property) { return property.name === 'selectableListColumnSchema'; });
-                        var selectableListDataSource = null;
-                        var selectableListColumnSchema = null;
-                        if (processInstance.nextTaskDef && processInstance.nextTaskDef.extensions && processInstance.nextTaskDef.extensions.properties &&
-                            selectableListDataSourceArr && selectableListDataSourceArr.length === 1 && selectableListColumnSchemaArr && selectableListColumnSchemaArr.length === 1) {
-                            if (selectableListDataSourceArr[0].value.indexOf('$token.') === 0) {
-                                eval('selectableListDataSource = ' + selectableListDataSourceArr[0].value.replace(/\$token\./gi, 'processInstance.nextTaskEntity.processToken.data.') + ';');
+                        let selectableListDataSource = null;
+                        let selectableListColumnSchema = null;
+                        if (typeof this.props.uiConfig === 'object' && this.props.uiConfig) {
+                            if (this.props.uiConfig.hasOwnProperty('dataSource')) {
+                                selectableListDataSource = this.props.uiConfig.dataSource;
                             }
-                            else {
-                                selectableListDataSource = JSON.parse(selectableListDataSourceArr[0].value);
+                            if (this.props.uiConfig.hasOwnProperty('thcSchema')) {
+                                selectableListColumnSchema = this.props.uiConfig.thcSchema;
                             }
-                            selectableListColumnSchema = JSON.parse(selectableListColumnSchemaArr[0].value);
                         }
                         widget = {
                             component: Table_js_1.default,
@@ -90,15 +55,15 @@ var ProcessableContainer = (function (_super) {
                     break;
                 case 'Form':
                     {
-                        var formElements = [];
+                        let formElements = [];
                         if (processInstance.nextTaskDef.extensions.formFields && processInstance.nextTaskDef.extensions.formFields.length > 0) {
-                            formElements = processInstance.nextTaskDef.extensions.formFields.map(function (formField) {
-                                var parsedType = null;
-                                var options = {};
-                                var formFieldWidgetNameArr;
-                                var formFieldMuiPropsArr;
-                                var muiProps = {};
-                                formFieldMuiPropsArr = formField.formProperties.filter(function (formFieldProperty) { return formFieldProperty.name === 'muiProps'; });
+                            formElements = processInstance.nextTaskDef.extensions.formFields.map((formField) => {
+                                let parsedType = null;
+                                const options = {};
+                                let formFieldWidgetNameArr;
+                                let formFieldMuiPropsArr;
+                                let muiProps = {};
+                                formFieldMuiPropsArr = formField.formProperties.filter((formFieldProperty) => formFieldProperty.name === 'muiProps');
                                 if (formField.formProperties && formFieldMuiPropsArr && formFieldMuiPropsArr.length === 1 && formFieldMuiPropsArr[0].value) {
                                     muiProps = JSON.parse(formFieldMuiPropsArr[0].value.replace(/\&\#34\;/gi, '"'));
                                 }
@@ -115,29 +80,29 @@ var ProcessableContainer = (function (_super) {
                                         break;
                                     case 'enum':
                                         parsedType = 'DropDown';
-                                        formFieldWidgetNameArr = formField.formProperties.filter(function (formFieldProperty) { return formFieldProperty.name === 'widgetName'; });
+                                        formFieldWidgetNameArr = formField.formProperties.filter((formFieldProperty) => formFieldProperty.name === 'widgetName');
                                         if (formField.formProperties && formFieldWidgetNameArr && formFieldWidgetNameArr.length === 1) {
                                             parsedType = formFieldWidgetNameArr[0].value;
                                         }
                                         if (parsedType === 'RadioBox') {
                                             options.radioButtonMuiProps = themeBuilder_js_1.buildTheme({
-                                                theme: _this.props.formItemTheme,
+                                                theme: this.props.formItemTheme,
                                                 sourceMuiProps: {},
                                                 componentName: 'RadioButton'
                                             }).muiProps;
                                         }
                                         if (formField.formValues && formField.formValues.length > 0) {
-                                            options.items = formField.formValues.map(function (formValue) {
-                                                var value = formValue.id;
-                                                var label = formValue.name;
+                                            options.items = formField.formValues.map((formValue) => {
+                                                const value = formValue.id;
+                                                const label = formValue.name;
                                                 if (value && label) {
                                                     return {
-                                                        value: value,
-                                                        label: label
+                                                        value,
+                                                        label
                                                     };
                                                 }
                                                 return null;
-                                            }).filter(function (formValue) { return (formValue !== null); });
+                                            }).filter((formValue) => (formValue !== null));
                                         }
                                         if (formField.defaultValue) {
                                             options.initialValue = formField.defaultValue;
@@ -147,10 +112,10 @@ var ProcessableContainer = (function (_super) {
                                         break;
                                 }
                                 if (parsedType) {
-                                    return __assign({ theme: _this.props.formItemTheme, label: formField.label, type: parsedType, muiProps: muiProps, key: formField.id }, options);
+                                    return Object.assign({ theme: this.props.formItemTheme, label: formField.label, type: parsedType, muiProps, key: formField.id }, options);
                                 }
                                 return null;
-                            }).filter(function (formField) { return (formField !== null); });
+                            }).filter((formField) => (formField !== null));
                         }
                         widget = {
                             component: Form_js_1.default,
@@ -164,17 +129,12 @@ var ProcessableContainer = (function (_super) {
                     break;
                 case 'Confirm':
                     {
-                        var confirmLayoutArr = processInstance.nextTaskDef.extensions.properties.filter(function (property) { return property.name === 'confirmLayout'; });
-                        var confirmMessageArr = processInstance.nextTaskDef.extensions.properties.filter(function (property) { return property.name === 'confirmMessage'; });
-                        var confirmLayout = [];
-                        var confirmMessage = '';
-                        var confirmElements = [];
-                        if (processInstance.nextTaskDef && processInstance.nextTaskDef.extensions && processInstance.nextTaskDef.extensions.properties &&
-                            confirmMessageArr && confirmLayoutArr.length === 1) {
-                            confirmLayout = JSON.parse(confirmLayoutArr[0].value);
-                            confirmElements = confirmLayout.map(function (element) {
-                                var elementObj = {
-                                    theme: _this.props.confirmItemTheme,
+                        let confirmElements = [];
+                        let confirmMessage = '';
+                        const convertLayout = (confirmLayout) => {
+                            return confirmLayout.map((element) => {
+                                const elementObj = {
+                                    theme: this.props.confirmItemTheme,
                                     key: element.key,
                                     label: element.label
                                 };
@@ -186,10 +146,26 @@ var ProcessableContainer = (function (_super) {
                                 }
                                 return elementObj;
                             });
+                        };
+                        if (this.props.uiConfig) {
+                            if (this.props.uiConfig.hasOwnProperty('message')) {
+                                confirmMessage = mustache.render(this.props.uiConfig.message, tokenData);
+                            }
+                            if (this.props.uiConfig.hasOwnProperty('layout')) {
+                                confirmElements = convertLayout(this.props.uiConfig.layout);
+                            }
                         }
-                        if (processInstance.nextTaskDef && processInstance.nextTaskDef.extensions && processInstance.nextTaskDef.extensions.properties &&
-                            confirmMessageArr && confirmMessageArr.length === 1) {
-                            confirmMessage = mustache.render(confirmMessageArr[0].value, tokenData);
+                        else {
+                            const confirmLayoutArr = processInstance.nextTaskDef.extensions.properties.filter((property) => property.name === 'confirmLayout');
+                            const confirmMessageArr = processInstance.nextTaskDef.extensions.properties.filter((property) => property.name === 'confirmMessage');
+                            if (processInstance.nextTaskDef && processInstance.nextTaskDef.extensions && processInstance.nextTaskDef.extensions.properties &&
+                                confirmMessageArr && confirmLayoutArr.length === 1) {
+                                confirmElements = convertLayout(JSON.parse(confirmLayoutArr[0].value));
+                            }
+                            if (processInstance.nextTaskDef && processInstance.nextTaskDef.extensions && processInstance.nextTaskDef.extensions.properties &&
+                                confirmMessageArr && confirmMessageArr.length === 1) {
+                                confirmMessage = mustache.render(confirmMessageArr[0].value, tokenData);
+                            }
                         }
                         widget = {
                             component: Confirm_js_1.default,
@@ -209,14 +185,13 @@ var ProcessableContainer = (function (_super) {
         if (widget) {
             this.widgetConfig = widget;
         }
-    };
-    ProcessableContainer.prototype.handleCancel = function (executionContext) {
-        var _this = this;
-        var processInstance = this.props.processInstance;
-        var fireCancel = function () {
+    }
+    handleCancel(executionContext) {
+        const { processInstance } = this.props;
+        const fireCancel = () => {
             if (processInstance) {
-                processInstance.doCancel(executionContext).then(function () {
-                    _this.setState({
+                processInstance.doCancel(executionContext).then(() => {
+                    this.setState({
                         canceled: true,
                         processing: true
                     });
@@ -226,14 +201,13 @@ var ProcessableContainer = (function (_super) {
         this.setState({
             modalOpen: false
         }, fireCancel);
-    };
-    ProcessableContainer.prototype.handleProceed = function (executionContext, tokenData) {
-        var _this = this;
-        var processInstance = this.props.processInstance;
-        var fireProceed = function () {
+    }
+    handleProceed(executionContext) {
+        const { processInstance } = this.props;
+        const fireProceed = () => {
             if (processInstance) {
-                processInstance.doProceed(executionContext, tokenData).then(function () {
-                    _this.setState({
+                processInstance.doProceed(executionContext).then(() => {
+                    this.setState({
                         canceled: false,
                         processing: true
                     });
@@ -249,50 +223,50 @@ var ProcessableContainer = (function (_super) {
         else {
             fireProceed();
         }
-    };
-    ProcessableContainer.prototype.render = function () {
-        var _this = this;
-        var qflProps = themeBuilder_js_1.buildTheme({
+    }
+    render() {
+        const { qflProps } = themeBuilder_js_1.buildTheme({
             theme: this.props.theme,
             sourceMuiProps: this.props.muiProps,
             sourceQflProps: this.props.qflProps,
             componentName: 'Processable'
-        }).qflProps;
-        var processInstance = this.props.processInstance;
-        var proceedButton = null;
-        var cancelButton = null;
-        var widget = null;
+        });
+        const { processInstance } = this.props;
+        let proceedButton = null;
+        let cancelButton = null;
+        let widget = null;
         if (this.widgetConfig && this.widgetConfig.component && this.widgetConfig.component.name === 'Table') {
             proceedButton = (React.createElement(RaisedButton_js_1.default, { theme: this.props.buttonTheme, muiProps: {
                     label: 'Auswählen',
                     primary: true
                 }, qflProps: {
-                    onClick: function (e) {
-                        _this.handleProceed(_this.props.executionContext, { selectedItem: _this.state.selectedItem });
+                    onClick: (e) => {
+                        this.handleProceed(this.props.executionContext);
                     }
                 } }));
-            var onSelect_1 = function (selectedItems) {
-                var selectedItem = null;
+            const onSelect = (selectedItems) => {
+                let selectedItem = null;
                 if (selectedItems) {
-                    Object.keys(selectedItems).map(function (item) {
+                    Object.keys(selectedItems).map((item) => {
                         selectedItem = selectedItems[item];
                     });
                     if (selectedItem) {
-                        _this.setState({
-                            selectedItem: selectedItem
+                        const mergedUiData = Object.assign(this.state.uiData, selectedItem);
+                        this.setState({
+                            uiData: mergedUiData
                         });
                     }
                 }
             };
-            widget = React.createElement(this.widgetConfig.component, __assign({ onSelectedRowsChanged: function (selectedItem) { return onSelect_1(selectedItem); } }, this.widgetConfig.props));
+            widget = React.createElement(this.widgetConfig.component, Object.assign({ onSelectedRowsChanged: (selectedItem) => onSelect(selectedItem) }, this.widgetConfig.props));
         }
         else if (this.widgetConfig && this.widgetConfig.component && this.widgetConfig.component.name === 'Form') {
             proceedButton = (React.createElement(RaisedButton_js_1.default, { theme: this.props.buttonTheme, muiProps: {
                     label: 'Weiter',
                     primary: true
                 }, qflProps: {
-                    onClick: function (e) {
-                        _this.handleProceed(_this.props.executionContext, { formData: _this.state.formData });
+                    onClick: (e) => {
+                        this.handleProceed(this.props.executionContext);
                     }
                 } }));
             if (this.props.modal) {
@@ -300,30 +274,36 @@ var ProcessableContainer = (function (_super) {
                         label: 'Abbrechen',
                         primary: true
                     }, qflProps: {
-                        onClick: function (e) {
-                            _this.handleCancel(_this.props.executionContext);
+                        onClick: (e) => {
+                            this.handleCancel(this.props.executionContext);
                         }
                     } }));
             }
-            var onChange_1 = function (formData) {
-                _this.setState({
-                    formData: formData
+            const onChange = (formData) => {
+                const mergedUiData = Object.assign(this.state.uiData, formData);
+                this.setState({
+                    uiData: mergedUiData
                 });
             };
-            widget = React.createElement(this.widgetConfig.component, __assign({ onChange: function (formData) { return onChange_1(formData); } }, this.widgetConfig.props));
+            widget = React.createElement(this.widgetConfig.component, Object.assign({ onChange: (formData) => onChange(formData) }, this.widgetConfig.props));
         }
         else if (this.widgetConfig && this.widgetConfig.component && this.widgetConfig.component.name === 'Confirm') {
-            var onChoose_1 = function (key) {
-                var confirmData = {
-                    key: key
+            const onChoose = (key) => {
+                const confirmData = {
+                    key
                 };
-                _this.handleProceed(_this.props.executionContext, { confirmData: confirmData });
+                const mergedUiData = Object.assign(this.state.uiData, confirmData);
+                this.setState({
+                    uiData: mergedUiData
+                }, () => {
+                    this.handleProceed(this.props.executionContext);
+                });
             };
-            widget = React.createElement(this.widgetConfig.component, __assign({ onChoose: function (key) { return onChoose_1(key); } }, this.widgetConfig.props));
+            widget = React.createElement(this.widgetConfig.component, Object.assign({ onChoose: (key) => onChoose(key) }, this.widgetConfig.props));
         }
         if (processInstance) {
-            var tokenDataElement = null;
-            var tokenData = null;
+            let tokenDataElement = null;
+            let tokenData = null;
             if (processInstance && processInstance.nextTaskEntity && processInstance.nextTaskEntity.processToken && processInstance.nextTaskEntity.processToken.data) {
                 tokenData = processInstance.nextTaskEntity.processToken.data;
             }
@@ -339,18 +319,18 @@ var ProcessableContainer = (function (_super) {
             }
             if (processInstance.nextTaskDef && !this.state.processing) {
                 if (this.props.modal) {
-                    return (React.createElement("div", __assign({ style: {
+                    return (React.createElement("div", Object.assign({ style: {
                             display: 'inline-block',
                             padding: '10px',
                             textAlign: 'left'
                         } }, qflProps),
-                        React.createElement(Dialog_js_1.default, { theme: this.props.dialogTheme, muiProps: __assign({ title: processInstance.nextTaskDef.name, actions: [cancelButton, proceedButton], modal: true, open: this.state.modalOpen }, this.props.dialogMuiProps), qflProps: __assign({}, this.props.dialogQflProps) },
+                        React.createElement(Dialog_js_1.default, { theme: this.props.dialogTheme, muiProps: Object.assign({ title: processInstance.nextTaskDef.name, actions: [cancelButton, proceedButton], modal: true, open: this.state.modalOpen }, this.props.dialogMuiProps), qflProps: Object.assign({}, this.props.dialogQflProps) },
                             widget,
                             React.createElement("br", null)),
                         React.createElement("br", null),
                         tokenDataElement));
                 }
-                return (React.createElement("div", __assign({ style: {
+                return (React.createElement("div", Object.assign({ style: {
                         padding: '10px'
                     } }, qflProps),
                     React.createElement("h4", null, processInstance.nextTaskDef.name),
@@ -361,11 +341,11 @@ var ProcessableContainer = (function (_super) {
                     tokenDataElement,
                     React.createElement("hr", null)));
             }
-            var processingComponent = (React.createElement("span", null, "Bitte warten..."));
+            let processingComponent = (React.createElement("span", null, "Bitte warten..."));
             if (this.state.canceled) {
                 processingComponent = null;
             }
-            return (React.createElement("div", __assign({ style: {
+            return (React.createElement("div", Object.assign({ style: {
                     display: 'table',
                     padding: '10px',
                     margin: '0 auto'
@@ -378,27 +358,25 @@ var ProcessableContainer = (function (_super) {
                 React.createElement("hr", null)));
         }
         return null;
-    };
-    ProcessableContainer.defaultProps = {
-        theme: 'Default',
-        muiProps: {},
-        qflProps: {},
-        buttonTheme: 'Default',
-        dialogTheme: 'Default',
-        modal: false,
-        formItemTheme: 'Default',
-        widgetTheme: 'Default',
-        confirmItemTheme: 'Default',
-        processableClassName: null,
-        modalProcessableClassName: null,
-        dialogMuiProps: null,
-        dialogQflProps: null
-    };
-    ProcessableContainer.childContextTypes = {
-        muiTheme: PropTypes.object
-    };
-    return ProcessableContainer;
-}(React.Component));
+    }
+}
+ProcessableContainer.defaultProps = {
+    theme: 'Default',
+    muiProps: {},
+    qflProps: {},
+    buttonTheme: 'Default',
+    dialogTheme: 'Default',
+    modal: false,
+    formItemTheme: 'Default',
+    widgetTheme: 'Default',
+    confirmItemTheme: 'Default',
+    processableClassName: null,
+    modalProcessableClassName: null,
+    dialogMuiProps: null,
+    dialogQflProps: null,
+    uiConfig: null,
+    uiData: {}
+};
 exports.ProcessableContainer = ProcessableContainer;
 exports.default = ProcessableContainer;
 

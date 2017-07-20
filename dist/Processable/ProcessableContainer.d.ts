@@ -5,6 +5,7 @@ import { ExecutionContext } from '@process-engine-js/core_contracts';
 export interface IProcessableContainerProps extends IMUIProps {
     processInstance: IProcessInstance;
     executionContext: ExecutionContext;
+    uiName: string;
     buttonTheme?: any;
     dialogTheme?: any;
     modal?: boolean;
@@ -15,13 +16,17 @@ export interface IProcessableContainerProps extends IMUIProps {
     modalProcessableClassName?: string;
     dialogMuiProps?: {};
     dialogQflProps?: {};
+    uiConfig?: any;
+    uiData?: any;
 }
 export interface IProcessableContainerState {
     modalOpen?: boolean;
-    formData?: any;
-    selectedItem?: any;
+    uiData?: any;
     canceled?: boolean;
     processing?: boolean;
+}
+export interface IProcessableContainerChildContext {
+    muiTheme?: {};
 }
 export declare class ProcessableContainer extends React.Component<IProcessableContainerProps, IProcessableContainerState> {
     static defaultProps: {
@@ -38,18 +43,14 @@ export declare class ProcessableContainer extends React.Component<IProcessableCo
         modalProcessableClassName: any;
         dialogMuiProps: any;
         dialogQflProps: any;
-    };
-    static childContextTypes: {
-        muiTheme: any;
+        uiConfig: any;
+        uiData: {};
     };
     constructor(props: IProcessableContainerProps);
-    protected getChildContext(): {
-        muiTheme: any;
-    };
-    protected componentWillMount(): void;
+    componentWillMount(): void;
     private widgetConfig;
     private handleCancel(executionContext);
-    private handleProceed(executionContext, tokenData);
+    private handleProceed(executionContext);
     render(): JSX.Element;
 }
 export default ProcessableContainer;

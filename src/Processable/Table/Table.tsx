@@ -19,8 +19,8 @@ import {ExecutionContext} from '@process-engine-js/core_contracts';
 export interface ITableProps extends IMUIProps {
   dataClassName: string;
 
-  context?: ExecutionContext;
-  processEngineClientApi?: IProcessEngineClientApi;
+  executionContext: ExecutionContext;
+  processEngineClientApi: IProcessEngineClientApi;
 
   title?: string;
   children?: React.ReactNode;
@@ -106,13 +106,11 @@ export interface ITableState {
   searchValue?: string;
 
   createOnProcessEnded?: Function;
-  createProcessInstance?: IProcessInstance;
-  createProcessableContainer?: ProcessableContainer;
+  createProcessableContainer?: React.ReactNode;
 
   currentItemProcessKey?: string;
   currentItemOnProcessEnded?: Function;
-  itemProcessInstance?: IProcessInstance;
-  itemProcessableContainer?: ProcessableContainer;
+  itemProcessableContainer?: React.ReactNode;
 }
 
 class ProcessableTable extends React.Component<ITableProps, ITableState> implements IProcessable {
@@ -121,7 +119,6 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
     muiProps: {},
     qflProps: {},
 
-    processEngineClientApi: null,
     title: null,
     frame: true,
     searchKeyDelay: 250,
@@ -171,7 +168,7 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
     searchFieldProps: null,
     searchValue: null,
     tableProps: {
-      rbtProps: null
+      rbtProps: {}
     },
     data: null,
     controlledHeight: null,
@@ -206,22 +203,20 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
       searchValue: props.searchValue,
 
       createOnProcessEnded: null,
-      createProcessInstance: null,
       createProcessableContainer: null,
 
       currentItemProcessKey: null,
       currentItemOnProcessEnded: null,
-      itemProcessInstance: null,
       itemProcessableContainer: null
     };
   }
 
-  private renderProcessContainer(processKey) {
-    switch (processKey) {
+  private renderProcessContainer(processInstance: IProcessInstance, uiName: string, uiConfig?: any, uiData?: any) {
+    switch (processInstance.processKey) {
       case (this.props.createProcessKey + this.props.dataClassName):
         const createProcessableContainer = (
-          <ProcessableContainer modal={true} key={this.state.createProcessInstance.nextTaskEntity.id}
-                                processInstance={this.state.createProcessInstance}/>
+          <ProcessableContainer modal={true} key={processInstance.nextTaskEntity.id}
+                                processInstance={processInstance} executionContext={this.props.executionContext} uiName={uiName} uiConfig={uiConfig} uiData={uiData}/>
         );
         this.setState({
           createProcessableContainer
@@ -229,8 +224,8 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
         break;
       case (this.state.currentItemProcessKey):
         const itemProcessableContainer = (
-          <ProcessableContainer modal={true} key={this.state.itemProcessInstance.nextTaskEntity.id}
-                                processInstance={this.state.itemProcessInstance}/>
+          <ProcessableContainer modal={true} key={processInstance.nextTaskEntity.id}
+                                processInstance={processInstance} executionContext={this.props.executionContext} uiName={uiName} uiConfig={uiConfig} uiData={uiData}/>
         );
         this.setState({
           itemProcessableContainer
@@ -240,20 +235,19 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
     }
   };
 
-  public async handleUserTask(processKey: string, message: any) {
-    this.renderProcessContainer(processKey);
+  public async handleUserTask(processInstance: IProcessInstance, uiName: string, uiConfig?: any, uiData?: any) {
+    this.renderProcessContainer(processInstance, uiName, uiConfig, uiData);
   };
 
-  public async handleManualTask(processKey: string, message: any) {
+  public async handleManualTask(processInstance: IProcessInstance, uiName: string, uiConfig?: any, uiData?: any) {
     return;
   };
 
-  public async handleEndEvent(processKey: string, message: any) {
-    switch (processKey) {
+  public async handleEndEvent(processInstance: IProcessInstance, endEventData?: any) {
+    switch (processInstance.processKey) {
       case (this.props.createProcessKey + this.props.dataClassName):
         this.setState(
           {
-            createProcessInstance: null,
             createProcessableContainer: null
           },
           () => {
@@ -266,15 +260,14 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
       case (this.state.currentItemProcessKey):
         this.setState(
           {
-            itemProcessInstance: null,
             itemProcessableContainer: null
           },
           () => {
             if (this.state.currentItemOnProcessEnded) {
-              this.state.currentItemOnProcessEnded(this.state.currentItemProcessKey, message);
+              this.state.currentItemOnProcessEnded(this.state.currentItemProcessKey, endEventData);
             }
             if (this.props.onItemProcessEnded) {
-              this.props.onItemProcessEnded(this.state.currentItemProcessKey, message);
+              this.props.onItemProcessEnded(this.state.currentItemProcessKey, endEventData);
             }
           }
         );
@@ -285,44 +278,42 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
 
   private async handleStartCreate(startToken, onProcessEnded?: Function, done?: Function) {
     if (this.props.processEngineClientApi) {
-      const createProcessInstance = await this.props.processEngineClientApi.startProcess(
+      await this.props.processEngineClientApi.startProcess(
         (this.props.createProcessKey + this.props.dataClassName),
         this,
-        startToken,
-        this.props.context
+        this.props.executionContext,
+        startToken
       );
       if (done) {
         done();
       }
       this.setState({
-        createOnProcessEnded: onProcessEnded,
-        createProcessInstance
+        createOnProcessEnded: onProcessEnded
       });
     }
   }
 
   private async handleStartItem(processKey, startToken, onProcessEnded?: Function, done?: Function) {
     if (this.props.processEngineClientApi) {
-      const itemProcessInstance = await this.props.processEngineClientApi.startProcess(
+      await this.props.processEngineClientApi.startProcess(
         processKey,
         this,
-        startToken,
-        this.props.context
+        this.props.executionContext,
+        startToken
       );
       if (done) {
         done();
       }
       this.setState({
         currentItemOnProcessEnded: onProcessEnded,
-        currentItemProcessKey: processKey,
-        itemProcessInstance
+        currentItemProcessKey: processKey
       });
     }
   }
 
   private delay = (() => {
     let timer: NodeJS.Timer = null;
-    return (callback: Function, ms: number) => {
+    return (callback: (...args: any[]) => void, ms: number) => {
       clearTimeout(timer);
       timer = setTimeout(callback, ms);
     };
@@ -388,7 +379,7 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
       newClassName = this.props.tableStyles.tableWithoutFrameClassName;
     }
 
-    const { rbtProps } = (this.props.tableProps || {});
+    const { rbtProps } = (this.props.tableProps || { rbtProps: {} });
     if (this.props.tableProps) {
       delete this.props.tableProps.rbtProps;
     }
@@ -575,7 +566,7 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
                 style={{
                   display: (this.state.isItemBasedMoreMenuOpened ? 'block' : 'none'),
                   position: 'absolute',
-                  zIndex: '10',
+                  zIndex: 10,
                   whiteSpace: 'nowrap',
                   color: 'black',
                   backgroundColor: 'white',
@@ -729,4 +720,3 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
 }
 
 export default ProcessableTable;
-

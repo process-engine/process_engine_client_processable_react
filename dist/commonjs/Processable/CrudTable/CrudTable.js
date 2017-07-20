@@ -1,31 +1,12 @@
 "use strict";
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var __assign = (this && this.__assign) || Object.assign || function(t) {
-    for (var s, i = 1, n = arguments.length; i < n; i++) {
-        s = arguments[i];
-        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-            t[p] = s[p];
-    }
-    return t;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-var React = require("react");
-var Table_1 = require("../Table/Table");
-var themeBuilder_js_1 = require("@process-engine-js/frontend_mui/dist/commonjs/themeBuilder.js");
-var ProcessableCrudTable = (function (_super) {
-    __extends(ProcessableCrudTable, _super);
-    function ProcessableCrudTable(props) {
-        var _this = _super.call(this, props) || this;
-        _this.state = {
+const React = require("react");
+const Table_1 = require("../Table/Table");
+const themeBuilder_js_1 = require("@process-engine-js/frontend_mui/dist/commonjs/themeBuilder.js");
+class ProcessableCrudTable extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
             currentOffset: 0,
             currentFirst: props.pageSize,
             isFetching: true,
@@ -35,10 +16,8 @@ var ProcessableCrudTable = (function (_super) {
             synced: false,
             entityCollection: []
         };
-        return _this;
     }
-    ProcessableCrudTable.prototype.componentDidMount = function () {
-        var _this = this;
+    componentDidMount() {
         this.props.fetcher({
             mode: 'load',
             offset: this.state.currentOffset,
@@ -50,26 +29,26 @@ var ProcessableCrudTable = (function (_super) {
                         this.props.baseFilter()
                     ] : [])
             })
-        }, function (e) {
+        }, (e) => {
             if (e.mounted && !e.done) {
-                _this.setState({
+                this.setState({
                     isFetching: true,
                     hasLoaded: false,
                     synced: false
                 });
             }
             else if (e.mounted && e.done) {
-                _this.setState({
+                this.setState({
                     isFetching: false,
                     hasLoaded: true
                 });
             }
         });
-    };
-    ProcessableCrudTable.prototype.getGlobalSearchFilter = function (searchValue, ignoreCase) {
-        var searchFilter = this.props.columnSchema.filter(function (element) { return (element.searchable); }).map(function (element) {
+    }
+    getGlobalSearchFilter(searchValue, ignoreCase) {
+        const searchFilter = this.props.columnSchema.filter((element) => (element.searchable)).map((element) => {
             if (element.searchableType === 'float' || element.searchableType === 'integer') {
-                var parsedSearchValue = (element.searchableType === 'float' ? parseFloat(searchValue) : parseInt(searchValue));
+                const parsedSearchValue = (element.searchableType === 'float' ? parseFloat(searchValue) : parseInt(searchValue));
                 if (isNaN(parsedSearchValue)) {
                     return null;
                 }
@@ -85,44 +64,42 @@ var ProcessableCrudTable = (function (_super) {
                 attribute: element.thcProps.dataField,
                 operator: 'contains',
                 value: searchValue,
-                ignoreCase: ignoreCase
+                ignoreCase
             };
-        }).filter(function (element) { return (element !== null && element !== undefined); });
+        }).filter((element) => (element !== null && element !== undefined));
         return searchFilter;
-    };
-    ProcessableCrudTable.prototype.initCollection = function (firstCall) {
-        var _this = this;
-        var newEntityCollection = (this.state.entityCollection || []);
-        var entityCollection = this.props.entityCollection;
+    }
+    initCollection(firstCall) {
+        let newEntityCollection = (this.state.entityCollection || []);
+        const { entityCollection } = this.props;
         if (entityCollection && entityCollection.edges) {
-            newEntityCollection = entityCollection.edges.map(function (item) { return item.node; });
+            newEntityCollection = entityCollection.edges.map((item) => item.node);
         }
-        setTimeout(function () {
-            _this.setState({
+        setTimeout(() => {
+            this.setState({
                 entityCollection: newEntityCollection,
                 synced: true
             });
         }, 0);
         return newEntityCollection;
-    };
-    ProcessableCrudTable.prototype.extendCollection = function () {
-        var _this = this;
-        var currentEntityCollection = (this.state.entityCollection || []);
-        var newEntityCollection = currentEntityCollection;
-        var entityCollection = this.props.entityCollection;
+    }
+    extendCollection() {
+        const currentEntityCollection = (this.state.entityCollection || []);
+        let newEntityCollection = currentEntityCollection;
+        const { entityCollection } = this.props;
         if (entityCollection && entityCollection.edges) {
-            newEntityCollection = currentEntityCollection.concat(entityCollection.edges.map(function (item) { return item.node; }));
+            newEntityCollection = currentEntityCollection.concat(entityCollection.edges.map((item) => item.node));
         }
-        setTimeout(function () {
-            _this.setState({
-                currentOffset: (_this.state.currentOffset + _this.props.pageSize),
+        setTimeout(() => {
+            this.setState({
+                currentOffset: (this.state.currentOffset + this.props.pageSize),
                 entityCollection: newEntityCollection,
                 synced: true
             });
         }, 0);
         return newEntityCollection;
-    };
-    ProcessableCrudTable.prototype.prepareCollection = function () {
+    }
+    prepareCollection() {
         if (!this.state.synced) {
             if (!this.state.isFetching) {
                 if (this.state.hasLoaded && this.props.fetchingMode === 'load') {
@@ -140,44 +117,43 @@ var ProcessableCrudTable = (function (_super) {
             }
         }
         return (this.state.entityCollection || []);
-    };
-    ProcessableCrudTable.prototype.handleRowDoubleClick = function (row) {
+    }
+    handleRowDoubleClick(row) {
         if (this.props.onRowDoubleClick) {
             this.props.onRowDoubleClick(row);
         }
-    };
-    ProcessableCrudTable.prototype.handleSearch = function (searchValue) {
-        var _this = this;
+    }
+    handleSearch(searchValue) {
         this.setState({
             currentOffset: 0
-        }, function () {
+        }, () => {
             if (searchValue) {
-                _this.props.fetcher({
+                this.props.fetcher({
                     mode: 'reload',
-                    offset: _this.state.currentOffset,
-                    first: _this.state.currentFirst,
+                    offset: this.state.currentOffset,
+                    first: this.state.currentFirst,
                     query: JSON.stringify({
                         operator: 'and',
-                        queries: (_this.props.baseFilter
+                        queries: (this.props.baseFilter
                             ? [
-                                _this.props.baseFilter(), {
+                                this.props.baseFilter(), {
                                     operator: 'or',
-                                    queries: _this.getGlobalSearchFilter(searchValue, true)
+                                    queries: this.getGlobalSearchFilter(searchValue, true)
                                 }
                             ] : [
-                            _this.getGlobalSearchFilter(searchValue, true)
+                            this.getGlobalSearchFilter(searchValue, true)
                         ])
                     })
-                }, function (e) {
+                }, (e) => {
                     if (e.mounted && !e.done) {
-                        _this.setState({
+                        this.setState({
                             synced: false,
                             isFetching: true,
                             hasReloaded: false
                         });
                     }
                     else if (e.mounted && e.done) {
-                        _this.setState({
+                        this.setState({
                             isFetching: false,
                             hasReloaded: true
                         });
@@ -185,27 +161,27 @@ var ProcessableCrudTable = (function (_super) {
                 });
             }
             else {
-                _this.props.fetcher({
+                this.props.fetcher({
                     mode: 'reload',
-                    offset: _this.state.currentOffset,
-                    first: _this.state.currentFirst,
+                    offset: this.state.currentOffset,
+                    first: this.state.currentFirst,
                     query: JSON.stringify({
                         operator: 'and',
-                        queries: (_this.props.baseFilter()
+                        queries: (this.props.baseFilter()
                             ? [
-                                _this.props.baseFilter()
+                                this.props.baseFilter()
                             ] : [])
                     })
-                }, function (e) {
+                }, (e) => {
                     if (e.mounted && !e.done) {
-                        _this.setState({
+                        this.setState({
                             synced: false,
                             isFetching: true,
                             hasReloaded: false
                         });
                     }
                     else if (e.mounted && e.done) {
-                        _this.setState({
+                        this.setState({
                             isFetching: false,
                             hasReloaded: true
                         });
@@ -213,28 +189,27 @@ var ProcessableCrudTable = (function (_super) {
                 });
             }
         });
-    };
-    ProcessableCrudTable.prototype.handleSortChange = function (sortName, sortOrder) {
-        var _this = this;
+    }
+    handleSortChange(sortName, sortOrder) {
         if (sortName && sortOrder) {
             this.setState({
                 currentOffset: 0
-            }, function () {
-                _this.props.fetcher({
+            }, () => {
+                this.props.fetcher({
                     mode: 'reload',
-                    offset: _this.state.currentOffset,
-                    first: _this.state.currentFirst,
+                    offset: this.state.currentOffset,
+                    first: this.state.currentFirst,
                     orderBy: JSON.stringify({ attributes: [{ attribute: sortName, order: sortOrder }] })
-                }, function (e) {
+                }, (e) => {
                     if (e.mounted && !e.done) {
-                        _this.setState({
+                        this.setState({
                             synced: false,
                             isFetching: true,
                             hasReloaded: false
                         });
                     }
                     else if (e.mounted && e.done) {
-                        _this.setState({
+                        this.setState({
                             isFetching: false,
                             hasReloaded: true
                         });
@@ -242,30 +217,29 @@ var ProcessableCrudTable = (function (_super) {
                 });
             });
         }
-    };
-    ProcessableCrudTable.prototype.handleLoadMore = function () {
-        var _this = this;
-        var entityCollection = this.props.entityCollection;
+    }
+    handleLoadMore() {
+        const { entityCollection } = this.props;
         if (!this.state.isFetching && entityCollection && entityCollection.pageInfo && entityCollection.pageInfo.hasNextPage) {
-            var currentOffset = this.state.currentOffset;
-            var newOffset_1 = (currentOffset + this.props.pageSize);
-            var newFirst = (this.props.pageSize + newOffset_1);
+            const currentOffset = this.state.currentOffset;
+            const newOffset = (currentOffset + this.props.pageSize);
+            const newFirst = (this.props.pageSize + newOffset);
             this.setState({
                 currentFirst: newFirst
-            }, function () {
-                _this.props.fetcher({
+            }, () => {
+                this.props.fetcher({
                     mode: 'more',
-                    offset: newOffset_1
-                }, function (e) {
+                    offset: newOffset
+                }, (e) => {
                     if (e.mounted && !e.done) {
-                        _this.setState({
+                        this.setState({
                             synced: false,
                             isFetching: true,
                             hasLoadedMore: false
                         });
                     }
                     else if (e.mounted && e.done) {
-                        _this.setState({
+                        this.setState({
                             isFetching: false,
                             hasLoadedMore: true
                         });
@@ -273,117 +247,112 @@ var ProcessableCrudTable = (function (_super) {
                 });
             });
         }
-    };
-    ProcessableCrudTable.prototype.cleanSelectedEntities = function () {
-        var refs = this.refs;
+    }
+    cleanSelectedEntities() {
+        const refs = this.refs;
         if (refs && refs.entitiesTable && refs.entitiesTable.cleanSelected) {
             refs.entitiesTable.cleanSelected();
         }
-    };
-    ProcessableCrudTable.prototype.handleCreateProcessEnded = function (processKey, data) {
-        var _this = this;
+    }
+    handleCreateProcessEnded(processKey, data) {
         this.props.fetcher({
             mode: 'reload',
             offset: this.state.currentOffset
-        }, function (e) {
+        }, (e) => {
             if (e.mounted && !e.done) {
-                _this.setState({
+                this.setState({
                     synced: false,
                     isFetching: true,
                     hasReloaded: false
                 });
             }
             else if (e.mounted && e.done) {
-                _this.setState({
+                this.setState({
                     isFetching: false,
                     hasReloaded: true
                 });
             }
         });
-    };
-    ProcessableCrudTable.prototype.handleItemProcessEnded = function (processKey, data) {
-        var _this = this;
+    }
+    handleItemProcessEnded(processKey, data) {
         this.props.fetcher({
             mode: 'reload',
             offset: this.state.currentOffset
-        }, function (e) {
+        }, (e) => {
             if (e.mounted && !e.done) {
-                _this.setState({
+                this.setState({
                     synced: false,
                     isFetching: true,
                     hasReloaded: false
                 });
             }
             else if (e.mounted && e.done) {
-                _this.setState({
+                this.setState({
                     isFetching: false,
                     hasReloaded: true
-                }, function () {
-                    if (processKey === ('Delete' + _this.props.entityTypeName)) {
-                        _this.cleanSelectedEntities();
+                }, () => {
+                    if (processKey === ('Delete' + this.props.entityTypeName)) {
+                        this.cleanSelectedEntities();
                     }
                 });
             }
         });
-    };
-    ProcessableCrudTable.prototype.render = function () {
-        var _this = this;
-        var children = this.props.children;
-        var _a = themeBuilder_js_1.buildTheme({
+    }
+    render() {
+        const { children } = this.props;
+        const { qflProps, rbtProps } = themeBuilder_js_1.buildTheme({
             theme: this.props.theme,
             sourceRbtProps: this.props.rbtProps,
             sourceQflProps: this.props.qflProps,
             componentName: 'Table'
-        }), qflProps = _a.qflProps, rbtProps = _a.rbtProps;
-        var tableElement = null;
+        });
+        let tableElement = null;
         if (this.state.hasLoaded) {
-            tableElement = (React.createElement(Table_1.default, { tableOverlayStyles: this.props.tableOverlayStyles, tableStyles: this.props.tableStyles, processEngineClientApi: this.props.processEngineClientApi, theme: this.props.theme, ref: 'entitiesTable', dataClassName: this.props.entityTypeName, frame: false, onSearch: function (searchValue) { return _this.handleSearch(searchValue); }, onCreateProcessEnded: function (processKey, data) { return _this.handleCreateProcessEnded(processKey, data); }, onItemProcessEnded: function (processKey, data) { return _this.handleItemProcessEnded(processKey, data); }, createProcessKey: 'Create', createStartToken: this.props.createStartToken, createButtonTheme: this.props.createButtonTheme, createDialogTheme: this.props.createDialogTheme, createFormItemTheme: this.props.createFormItemTheme, createConfirmTheme: this.props.createConfirmTheme, createWidgetTheme: this.props.createWidgetTheme, createTheme: this.props.createTheme, itemBasedButtonTheme: this.props.itemBasedButtonTheme, listBasedButtonTheme: this.props.listBasedButtonTheme, filterMenuTheme: this.props.filterMenuTheme, baseFilterMenuTheme: this.props.baseFilterMenuTheme, searchFieldTheme: this.props.searchFieldTheme, tableTheme: this.props.tableTheme, tableSelectorTheme: this.props.tableSelectorTheme, title: this.props.title, data: this.prepareCollection(), itemBasedButtonSchema: this.props.itemBasedButtonSchema, listBasedButtonSchema: this.props.listBasedButtonSchema, filterMenuSchema: this.props.filterMenuSchema, baseFilterMenuSchema: this.props.baseFilterMenuSchema, tableProps: __assign({ rbtProps: __assign({ remote: true, sortName: this.props.defaultSortName, sortOrder: this.props.defaultSortOrder, defaultSortName: this.props.defaultSortName, defaultSortOrder: this.props.defaultSortOrder, options: {
-                            onRowDoubleClick: function (row) { return _this.handleRowDoubleClick(row); },
-                            onSortChange: function (sortName, sortOrder) { return _this.handleSortChange(sortName, sortOrder); },
-                            onLoadMore: function () { return _this.handleLoadMore(); }
+            tableElement = (React.createElement(Table_1.default, { tableOverlayStyles: this.props.tableOverlayStyles, tableStyles: this.props.tableStyles, executionContext: this.props.executionContext, processEngineClientApi: this.props.processEngineClientApi, theme: this.props.theme, ref: 'entitiesTable', dataClassName: this.props.entityTypeName, frame: false, onSearch: (searchValue) => this.handleSearch(searchValue), onCreateProcessEnded: (processKey, data) => this.handleCreateProcessEnded(processKey, data), onItemProcessEnded: (processKey, data) => this.handleItemProcessEnded(processKey, data), createProcessKey: 'Create', createStartToken: this.props.createStartToken, createButtonTheme: this.props.createButtonTheme, createDialogTheme: this.props.createDialogTheme, createFormItemTheme: this.props.createFormItemTheme, createConfirmTheme: this.props.createConfirmTheme, createWidgetTheme: this.props.createWidgetTheme, createTheme: this.props.createTheme, itemBasedButtonTheme: this.props.itemBasedButtonTheme, listBasedButtonTheme: this.props.listBasedButtonTheme, filterMenuTheme: this.props.filterMenuTheme, baseFilterMenuTheme: this.props.baseFilterMenuTheme, searchFieldTheme: this.props.searchFieldTheme, tableTheme: this.props.tableTheme, tableSelectorTheme: this.props.tableSelectorTheme, title: this.props.title, data: this.prepareCollection(), itemBasedButtonSchema: this.props.itemBasedButtonSchema, listBasedButtonSchema: this.props.listBasedButtonSchema, filterMenuSchema: this.props.filterMenuSchema, baseFilterMenuSchema: this.props.baseFilterMenuSchema, tableProps: Object.assign({ rbtProps: Object.assign({ remote: true, sortName: this.props.defaultSortName, sortOrder: this.props.defaultSortOrder, defaultSortName: this.props.defaultSortName, defaultSortOrder: this.props.defaultSortOrder, options: {
+                            onRowDoubleClick: (row) => this.handleRowDoubleClick(row),
+                            onSortChange: (sortName, sortOrder) => this.handleSortChange(sortName, sortOrder),
+                            onLoadMore: () => this.handleLoadMore()
                         } }, rbtProps), thcSchema: this.props.columnSchema }, qflProps) }));
         }
         return (React.createElement("div", null,
             tableElement,
             children));
-    };
-    ProcessableCrudTable.defaultProps = {
-        rbtProps: {},
-        entityCollection: [],
-        processEngineClientApi: null,
-        title: null,
-        fetchingMode: 'initial',
-        baseFilter: null,
-        pageSize: 16,
-        entityTypeName: 'Entity',
-        defaultSortName: 'id',
-        defaultSortOrder: 'asc',
-        onRowDoubleClick: null,
-        createStartToken: null,
-        createButtonTheme: null,
-        createDialogTheme: null,
-        createFormItemTheme: null,
-        createConfirmTheme: null,
-        createWidgetTheme: null,
-        createTheme: null,
-        itemBasedButtonSchema: [],
-        listBasedButtonSchema: [],
-        filterMenuSchema: [],
-        baseFilterMenuSchema: [],
-        itemBasedButtonTheme: null,
-        listBasedButtonTheme: null,
-        filterMenuTheme: null,
-        baseFilterMenuTheme: null,
-        searchFieldTheme: null,
-        columnSchema: [],
-        tableOverlayStyles: null,
-        tableStyles: null,
-        theme: null,
-        tableTheme: null,
-        tableSelectorTheme: null
-    };
-    return ProcessableCrudTable;
-}(React.Component));
+    }
+}
+ProcessableCrudTable.defaultProps = {
+    rbtProps: {},
+    entityCollection: {},
+    title: null,
+    fetchingMode: 'initial',
+    baseFilter: null,
+    pageSize: 16,
+    entityTypeName: 'Entity',
+    defaultSortName: 'id',
+    defaultSortOrder: 'asc',
+    onRowDoubleClick: null,
+    createStartToken: null,
+    createButtonTheme: null,
+    createDialogTheme: null,
+    createFormItemTheme: null,
+    createConfirmTheme: null,
+    createWidgetTheme: null,
+    createTheme: null,
+    itemBasedButtonSchema: [],
+    listBasedButtonSchema: [],
+    filterMenuSchema: [],
+    baseFilterMenuSchema: [],
+    itemBasedButtonTheme: null,
+    listBasedButtonTheme: null,
+    filterMenuTheme: null,
+    baseFilterMenuTheme: null,
+    searchFieldTheme: null,
+    columnSchema: [],
+    tableOverlayStyles: null,
+    tableStyles: null,
+    theme: null,
+    tableTheme: null,
+    tableSelectorTheme: null
+};
 exports.default = ProcessableCrudTable;
 
 //# sourceMappingURL=CrudTable.js.map

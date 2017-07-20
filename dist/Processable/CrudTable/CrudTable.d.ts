@@ -2,11 +2,21 @@ import * as React from 'react';
 import { IMUIProps } from '@process-engine-js/frontend_mui/dist/interfaces';
 import { IColumnSchema } from '../../interfaces';
 import { IProcessEngineClientApi } from '@process-engine-js/process_engine_client_api';
+import { ExecutionContext } from '@process-engine-js/core_contracts';
 export interface IProcessableCrudTableProps extends IMUIProps {
     fetcher: Function;
+    executionContext: ExecutionContext;
+    processEngineClientApi: IProcessEngineClientApi;
     rbtProps?: any;
-    entityCollection?: Array<{}>;
-    processEngineClientApi?: IProcessEngineClientApi;
+    entityCollection?: {
+        edges?: Array<{
+            node: {};
+        }>;
+        pageInfo?: {
+            hasNextPage?: boolean;
+            hasPreviousPage?: boolean;
+        };
+    };
     title?: string;
     fetchingMode?: {};
     baseFilter?: Function;
@@ -51,8 +61,7 @@ export interface IProcessableCrudTableState {
 declare class ProcessableCrudTable extends React.Component<IProcessableCrudTableProps, IProcessableCrudTableState> {
     static defaultProps: {
         rbtProps: {};
-        entityCollection: any[];
-        processEngineClientApi: any;
+        entityCollection: {};
         title: any;
         fetchingMode: string;
         baseFilter: any;
