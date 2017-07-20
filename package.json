@@ -14,9 +14,9 @@
     "Simon Reymann <simon.reymann@quantusflow.com>"
   ],
   "dependencies": {
-    "@process-engine-js/core_contracts": "^1.0.45",
+    "@process-engine-js/core_contracts": "^1.0.48-0",
     "@process-engine-js/frontend_mui": "^1.0.1",
-    "@process-engine-js/process_engine_client_api": "^1.0.1",
+    "@process-engine-js/process_engine_client_api": "^1.0.8-0",
     "babel-plugin-add-module-exports": "^0.2.1",
     "babel-plugin-syntax-async-functions": "^6.13.0",
     "babel-plugin-transform-decorators-legacy": "^1.3.4",
