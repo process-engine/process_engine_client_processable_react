@@ -131,6 +131,7 @@ class ProcessableContainer extends React.Component {
                     {
                         let confirmElements = [];
                         let confirmMessage = '';
+                        let confirmImageUrl = null;
                         const convertLayout = (confirmLayout) => {
                             return confirmLayout.map((element) => {
                                 const elementObj = {
@@ -154,6 +155,9 @@ class ProcessableContainer extends React.Component {
                             if (this.props.uiConfig.hasOwnProperty('layout')) {
                                 confirmElements = convertLayout(this.props.uiConfig.layout);
                             }
+                            if (this.props.uiConfig.hasOwnProperty('imageUrl')) {
+                                confirmImageUrl = this.props.uiConfig.imageUrl;
+                            }
                         }
                         else {
                             const confirmLayoutArr = processInstance.nextTaskDef.extensions.properties.filter((property) => property.name === 'confirmLayout');
@@ -167,13 +171,18 @@ class ProcessableContainer extends React.Component {
                                 confirmMessage = mustache.render(confirmMessageArr[0].value, tokenData);
                             }
                         }
+                        let widgetChildren = null;
+                        if (confirmImageUrl) {
+                            widgetChildren = React.createElement("img", { src: confirmImageUrl });
+                        }
                         widget = {
                             component: Confirm_js_1.default,
                             isModal: this.props.modal,
                             props: {
                                 theme: this.props.widgetTheme,
                                 layout: confirmElements,
-                                message: confirmMessage
+                                message: confirmMessage,
+                                children: [widgetChildren]
                             }
                         };
                     }
@@ -299,7 +308,12 @@ class ProcessableContainer extends React.Component {
                     this.handleProceed(this.props.executionContext);
                 });
             };
-            widget = React.createElement(this.widgetConfig.component, Object.assign({ onChoose: (key) => onChoose(key) }, this.widgetConfig.props));
+            debugger;
+            let childs = [];
+            if (this.widgetConfig.props && this.widgetConfig.props.children) {
+                childs = childs.concat(this.widgetConfig.props.children);
+            }
+            widget = React.createElement(this.widgetConfig.component, Object.assign({ onChoose: (key) => onChoose(key) }, this.widgetConfig.props), childs);
         }
         if (processInstance) {
             let tokenDataElement = null;

@@ -17,7 +17,7 @@ const DropDown_js_1 = require("@process-engine-js/frontend_mui/dist/commonjs/Inp
 const MenuItem_js_1 = require("material-ui/MenuItem/MenuItem.js");
 const expand_more_js_1 = require("material-ui/svg-icons/navigation/expand-more.js");
 const TableOverlay_1 = require("./TableOverlay");
-const $ = require('jquery');
+const $ = require('jquery'); // tslint:disable-line no-var-requires
 class ProcessableTable extends React.Component {
     constructor(props) {
         super(props);

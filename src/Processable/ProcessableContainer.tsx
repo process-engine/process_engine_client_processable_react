@@ -203,6 +203,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
         case 'Confirm': {
           let confirmElements = [];
           let confirmMessage = '';
+          let confirmImageUrl = null;
 
           const convertLayout = (confirmLayout) => {
             return confirmLayout.map((element) => {
@@ -230,6 +231,9 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
             if (this.props.uiConfig.hasOwnProperty('layout')) {
               confirmElements = convertLayout(this.props.uiConfig.layout);
             }
+            if (this.props.uiConfig.hasOwnProperty('imageUrl')) {
+              confirmImageUrl = this.props.uiConfig.imageUrl;
+            }
           } else {
             const confirmLayoutArr = processInstance.nextTaskDef.extensions.properties.filter((property) => property.name === 'confirmLayout');
             const confirmMessageArr = processInstance.nextTaskDef.extensions.properties.filter((property) => property.name === 'confirmMessage');
@@ -244,13 +248,19 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
             }
           }
 
+          let widgetChildren = null;
+          if (confirmImageUrl) {
+            widgetChildren = <img src={confirmImageUrl}/>;
+          }
+
           widget = {
             component: Confirm,
             isModal: this.props.modal,
             props: {
               theme: this.props.widgetTheme,
               layout: confirmElements,
-              message: confirmMessage
+              message: confirmMessage,
+              children: [widgetChildren]
             }
           };
         }
@@ -417,7 +427,14 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
           this.handleProceed(this.props.executionContext);
         });
       };
-      widget = <this.widgetConfig.component onChoose={(key) => onChoose(key)} {...this.widgetConfig.props}/>;
+
+      debugger;
+      let childs = [];
+      if (this.widgetConfig.props && this.widgetConfig.props.children) {
+        childs = childs.concat(this.widgetConfig.props.children);
+      }
+
+      widget = <this.widgetConfig.component onChoose={(key) => onChoose(key)} {...this.widgetConfig.props}>{childs}</this.widgetConfig.component>;
     }
 
     if (processInstance) {

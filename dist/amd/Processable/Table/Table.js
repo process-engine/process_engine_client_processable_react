@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 define(["require", "exports", "react", "@process-engine-js/frontend_mui/dist/commonjs/Tables/Table/Table.js", "@process-engine-js/frontend_mui/dist/commonjs/Buttons/RaisedButton/RaisedButton.js", "@process-engine-js/frontend_mui/dist/commonjs/InputForms/TextField/TextField.js", "../ProcessableContainer", "@process-engine-js/frontend_mui/dist/commonjs/InputForms/DropDown/DropDown.js", "material-ui/MenuItem/MenuItem.js", "material-ui/svg-icons/navigation/expand-more.js", "./TableOverlay"], function (require, exports, React, Table_js_1, RaisedButton_js_1, TextField_js_1, ProcessableContainer_1, DropDown_js_1, MenuItem_js_1, expand_more_js_1, TableOverlay_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    const $ = require('jquery');
+    const $ = require('jquery'); // tslint:disable-line no-var-requires
     class ProcessableTable extends React.Component {
         constructor(props) {
             super(props);
