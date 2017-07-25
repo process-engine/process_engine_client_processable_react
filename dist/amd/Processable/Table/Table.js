@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 define(["require", "exports", "react", "@process-engine-js/frontend_mui/dist/commonjs/Tables/Table/Table.js", "@process-engine-js/frontend_mui/dist/commonjs/Buttons/RaisedButton/RaisedButton.js", "@process-engine-js/frontend_mui/dist/commonjs/InputForms/TextField/TextField.js", "../ProcessableContainer", "@process-engine-js/frontend_mui/dist/commonjs/InputForms/DropDown/DropDown.js", "material-ui/MenuItem/MenuItem.js", "material-ui/svg-icons/navigation/expand-more.js", "./TableOverlay"], function (require, exports, React, Table_js_1, RaisedButton_js_1, TextField_js_1, ProcessableContainer_1, DropDown_js_1, MenuItem_js_1, expand_more_js_1, TableOverlay_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    const $ = require('jquery');
+    const $ = require('jquery'); // tslint:disable-line no-var-requires
     class ProcessableTable extends React.Component {
         constructor(props) {
             super(props);
@@ -94,7 +94,7 @@ define(["require", "exports", "react", "@process-engine-js/frontend_mui/dist/com
         handleStartCreate(startToken, onProcessEnded, done) {
             return __awaiter(this, void 0, void 0, function* () {
                 if (this.props.processEngineClientApi) {
-                    yield this.props.processEngineClientApi.startProcess((this.props.createProcessKey + this.props.dataClassName), this, this.props.executionContext, startToken);
+                    yield this.props.processEngineClientApi.startProcess((this.props.createProcessKey + this.props.dataClassName), this, this.props.executionContext, (startToken ? (typeof startToken === 'function' ? startToken() : startToken) : null));
                     if (done) {
                         done();
                     }
@@ -281,7 +281,7 @@ define(["require", "exports", "react", "@process-engine-js/frontend_mui/dist/com
                                         padding: this.props.theme.distances.halfPrimary,
                                         marginLeft: this.props.theme.distances.halfPrimary
                                     } },
-                                    React.createElement(TableOverlay_1.default, { menuSchema: menuSchema, tableOverlayStyles: this.props.tableOverlayStyles, onMenuItemClicked: (key) => {
+                                    React.createElement(TableOverlay_1.default, { menuSchema: menuSchema, tableOverlayStyles: this.props.tableOverlayStyles, theme: this.props.tableOverlayTheme, onMenuItemClicked: (key) => {
                                             const matchedButtonSchemaItems = itemBasedMoreButtons.filter((buttonSchemaItem) => (buttonSchemaItem.key === key));
                                             let buttonSchemaItem = null;
                                             if (matchedButtonSchemaItems.length === 1) {
@@ -423,6 +423,7 @@ define(["require", "exports", "react", "@process-engine-js/frontend_mui/dist/com
         onCreateProcessEnded: null,
         onItemProcessEnded: null,
         tableTheme: null,
+        tableOverlayTheme: null,
         tableSelectorTheme: null
     };
     exports.default = ProcessableTable;

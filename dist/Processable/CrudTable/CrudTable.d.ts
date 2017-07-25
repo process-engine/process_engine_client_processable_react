@@ -20,12 +20,16 @@ export interface IProcessableCrudTableProps extends IMUIProps {
     title?: string;
     fetchingMode?: {};
     baseFilter?: Function;
+    extendedFilter?: Function;
     pageSize?: number;
     entityTypeName?: string;
     defaultSortName?: string;
     defaultSortOrder?: string;
     onRowDoubleClick?: Function;
     createStartToken?: {};
+    createButtonMuiProps?: {};
+    createButtonQflProps?: {};
+    createButtonProps?: {};
     createButtonTheme?: {};
     createDialogTheme?: {};
     createFormItemTheme?: {};
@@ -46,6 +50,7 @@ export interface IProcessableCrudTableProps extends IMUIProps {
     tableStyles?: {};
     theme?: {};
     tableTheme?: {};
+    tableOverlayTheme?: {};
     tableSelectorTheme?: {};
 }
 export interface IProcessableCrudTableState {
@@ -65,12 +70,16 @@ declare class ProcessableCrudTable extends React.Component<IProcessableCrudTable
         title: any;
         fetchingMode: string;
         baseFilter: any;
+        extendedFilter: () => {};
         pageSize: number;
         entityTypeName: string;
         defaultSortName: string;
         defaultSortOrder: string;
         onRowDoubleClick: any;
         createStartToken: any;
+        createButtonMuiProps: any;
+        createButtonQflProps: any;
+        createButtonProps: any;
         createButtonTheme: any;
         createDialogTheme: any;
         createFormItemTheme: any;
@@ -91,6 +100,7 @@ declare class ProcessableCrudTable extends React.Component<IProcessableCrudTable
         tableStyles: any;
         theme: any;
         tableTheme: any;
+        tableOverlayTheme: any;
         tableSelectorTheme: any;
     };
     constructor(props: any);

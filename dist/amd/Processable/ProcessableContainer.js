@@ -301,7 +301,6 @@ define(["require", "exports", "react", "@process-engine-js/frontend_mui/dist/com
                         this.handleProceed(this.props.executionContext);
                     });
                 };
-                debugger;
                 let childs = [];
                 if (this.widgetConfig.props && this.widgetConfig.props.children) {
                     childs = childs.concat(this.widgetConfig.props.children);

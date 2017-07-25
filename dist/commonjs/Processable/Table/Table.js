@@ -17,7 +17,7 @@ const DropDown_js_1 = require("@process-engine-js/frontend_mui/dist/commonjs/Inp
 const MenuItem_js_1 = require("material-ui/MenuItem/MenuItem.js");
 const expand_more_js_1 = require("material-ui/svg-icons/navigation/expand-more.js");
 const TableOverlay_1 = require("./TableOverlay");
-const $ = require('jquery');
+const $ = require('jquery'); // tslint:disable-line no-var-requires
 class ProcessableTable extends React.Component {
     constructor(props) {
         super(props);
@@ -102,7 +102,7 @@ class ProcessableTable extends React.Component {
     handleStartCreate(startToken, onProcessEnded, done) {
         return __awaiter(this, void 0, void 0, function* () {
             if (this.props.processEngineClientApi) {
-                yield this.props.processEngineClientApi.startProcess((this.props.createProcessKey + this.props.dataClassName), this, this.props.executionContext, startToken);
+                yield this.props.processEngineClientApi.startProcess((this.props.createProcessKey + this.props.dataClassName), this, this.props.executionContext, (startToken ? (typeof startToken === 'function' ? startToken() : startToken) : null));
                 if (done) {
                     done();
                 }
@@ -289,7 +289,7 @@ class ProcessableTable extends React.Component {
                                     padding: this.props.theme.distances.halfPrimary,
                                     marginLeft: this.props.theme.distances.halfPrimary
                                 } },
-                                React.createElement(TableOverlay_1.default, { menuSchema: menuSchema, tableOverlayStyles: this.props.tableOverlayStyles, onMenuItemClicked: (key) => {
+                                React.createElement(TableOverlay_1.default, { menuSchema: menuSchema, tableOverlayStyles: this.props.tableOverlayStyles, theme: this.props.tableOverlayTheme, onMenuItemClicked: (key) => {
                                         const matchedButtonSchemaItems = itemBasedMoreButtons.filter((buttonSchemaItem) => (buttonSchemaItem.key === key));
                                         let buttonSchemaItem = null;
                                         if (matchedButtonSchemaItems.length === 1) {
@@ -431,6 +431,7 @@ ProcessableTable.defaultProps = {
     onCreateProcessEnded: null,
     onItemProcessEnded: null,
     tableTheme: null,
+    tableOverlayTheme: null,
     tableSelectorTheme: null
 };
 exports.default = ProcessableTable;

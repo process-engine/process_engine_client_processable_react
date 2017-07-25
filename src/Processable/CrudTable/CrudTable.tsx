@@ -19,6 +19,7 @@ export interface IProcessableCrudTableProps extends IMUIProps {
   title?: string;
   fetchingMode?: {};
   baseFilter?: Function;
+  extendedFilter?: Function;
 
   pageSize?: number;
   entityTypeName?: string;
@@ -27,6 +28,9 @@ export interface IProcessableCrudTableProps extends IMUIProps {
   onRowDoubleClick?: Function;
 
   createStartToken?: {};
+  createButtonMuiProps?: {};
+  createButtonQflProps?: {};
+  createButtonProps?: {};
   createButtonTheme?: {};
   createDialogTheme?: {};
   createFormItemTheme?: {};
@@ -53,6 +57,7 @@ export interface IProcessableCrudTableProps extends IMUIProps {
 
   theme?: {};
   tableTheme?: {};
+  tableOverlayTheme?: {};
   tableSelectorTheme?: {};
 }
 
@@ -75,6 +80,7 @@ class ProcessableCrudTable extends React.Component<IProcessableCrudTableProps, I
     title: null,
     fetchingMode: 'initial',
     baseFilter: null,
+    extendedFilter: () => ({}),
 
     pageSize: 16,
     entityTypeName: 'Entity',
@@ -83,6 +89,9 @@ class ProcessableCrudTable extends React.Component<IProcessableCrudTableProps, I
     onRowDoubleClick: null,
 
     createStartToken: null,
+    createButtonMuiProps: null,
+    createButtonQflProps: null,
+    createButtonProps: null,
     createButtonTheme: null,
     createDialogTheme: null,
     createFormItemTheme: null,
@@ -109,6 +118,7 @@ class ProcessableCrudTable extends React.Component<IProcessableCrudTableProps, I
 
     theme: null,
     tableTheme: null,
+    tableOverlayTheme: null,
     tableSelectorTheme: null
   };
 
@@ -140,7 +150,8 @@ class ProcessableCrudTable extends React.Component<IProcessableCrudTableProps, I
               this.props.baseFilter()
             ] : []
           )
-        })
+        }),
+        ...this.props.extendedFilter()
       },
       (e) => {
         if (e.mounted && !e.done) {
@@ -278,7 +289,8 @@ class ProcessableCrudTable extends React.Component<IProcessableCrudTableProps, I
                     this.getGlobalSearchFilter(searchValue, true)
                   ]
                 )
-              })
+              }),
+              ...this.props.extendedFilter()
             },
             (e) => {
               if (e.mounted && !e.done) {
@@ -308,7 +320,8 @@ class ProcessableCrudTable extends React.Component<IProcessableCrudTableProps, I
                     this.props.baseFilter()
                   ] : []
                 )
-              })
+              }),
+              ...this.props.extendedFilter()
             },
             (e) => {
               if (e.mounted && !e.done) {
@@ -494,6 +507,10 @@ class ProcessableCrudTable extends React.Component<IProcessableCrudTableProps, I
           createProcessKey='Create'
           createStartToken={this.props.createStartToken}
 
+          createButtonMuiProps={this.props.createButtonMuiProps}
+          createButtonQflProps={this.props.createButtonQflProps}
+          createButtonProps={this.props.createButtonProps}
+
           createButtonTheme={this.props.createButtonTheme}
           createDialogTheme={this.props.createDialogTheme}
           createFormItemTheme={this.props.createFormItemTheme}
@@ -509,6 +526,7 @@ class ProcessableCrudTable extends React.Component<IProcessableCrudTableProps, I
           searchFieldTheme={this.props.searchFieldTheme}
 
           tableTheme={this.props.tableTheme}
+          tableOverlayTheme={this.props.tableOverlayTheme}
           tableSelectorTheme={this.props.tableSelectorTheme}
 
           title={this.props.title}

@@ -69,6 +69,7 @@ export interface ITableProps extends IMUIProps {
         tableHeaderColumnSelectorClassName?: string;
     };
     tableTheme?: {};
+    tableOverlayTheme?: {};
     tableSelectorTheme?: {};
 }
 export interface ITableState {
@@ -148,6 +149,7 @@ declare class ProcessableTable extends React.Component<ITableProps, ITableState>
         onCreateProcessEnded: any;
         onItemProcessEnded: any;
         tableTheme: any;
+        tableOverlayTheme: any;
         tableSelectorTheme: any;
     };
     constructor(props: any);

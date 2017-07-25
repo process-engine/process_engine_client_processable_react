@@ -18,18 +18,13 @@ class ProcessableCrudTable extends React.Component {
         };
     }
     componentDidMount() {
-        this.props.fetcher({
-            mode: 'load',
-            offset: this.state.currentOffset,
-            first: this.props.pageSize,
-            query: JSON.stringify({
+        this.props.fetcher(Object.assign({ mode: 'load', offset: this.state.currentOffset, first: this.props.pageSize, query: JSON.stringify({
                 operator: 'and',
                 queries: (this.props.baseFilter
                     ? [
                         this.props.baseFilter()
                     ] : [])
-            })
-        }, (e) => {
+            }) }, this.props.extendedFilter()), (e) => {
             if (e.mounted && !e.done) {
                 this.setState({
                     isFetching: true,
@@ -128,11 +123,7 @@ class ProcessableCrudTable extends React.Component {
             currentOffset: 0
         }, () => {
             if (searchValue) {
-                this.props.fetcher({
-                    mode: 'reload',
-                    offset: this.state.currentOffset,
-                    first: this.state.currentFirst,
-                    query: JSON.stringify({
+                this.props.fetcher(Object.assign({ mode: 'reload', offset: this.state.currentOffset, first: this.state.currentFirst, query: JSON.stringify({
                         operator: 'and',
                         queries: (this.props.baseFilter
                             ? [
@@ -143,8 +134,7 @@ class ProcessableCrudTable extends React.Component {
                             ] : [
                             this.getGlobalSearchFilter(searchValue, true)
                         ])
-                    })
-                }, (e) => {
+                    }) }, this.props.extendedFilter()), (e) => {
                     if (e.mounted && !e.done) {
                         this.setState({
                             synced: false,
@@ -161,18 +151,13 @@ class ProcessableCrudTable extends React.Component {
                 });
             }
             else {
-                this.props.fetcher({
-                    mode: 'reload',
-                    offset: this.state.currentOffset,
-                    first: this.state.currentFirst,
-                    query: JSON.stringify({
+                this.props.fetcher(Object.assign({ mode: 'reload', offset: this.state.currentOffset, first: this.state.currentFirst, query: JSON.stringify({
                         operator: 'and',
                         queries: (this.props.baseFilter()
                             ? [
                                 this.props.baseFilter()
                             ] : [])
-                    })
-                }, (e) => {
+                    }) }, this.props.extendedFilter()), (e) => {
                     if (e.mounted && !e.done) {
                         this.setState({
                             synced: false,
@@ -308,7 +293,7 @@ class ProcessableCrudTable extends React.Component {
         });
         let tableElement = null;
         if (this.state.hasLoaded) {
-            tableElement = (React.createElement(Table_1.default, { tableOverlayStyles: this.props.tableOverlayStyles, tableStyles: this.props.tableStyles, executionContext: this.props.executionContext, processEngineClientApi: this.props.processEngineClientApi, theme: this.props.theme, ref: 'entitiesTable', dataClassName: this.props.entityTypeName, frame: false, onSearch: (searchValue) => this.handleSearch(searchValue), onCreateProcessEnded: (processKey, data) => this.handleCreateProcessEnded(processKey, data), onItemProcessEnded: (processKey, data) => this.handleItemProcessEnded(processKey, data), createProcessKey: 'Create', createStartToken: this.props.createStartToken, createButtonTheme: this.props.createButtonTheme, createDialogTheme: this.props.createDialogTheme, createFormItemTheme: this.props.createFormItemTheme, createConfirmTheme: this.props.createConfirmTheme, createWidgetTheme: this.props.createWidgetTheme, createTheme: this.props.createTheme, itemBasedButtonTheme: this.props.itemBasedButtonTheme, listBasedButtonTheme: this.props.listBasedButtonTheme, filterMenuTheme: this.props.filterMenuTheme, baseFilterMenuTheme: this.props.baseFilterMenuTheme, searchFieldTheme: this.props.searchFieldTheme, tableTheme: this.props.tableTheme, tableSelectorTheme: this.props.tableSelectorTheme, title: this.props.title, data: this.prepareCollection(), itemBasedButtonSchema: this.props.itemBasedButtonSchema, listBasedButtonSchema: this.props.listBasedButtonSchema, filterMenuSchema: this.props.filterMenuSchema, baseFilterMenuSchema: this.props.baseFilterMenuSchema, tableProps: Object.assign({ rbtProps: Object.assign({ remote: true, sortName: this.props.defaultSortName, sortOrder: this.props.defaultSortOrder, defaultSortName: this.props.defaultSortName, defaultSortOrder: this.props.defaultSortOrder, options: {
+            tableElement = (React.createElement(Table_1.default, { tableOverlayStyles: this.props.tableOverlayStyles, tableStyles: this.props.tableStyles, executionContext: this.props.executionContext, processEngineClientApi: this.props.processEngineClientApi, theme: this.props.theme, ref: 'entitiesTable', dataClassName: this.props.entityTypeName, frame: false, onSearch: (searchValue) => this.handleSearch(searchValue), onCreateProcessEnded: (processKey, data) => this.handleCreateProcessEnded(processKey, data), onItemProcessEnded: (processKey, data) => this.handleItemProcessEnded(processKey, data), createProcessKey: 'Create', createStartToken: this.props.createStartToken, createButtonMuiProps: this.props.createButtonMuiProps, createButtonQflProps: this.props.createButtonQflProps, createButtonProps: this.props.createButtonProps, createButtonTheme: this.props.createButtonTheme, createDialogTheme: this.props.createDialogTheme, createFormItemTheme: this.props.createFormItemTheme, createConfirmTheme: this.props.createConfirmTheme, createWidgetTheme: this.props.createWidgetTheme, createTheme: this.props.createTheme, itemBasedButtonTheme: this.props.itemBasedButtonTheme, listBasedButtonTheme: this.props.listBasedButtonTheme, filterMenuTheme: this.props.filterMenuTheme, baseFilterMenuTheme: this.props.baseFilterMenuTheme, searchFieldTheme: this.props.searchFieldTheme, tableTheme: this.props.tableTheme, tableOverlayTheme: this.props.tableOverlayTheme, tableSelectorTheme: this.props.tableSelectorTheme, title: this.props.title, data: this.prepareCollection(), itemBasedButtonSchema: this.props.itemBasedButtonSchema, listBasedButtonSchema: this.props.listBasedButtonSchema, filterMenuSchema: this.props.filterMenuSchema, baseFilterMenuSchema: this.props.baseFilterMenuSchema, tableProps: Object.assign({ rbtProps: Object.assign({ remote: true, sortName: this.props.defaultSortName, sortOrder: this.props.defaultSortOrder, defaultSortName: this.props.defaultSortName, defaultSortOrder: this.props.defaultSortOrder, options: {
                             onRowDoubleClick: (row) => this.handleRowDoubleClick(row),
                             onSortChange: (sortName, sortOrder) => this.handleSortChange(sortName, sortOrder),
                             onLoadMore: () => this.handleLoadMore()
@@ -325,12 +310,16 @@ ProcessableCrudTable.defaultProps = {
     title: null,
     fetchingMode: 'initial',
     baseFilter: null,
+    extendedFilter: () => ({}),
     pageSize: 16,
     entityTypeName: 'Entity',
     defaultSortName: 'id',
     defaultSortOrder: 'asc',
     onRowDoubleClick: null,
     createStartToken: null,
+    createButtonMuiProps: null,
+    createButtonQflProps: null,
+    createButtonProps: null,
     createButtonTheme: null,
     createDialogTheme: null,
     createFormItemTheme: null,
@@ -351,6 +340,7 @@ ProcessableCrudTable.defaultProps = {
     tableStyles: null,
     theme: null,
     tableTheme: null,
+    tableOverlayTheme: null,
     tableSelectorTheme: null
 };
 exports.default = ProcessableCrudTable;

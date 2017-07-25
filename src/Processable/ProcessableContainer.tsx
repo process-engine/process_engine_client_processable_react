@@ -428,7 +428,6 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
         });
       };
 
-      debugger;
       let childs = [];
       if (this.widgetConfig.props && this.widgetConfig.props.children) {
         childs = childs.concat(this.widgetConfig.props.children);

@@ -97,6 +97,7 @@ export interface ITableProps extends IMUIProps {
   };
 
   tableTheme?: {};
+  tableOverlayTheme?: {};
   tableSelectorTheme?: {};
 }
 
@@ -191,6 +192,7 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
     onItemProcessEnded: null,
 
     tableTheme: null,
+    tableOverlayTheme: null,
     tableSelectorTheme: null
   };
 
@@ -282,7 +284,7 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
         (this.props.createProcessKey + this.props.dataClassName),
         this,
         this.props.executionContext,
-        startToken
+        (startToken ? (typeof startToken === 'function' ? startToken() : startToken ) : null)
       );
       if (done) {
         done();
@@ -577,6 +579,7 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
                 <TableOverlay
                   menuSchema={menuSchema}
                   tableOverlayStyles={this.props.tableOverlayStyles}
+                  theme={this.props.tableOverlayTheme}
                   onMenuItemClicked={(key) => {
                     const matchedButtonSchemaItems = itemBasedMoreButtons.filter((buttonSchemaItem) => (buttonSchemaItem.key === key));
                     let buttonSchemaItem = null;
