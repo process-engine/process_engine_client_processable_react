@@ -62,6 +62,18 @@ define(["require", "exports", "react", "@process-engine-js/frontend_mui/dist/com
             });
         }
         ;
+        handleEvent(processInstance, eventType, eventData) {
+            return __awaiter(this, void 0, void 0, function* () {
+                console.log('got event: ', eventData);
+            });
+        }
+        ;
+        handleCancel(processInstance) {
+            return __awaiter(this, void 0, void 0, function* () {
+                console.log('got event cancel');
+            });
+        }
+        ;
         handleEndEvent(processInstance, endEventData) {
             return __awaiter(this, void 0, void 0, function* () {
                 switch (processInstance.processKey) {

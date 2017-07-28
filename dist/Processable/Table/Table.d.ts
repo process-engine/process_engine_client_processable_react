@@ -156,6 +156,8 @@ declare class ProcessableTable extends React.Component<ITableProps, ITableState>
     private renderProcessContainer(processInstance, uiName, uiConfig?, uiData?);
     handleUserTask(processInstance: IProcessInstance, uiName: string, uiConfig?: any, uiData?: any): Promise<void>;
     handleManualTask(processInstance: IProcessInstance, uiName: string, uiConfig?: any, uiData?: any): Promise<void>;
+    handleEvent(processInstance: IProcessInstance, eventType: string, eventData?: any): Promise<void>;
+    handleCancel(processInstance: IProcessInstance): Promise<void>;
     handleEndEvent(processInstance: IProcessInstance, endEventData?: any): Promise<void>;
     private handleStartCreate(startToken, onProcessEnded?, done?);
     private handleStartItem(processKey, startToken, onProcessEnded?, done?);
