@@ -245,6 +245,16 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
     return;
   };
 
+  public async handleEvent(processInstance: IProcessInstance, eventType: string, eventData?: any) {
+    console.log('got event: ', eventData);
+    // Todo: implement rerender
+  };
+
+  public async handleCancel(processInstance: IProcessInstance) {
+    console.log('got event cancel');
+    // Todo: implement rerender
+  };
+
   public async handleEndEvent(processInstance: IProcessInstance, endEventData?: any) {
     switch (processInstance.processKey) {
       case (this.props.createProcessKey + this.props.dataClassName):
