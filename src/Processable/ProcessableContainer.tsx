@@ -84,7 +84,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
     let widgetName = this.props.uiName;
 
     if (widgetName) {
-      const tokenData = processInstance;
+      const tokenData = (processInstance && processInstance.tokenData) || {};
 
       switch (widgetName) {
         case 'SelectableList': {
