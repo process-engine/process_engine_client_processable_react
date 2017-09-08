@@ -1,7 +1,7 @@
 import * as React from 'react';
 
-import Link from '@process-engine-js/frontend_mui/dist/commonjs/Buttons/Link/Link.js';
 import ToolBar from '@process-engine-js/frontend_mui/dist/commonjs/Bars/ToolBar/ToolBar.js';
+import Link from '@process-engine-js/frontend_mui/dist/commonjs/Buttons/Link/Link.js';
 import CheckBox from '@process-engine-js/frontend_mui/dist/commonjs/InputForms/CheckBox/CheckBox.js';
 import {IMUIProps} from '@process-engine-js/frontend_mui/dist/interfaces';
 
@@ -45,13 +45,13 @@ class TableOverlay extends React.Component<ITableOverlayProps, ITableOverlayStat
     menuItemClassName: null,
     checkBoxTheme: null,
     linkTheme: null,
-    onSelectedMenuItemsChange: null
+    onSelectedMenuItemsChange: null,
   };
 
   constructor() {
     super();
     this.state = {
-      selectedMenuItems: {}
+      selectedMenuItems: {},
     };
   }
 
@@ -65,13 +65,13 @@ class TableOverlay extends React.Component<ITableOverlayProps, ITableOverlayStat
       }
       this.setState(
         {
-          selectedMenuItems: currentSelectedMenuItems
+          selectedMenuItems: currentSelectedMenuItems,
         },
         () => {
           if (this.props.onSelectedMenuItemsChange) {
             this.props.onSelectedMenuItemsChange(currentSelectedMenuItems);
           }
-        }
+        },
       );
     }
   }
@@ -87,7 +87,7 @@ class TableOverlay extends React.Component<ITableOverlayProps, ITableOverlayStat
       theme: this.props.theme,
       sourceMuiProps: this.props.muiProps,
       sourceQflProps: this.props.qflProps,
-      componentName: 'TableOverlay'
+      componentName: 'TableOverlay',
     }) as {theme: any, qflProps: any, muiProps: any, componentName: string};
 
     return (
@@ -106,7 +106,7 @@ class TableOverlay extends React.Component<ITableOverlayProps, ITableOverlayStat
                 firstChild={(sectionIdx === 0)}
                 style={{
                   marginLeft: (sectionIdx === 0 ? theme.distances.secondary : theme.distances.tertiary),
-                  display: 'block'
+                  display: 'block',
                 }}
               >
                 {menuHeaderElement}
@@ -139,7 +139,7 @@ class TableOverlay extends React.Component<ITableOverlayProps, ITableOverlayStat
                         <span
                           key={itemIdx}
                           style={{
-                            cursor: 'pointer'
+                            cursor: 'pointer',
                           }}
                           onClick={(e) => {
                             this.handleItemMenuClicked(e, item.key);
@@ -152,7 +152,7 @@ class TableOverlay extends React.Component<ITableOverlayProps, ITableOverlayStat
                     return content;
                   })}
                 </span>
-              </ToolbarGroup>
+              </ToolbarGroup>,
             );
 
             if (sectionIdx < this.props.menuSchema.length - 1) {
@@ -167,9 +167,9 @@ class TableOverlay extends React.Component<ITableOverlayProps, ITableOverlayStat
                     marginLeft: '14px',
                     width: '2px',
                     display: 'block',
-                    backgroundColor: theme.brand.primary
+                    backgroundColor: theme.brand.primary,
                   }}
-                />
+                />,
               );
             }
             return (elements);

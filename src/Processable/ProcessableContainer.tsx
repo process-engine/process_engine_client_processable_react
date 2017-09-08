@@ -2,16 +2,16 @@ import * as React  from 'react';
 
 import RaisedButton from '@process-engine-js/frontend_mui/dist/commonjs/Buttons/RaisedButton/RaisedButton.js';
 import Dialog from '@process-engine-js/frontend_mui/dist/commonjs/Dialogs/Dialog/Dialog.js';
+import Confirm from '@process-engine-js/frontend_mui/dist/commonjs/InputForms/Confirm/Confirm.js';
 import Form from '@process-engine-js/frontend_mui/dist/commonjs/InputForms/Form/Form.js';
 import Table from '@process-engine-js/frontend_mui/dist/commonjs/Tables/Table/Table.js';
-import Confirm from '@process-engine-js/frontend_mui/dist/commonjs/InputForms/Confirm/Confirm.js';
 
 import {buildTheme} from '@process-engine-js/frontend_mui/dist/commonjs/themeBuilder.js';
 
-import * as mustache from 'mustache';
+import {ExecutionContext} from '@process-engine-js/core_contracts';
 import {IMUIProps} from '@process-engine-js/frontend_mui/dist/interfaces';
 import {IProcessInstance} from '@process-engine-js/process_engine_client_api';
-import {ExecutionContext} from '@process-engine-js/core_contracts';
+import * as mustache from 'mustache';
 
 export interface IProcessableContainerProps extends IMUIProps {
   processInstance: IProcessInstance;
@@ -63,7 +63,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
     dialogQflProps: null,
 
     uiConfig: null,
-    uiData: {}
+    uiData: {},
   };
 
   constructor(props: IProcessableContainerProps) {
@@ -73,7 +73,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
       modalOpen: props.modal,
       uiData: props.uiData,
       canceled: false,
-      processing: false
+      processing: false,
     };
   }
 
@@ -81,7 +81,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
     const { processInstance } = this.props;
 
     let widget = null;
-    let widgetName = this.props.uiName;
+    const widgetName = this.props.uiName;
 
     if (widgetName) {
       const tokenData = (processInstance && processInstance.tokenData) || {};
@@ -107,13 +107,13 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
               theme: this.props.widgetTheme,
               rbtProps: {
                 selectRow: {
-                  mode: 'radio'
-                }
-              }
-            }
+                  mode: 'radio',
+                },
+              },
+            },
           };
         }
-          break;
+                               break;
         case 'Form': {
           let formElements = [];
           if (processInstance.nextTaskDef.extensions.formFields && processInstance.nextTaskDef.extensions.formFields.length > 0) {
@@ -151,7 +151,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
                     options.radioButtonMuiProps = buildTheme({
                       theme: this.props.formItemTheme,
                       sourceMuiProps: {},
-                      componentName: 'RadioButton'
+                      componentName: 'RadioButton',
                     }).muiProps;
                   }
 
@@ -162,7 +162,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
                       if (value && label) {
                         return {
                           value,
-                          label
+                          label,
                         };
                       }
 
@@ -183,7 +183,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
                   type: parsedType,
                   muiProps,
                   key: formField.id,
-                  ...options
+                  ...options,
                 };
               }
               return null;
@@ -195,11 +195,11 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
             isModal: this.props.modal,
             props: {
               theme: this.props.widgetTheme,
-              layout: formElements
-            }
+              layout: formElements,
+            },
           };
         }
-          break;
+                     break;
         case 'Confirm': {
           let confirmElements = [];
           let confirmMessage = '';
@@ -210,13 +210,13 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
               const elementObj: any = {
                 theme: this.props.confirmItemTheme,
                 key: element.key,
-                label: element.label
+                label: element.label,
               };
 
               if (element.isCancel) {
                 elementObj.muiProps = {
                   primary: false,
-                  secondary: true
+                  secondary: true,
                 };
               }
 
@@ -260,11 +260,11 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
               theme: this.props.widgetTheme,
               layout: confirmElements,
               message: confirmMessage,
-              children: [widgetChildren]
-            }
+              children: [widgetChildren],
+            },
           };
         }
-          break;
+                        break;
         default:
           break;
       }
@@ -285,7 +285,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
         processInstance.doCancel(executionContext).then(() => {
           this.setState({
             canceled: true,
-            processing: true
+            processing: true,
           });
         });
       }
@@ -293,9 +293,9 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
 
     this.setState(
       {
-        modalOpen: false
+        modalOpen: false,
       },
-      fireCancel
+      fireCancel,
     );
   }
 
@@ -307,7 +307,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
         processInstance.doProceed(executionContext).then(() => {
           this.setState({
             canceled: false,
-            processing: true
+            processing: true,
           });
         });
       }
@@ -317,9 +317,9 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
       this.setState(
         {
           canceled: false,
-          modalOpen: false
+          modalOpen: false,
         },
-        fireProceed
+        fireProceed,
       );
     } else {
       fireProceed();
@@ -331,7 +331,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
       theme: this.props.theme,
       sourceMuiProps: this.props.muiProps,
       sourceQflProps: this.props.qflProps,
-      componentName: 'Processable'
+      componentName: 'Processable',
     });
 
     const { processInstance } = this.props;
@@ -346,12 +346,12 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
           theme={this.props.buttonTheme}
           muiProps={{
             label: 'Auswählen',
-            primary: true
+            primary: true,
           }}
           qflProps={{
             onClick: (e) => {
               this.handleProceed(this.props.executionContext);
-            }
+            },
           }}
         />
       );
@@ -366,7 +366,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
           if (selectedItem) {
             const mergedUiData = Object.assign(this.state.uiData, selectedItem);
             this.setState({
-              uiData: mergedUiData
+              uiData: mergedUiData,
             });
           }
         }
@@ -379,12 +379,12 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
           theme={this.props.buttonTheme}
           muiProps={{
             label: 'Weiter',
-            primary: true
+            primary: true,
           }}
           qflProps={{
             onClick: (e) => {
               this.handleProceed(this.props.executionContext);
-            }
+            },
           }}
         />
       );
@@ -395,12 +395,12 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
             theme={this.props.buttonTheme}
             muiProps={{
               label: 'Abbrechen',
-              primary: true
+              primary: true,
             }}
             qflProps={{
               onClick: (e) => {
                 this.handleCancel(this.props.executionContext);
-              }
+              },
             }}
           />
         );
@@ -409,19 +409,19 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
       const onChange = (formData) => {
         const mergedUiData = Object.assign(this.state.uiData, formData);
         this.setState({
-          uiData: mergedUiData
+          uiData: mergedUiData,
         });
       };
       widget = <this.widgetConfig.component onChange={(formData) => onChange(formData)} {...this.widgetConfig.props}/>;
     } else if (this.widgetConfig && this.widgetConfig.component && this.widgetConfig.component.name === 'Confirm') {
       const onChoose = (key) => {
         const confirmData = {
-          key
+          key,
         };
         const mergedUiData = Object.assign(this.state.uiData, confirmData);
         this.setState(
         {
-          uiData: mergedUiData
+          uiData: mergedUiData,
         },
         () => {
           this.handleProceed(this.props.executionContext);
@@ -452,7 +452,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
               display: 'inline-block',
               top: '170px',
               left: '10px',
-              padding: '0px'
+              padding: '0px',
             }}
           />
         );
@@ -465,7 +465,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
               style={{
                 display: 'inline-block',
                 padding: '10px',
-                textAlign: 'left'
+                textAlign: 'left',
               }}
               {...qflProps}
             >
@@ -476,10 +476,10 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
                   actions: [cancelButton, proceedButton],
                   modal: true,
                   open: this.state.modalOpen,
-                  ...this.props.dialogMuiProps
+                  ...this.props.dialogMuiProps,
                 }}
                 qflProps={{
-                  ...this.props.dialogQflProps
+                  ...this.props.dialogQflProps,
                 }}
               >
                 {widget}<br/>
@@ -492,7 +492,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
         return (
           <div
             style={{
-              padding: '10px'
+              padding: '10px',
             }}
             {...qflProps}
           >
@@ -515,7 +515,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
           style={{
             display: 'table',
             padding: '10px',
-            margin: '0 auto'
+            margin: '0 auto',
           }}
           {...qflProps}
         >
@@ -523,7 +523,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
             style={{
               display: 'table-cell',
               textAlign: 'center',
-              verticalAlign: 'middle'
+              verticalAlign: 'middle',
             }}
           >
             {processingComponent}

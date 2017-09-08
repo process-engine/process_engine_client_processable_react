@@ -1,10 +1,10 @@
 import * as React from 'react';
 
-import Table from '@process-engine-js/frontend_mui/dist/commonjs/Tables/Table/Table.js';
 import RaisedButton from '@process-engine-js/frontend_mui/dist/commonjs/Buttons/RaisedButton/RaisedButton.js';
-import TextField from '@process-engine-js/frontend_mui/dist/commonjs/InputForms/TextField/TextField.js';
-import ProcessableContainer from '../ProcessableContainer';
 import DropDown from '@process-engine-js/frontend_mui/dist/commonjs/InputForms/DropDown/DropDown.js';
+import TextField from '@process-engine-js/frontend_mui/dist/commonjs/InputForms/TextField/TextField.js';
+import Table from '@process-engine-js/frontend_mui/dist/commonjs/Tables/Table/Table.js';
+import ProcessableContainer from '../ProcessableContainer';
 
 import MenuItem from 'material-ui/MenuItem/MenuItem.js';
 import ExpandMoreIcon from 'material-ui/svg-icons/navigation/expand-more.js';
@@ -12,9 +12,9 @@ import TableOverlay from './TableOverlay';
 
 const $ = require('jquery'); // tslint:disable-line no-var-requires
 
+import {ExecutionContext} from '@process-engine-js/core_contracts';
 import {IMUIProps} from '@process-engine-js/frontend_mui/dist/interfaces';
 import {IProcessable, IProcessEngineClientApi, IProcessInstance} from '@process-engine-js/process_engine_client_api';
-import {ExecutionContext} from '@process-engine-js/core_contracts';
 
 export interface ITableProps extends IMUIProps {
   dataClassName: string;
@@ -136,11 +136,11 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
       tableRowClassName: null,
       tableHeaderRowClassName: null,
       tableColumnSelectorClassName: null,
-      tableHeaderColumnSelectorClassName: null
+      tableHeaderColumnSelectorClassName: null,
     },
     tableOverlayStyles: {
       menuHeaderClassName: null,
-      menuItemClassName: null
+      menuItemClassName: null,
     },
 
     createProcessKey: null,
@@ -169,7 +169,7 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
     searchFieldProps: null,
     searchValue: null,
     tableProps: {
-      rbtProps: {}
+      rbtProps: {},
     },
     data: null,
     controlledHeight: null,
@@ -193,7 +193,7 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
 
     tableTheme: null,
     tableOverlayTheme: null,
-    tableSelectorTheme: null
+    tableSelectorTheme: null,
   };
 
   constructor(props) {
@@ -209,7 +209,7 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
 
       currentItemProcessKey: null,
       currentItemOnProcessEnded: null,
-      itemProcessableContainer: null
+      itemProcessableContainer: null,
     };
   }
 
@@ -221,7 +221,7 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
                                 processInstance={processInstance} executionContext={this.props.executionContext} uiName={uiName} uiConfig={uiConfig} uiData={uiData}/>
         );
         this.setState({
-          createProcessableContainer
+          createProcessableContainer,
         });
         break;
       case (this.state.currentItemProcessKey):
@@ -230,49 +230,49 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
                                 processInstance={processInstance} executionContext={this.props.executionContext} uiName={uiName} uiConfig={uiConfig} uiData={uiData}/>
         );
         this.setState({
-          itemProcessableContainer
+          itemProcessableContainer,
         });
         break;
       default:
     }
-  };
+  }
 
   public async handleUserTask(processInstance: IProcessInstance, uiName: string, uiConfig?: any, uiData?: any) {
     this.renderProcessContainer(processInstance, uiName, uiConfig, uiData);
-  };
+  }
 
   public async handleManualTask(processInstance: IProcessInstance, uiName: string, uiConfig?: any, uiData?: any) {
     return;
-  };
+  }
 
   public async handleEvent(processInstance: IProcessInstance, eventType: string, eventData?: any) {
     console.log('got event: ', eventData);
     // Todo: implement rerender
-  };
+  }
 
   public async handleCancel(processInstance: IProcessInstance) {
     console.log('got event cancel');
     // Todo: implement rerender
-  };
+  }
 
   public async handleEndEvent(processInstance: IProcessInstance, endEventData?: any) {
     switch (processInstance.processKey) {
       case (this.props.createProcessKey + this.props.dataClassName):
         this.setState(
           {
-            createProcessableContainer: null
+            createProcessableContainer: null,
           },
           () => {
             if (this.state.createOnProcessEnded) {
               this.state.createOnProcessEnded();
             }
-          }
+          },
         );
         break;
       case (this.state.currentItemProcessKey):
         this.setState(
           {
-            itemProcessableContainer: null
+            itemProcessableContainer: null,
           },
           () => {
             if (this.state.currentItemOnProcessEnded) {
@@ -281,12 +281,12 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
             if (this.props.onItemProcessEnded) {
               this.props.onItemProcessEnded(this.state.currentItemProcessKey, endEventData);
             }
-          }
+          },
         );
         break;
       default:
     }
-  };
+  }
 
   private async handleStartCreate(startToken, onProcessEnded?: Function, done?: Function) {
     if (this.props.processEngineClientApi) {
@@ -294,13 +294,13 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
         (this.props.createProcessKey + this.props.dataClassName),
         this,
         this.props.executionContext,
-        (startToken ? (typeof startToken === 'function' ? startToken() : startToken ) : null)
+        (startToken ? (typeof startToken === 'function' ? startToken() : startToken ) : null),
       );
       if (done) {
         done();
       }
       this.setState({
-        createOnProcessEnded: onProcessEnded
+        createOnProcessEnded: onProcessEnded,
       });
     }
   }
@@ -311,21 +311,21 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
         processKey,
         this,
         this.props.executionContext,
-        startToken
+        startToken,
       );
       if (done) {
         done();
       }
       this.setState({
         currentItemOnProcessEnded: onProcessEnded,
-        currentItemProcessKey: processKey
+        currentItemProcessKey: processKey,
       });
     }
   }
 
   private delay = (() => {
     let timer: NodeJS.Timer = null;
-    return (callback: (...args: any[]) => void, ms: number) => {
+    return (callback: (...args: Array<any>) => void, ms: number) => {
       clearTimeout(timer);
       timer = setTimeout(callback, ms);
     };
@@ -333,7 +333,7 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
 
   private handleItemClicked(item) {
     this.setState({
-      isItemBasedMoreMenuOpened: false
+      isItemBasedMoreMenuOpened: false,
     });
 
     const selectedItems = [];
@@ -364,7 +364,7 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
 
   private handleSelectedRowsChanged(selectedRows) {
     this.setState({
-      selectedRows
+      selectedRows,
     });
   }
 
@@ -408,12 +408,12 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
             primary: true,
             className: this.props.tableStyles.createButtonClassName,
             style: {
-              borderRadius: '0px'
+              borderRadius: '0px',
             },
             onClick: (e) => {
               this.handleStartCreate(this.props.createStartToken, this.props.onCreateProcessEnded);
             },
-            ...this.props.createButtonMuiProps
+            ...this.props.createButtonMuiProps,
           }}
           qflProps={{
             style: {
@@ -421,15 +421,15 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
               width: 'auto',
               display: 'inline-block',
               top: '-14px',
-              position: 'relative'
+              position: 'relative',
             },
-            ...this.props.createButtonQflProps
+            ...this.props.createButtonQflProps,
           }}
           {...this.props.createButtonProps}
         />
       );
 
-      let createProcessContainer = this.state.createProcessableContainer;
+      const createProcessContainer = this.state.createProcessableContainer;
       processables.push(createProcessContainer);
     }
 
@@ -447,7 +447,7 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
           />)}
           muiProps={{
             floatingLabelText: filterMenuSchemaItem.label,
-            ...filterMenuSchemaItem.muiProps
+            ...filterMenuSchemaItem.muiProps,
           }}
           onChange={(event, index, oldValue, newValue) => this.handleFilterItemChange(
             filterMenuSchemaItem.key, oldValue, newValue, filterMenuSchemaItem.items[index], filterMenuSchemaItem)}
@@ -456,9 +456,9 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
               paddingTop: this.props.theme.distances.primary,
               display: 'inline-block',
               width: '150px',
-              marginLeft: this.props.theme.distances.primary
+              marginLeft: this.props.theme.distances.primary,
             },
-            ...filterMenuSchemaItem.qflProps
+            ...filterMenuSchemaItem.qflProps,
           }}
         />
       ));
@@ -473,7 +473,7 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
           }
           return !buttonSchemaItem.isMore;
         }).map((buttonSchemaItem, buttonSchemaIdx) => {
-          let itemBasedButtonProcessContainer = this.state.itemProcessableContainer;
+          const itemBasedButtonProcessContainer = this.state.itemProcessableContainer;
           processables.push(itemBasedButtonProcessContainer);
 
           return (
@@ -484,12 +484,12 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
                 primary: true,
                 className: this.props.tableStyles.itemBasedButtonClassName,
                 style: {
-                  borderRadius: '0px'
+                  borderRadius: '0px',
                 },
                 onClick: (e) => {
                   this.handleItemClicked.bind(this, buttonSchemaItem)();
                 },
-                ...this.props.itemBasedButtonMuiProps
+                ...this.props.itemBasedButtonMuiProps,
               }}
               qflProps={{
                 style: {
@@ -498,9 +498,9 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
                   display: 'inline-block',
                   position: 'relative',
                   top: '-2px',
-                  marginLeft: this.props.theme.distances.halfPrimary
+                  marginLeft: this.props.theme.distances.halfPrimary,
                 },
-                ...this.props.itemBasedButtonQflProps
+                ...this.props.itemBasedButtonQflProps,
               }}
               {...this.props.itemBasedButtonProps}
             />
@@ -517,21 +517,21 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
           const menuSchema = [{
             sectionName: null,
             items: itemBasedMoreButtons.map((buttonSchemaItem) => {
-              let itemBasedButtonProcessContainer = this.state.itemProcessableContainer;
+              const itemBasedButtonProcessContainer = this.state.itemProcessableContainer;
               processables.push(itemBasedButtonProcessContainer);
 
               return {
                 label: buttonSchemaItem.name,
-                key: buttonSchemaItem.key
+                key: buttonSchemaItem.key,
               };
-            })
+            }),
           }];
 
           itemBasedElements = itemBasedElements.concat([
             <div
               style={{
                 position: 'relative',
-                display: 'inline-block'
+                display: 'inline-block',
               }}
             >
               <RaisedButton
@@ -543,7 +543,7 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
                   primary: true,
                   className: this.props.tableStyles.itemBasedMoreButtonClassName,
                   style: {
-                    borderRadius: '0px'
+                    borderRadius: '0px',
                   },
                   onClick: (e) => {
                     if (!this.state.isItemBasedMoreMenuOpened) {
@@ -551,25 +551,25 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
                         if (ce.originalEvent && ce.originalEvent.path.filter((item) => item.id === this.itemBasedMoreMenuId).length === 0) {
                           $(window.document).off('click');
                           this.setState({
-                            isItemBasedMoreMenuOpened: false
+                            isItemBasedMoreMenuOpened: false,
                           });
                         }
                       });
                     }
                     this.setState({
-                      isItemBasedMoreMenuOpened: !this.state.isItemBasedMoreMenuOpened
+                      isItemBasedMoreMenuOpened: !this.state.isItemBasedMoreMenuOpened,
                     });
                   },
-                  ...this.props.itemBasedMoreButtonMuiProps
+                  ...this.props.itemBasedMoreButtonMuiProps,
                 }}
                 qflProps={{
                   style: {
                     paddingTop: this.props.theme.distances.primary,
                     width: 'auto',
                     display: 'inline-block',
-                    marginLeft: this.props.theme.distances.halfPrimary
+                    marginLeft: this.props.theme.distances.halfPrimary,
                   },
-                  ...this.props.itemBasedMoreButtonQflProps
+                  ...this.props.itemBasedMoreButtonQflProps,
                 }}
                 {...this.props.itemBasedMoreButtonProps}
               />
@@ -583,7 +583,7 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
                   color: 'black',
                   backgroundColor: 'white',
                   padding: this.props.theme.distances.halfPrimary,
-                  marginLeft: this.props.theme.distances.halfPrimary
+                  marginLeft: this.props.theme.distances.halfPrimary,
                 }}
               >
                 <TableOverlay
@@ -602,7 +602,7 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
                   }}
                 />
               </div>
-            </div>
+            </div>,
           ]);
         }
       }
@@ -618,16 +618,16 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
           muiProps={{
             hintText: 'Suchen',
             className: this.props.tableStyles.searchFieldClassName,
-            ...this.props.searchFieldMuiProps
+            ...this.props.searchFieldMuiProps,
           }}
           qflProps={{
             style: {
               paddingTop: '9px',
               display: 'inline-block',
               position: 'relative',
-              top: '-13px'
+              top: '-13px',
             },
-            ...this.props.searchFieldQflProps
+            ...this.props.searchFieldQflProps,
           }}
           {...this.props.searchFieldProps}
           onChange={(oldValue, newValue, e) => {
@@ -636,7 +636,7 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
                 () => {
                   this.props.onSearch(newValue);
                 },
-                (e && e.keyCode === 13 ? 0 : this.props.searchKeyDelay)
+                (e && e.keyCode === 13 ? 0 : this.props.searchKeyDelay),
               );
             }
           }}
@@ -651,28 +651,28 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
           padding: '0px',
           verticalAlign: 'top',
           lineHeight: 1.2,
-          position: 'relative'
+          position: 'relative',
         }}
       >
         <div className={this.props.tableStyles.itemHeaderClassName}>
           {this.props.title}
         </div>
         <div style={{
-          paddingTop: '9px'
+          paddingTop: '9px',
         }} className={this.props.tableStyles.tableBarClassName}>
           {createButton}{searchField}
           <div style={{
             display: 'inline-block',
             width: 'auto',
             position: 'relative',
-            top: '-12px'
+            top: '-12px',
           }}>{filterMenuElements}</div>
           <div
             style={{
               position: 'relative',
               display: 'inline-block',
               marginLeft: this.props.theme.distances.halfPrimary,
-              top: '-12px'
+              top: '-12px',
             }}
           >{itemBasedElements}</div>
 
@@ -680,7 +680,7 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
 
         <div
           style={{
-            display: (this.state.isItemBasedMoreMenuOpened ? 'block' : 'none')
+            display: (this.state.isItemBasedMoreMenuOpened ? 'block' : 'none'),
           }}
           className={this.props.tableStyles.contentOverlayClassName}
         />
@@ -707,21 +707,21 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
             tableHeaderClass: this.props.tableStyles.tableHeaderRowClassName,
             selectRowTdClassName: this.props.tableStyles.tableColumnSelectorClassName,
             selectRowHeaderTdClassName: this.props.tableStyles.tableHeaderColumnSelectorClassName,
-            ...rbtProps
+            ...rbtProps,
           }}
           stylingProps={{
             containerStyle: {
-              height: this.props.controlledHeight + 'px'
+              height: this.props.controlledHeight + 'px',
             },
             tableStyle: {
-              height: (this.props.controlledHeight - 10) + 'px'
+              height: (this.props.controlledHeight - 10) + 'px',
             },
             headerStyle: {
-              height: '35px'
+              height: '35px',
             },
             bodyStyle: {
-              height: (this.props.controlledHeight - 10 - 35) + 'px'
-            }
+              height: (this.props.controlledHeight - 10 - 35) + 'px',
+            },
           }}
 
         />
