@@ -1,12 +1,12 @@
 import * as React from 'react';
 
-import ProcessableTable from '../Table/Table';
 import {buildTheme} from '@process-engine-js/frontend_mui/dist/commonjs/themeBuilder.js';
 import {IMUIProps} from '@process-engine-js/frontend_mui/dist/interfaces';
+import ProcessableTable from '../Table/Table';
 
-import {IColumnSchema} from '../../interfaces';
-import {IProcessEngineClientApi} from '@process-engine-js/process_engine_client_api';
 import {ExecutionContext} from '@process-engine-js/core_contracts';
+import {IProcessEngineClientApi} from '@process-engine-js/process_engine_client_api';
+import {IColumnSchema} from '../../interfaces';
 
 export interface IProcessableCrudTableProps extends IMUIProps {
   fetcher: Function;
@@ -119,7 +119,7 @@ class ProcessableCrudTable extends React.Component<IProcessableCrudTableProps, I
     theme: null,
     tableTheme: null,
     tableOverlayTheme: null,
-    tableSelectorTheme: null
+    tableSelectorTheme: null,
   };
 
   constructor(props) {
@@ -133,7 +133,7 @@ class ProcessableCrudTable extends React.Component<IProcessableCrudTableProps, I
       hasReloaded: false,
       hasLoaded: false,
       synced: false,
-      entityCollection: []
+      entityCollection: [],
     };
   }
 
@@ -147,26 +147,26 @@ class ProcessableCrudTable extends React.Component<IProcessableCrudTableProps, I
           operator: 'and',
           queries: (this.props.baseFilter
             ? [
-              this.props.baseFilter()
+              this.props.baseFilter(),
             ] : []
-          )
+          ),
         }),
-        ...this.props.extendedFilter()
+        ...this.props.extendedFilter(),
       },
       (e) => {
         if (e.mounted && !e.done) {
           this.setState({
             isFetching: true,
             hasLoaded: false,
-            synced: false
+            synced: false,
           });
         } else if (e.mounted && e.done) {
           this.setState({
             isFetching: false,
-            hasLoaded: true
+            hasLoaded: true,
           });
         }
-      }
+      },
     );
   }
 
@@ -183,7 +183,7 @@ class ProcessableCrudTable extends React.Component<IProcessableCrudTableProps, I
           attribute: element.thcProps.dataField,
           type: 'number',
           operator: '=',
-          value: searchValue
+          value: searchValue,
         };
       }
 
@@ -191,7 +191,7 @@ class ProcessableCrudTable extends React.Component<IProcessableCrudTableProps, I
         attribute: element.thcProps.dataField,
         operator: 'contains',
         value: searchValue,
-        ignoreCase
+        ignoreCase,
       };
     }).filter((element) => (element !== null && element !== undefined));
 
@@ -210,10 +210,10 @@ class ProcessableCrudTable extends React.Component<IProcessableCrudTableProps, I
       () => {
         this.setState({
           entityCollection: newEntityCollection,
-          synced: true
+          synced: true,
         });
       },
-      0
+      0,
     );
 
     return newEntityCollection;
@@ -232,10 +232,10 @@ class ProcessableCrudTable extends React.Component<IProcessableCrudTableProps, I
         this.setState({
           currentOffset: (this.state.currentOffset + this.props.pageSize),
           entityCollection: newEntityCollection,
-          synced: true
+          synced: true,
         });
       },
-      0
+      0,
     );
 
     return newEntityCollection;
@@ -268,7 +268,7 @@ class ProcessableCrudTable extends React.Component<IProcessableCrudTableProps, I
   private handleSearch(searchValue) {
     this.setState(
       {
-        currentOffset: 0
+        currentOffset: 0,
       },
       () => {
         if (searchValue) {
@@ -283,29 +283,29 @@ class ProcessableCrudTable extends React.Component<IProcessableCrudTableProps, I
                   ? [
                     this.props.baseFilter(), {
                       operator: 'or',
-                      queries: this.getGlobalSearchFilter(searchValue, true)
-                    }
+                      queries: this.getGlobalSearchFilter(searchValue, true),
+                    },
                   ] : [
-                    this.getGlobalSearchFilter(searchValue, true)
+                    this.getGlobalSearchFilter(searchValue, true),
                   ]
-                )
+                ),
               }),
-              ...this.props.extendedFilter()
+              ...this.props.extendedFilter(),
             },
             (e) => {
               if (e.mounted && !e.done) {
                 this.setState({
                   synced: false,
                   isFetching: true,
-                  hasReloaded: false
+                  hasReloaded: false,
                 });
               } else if (e.mounted && e.done) {
                 this.setState({
                   isFetching: false,
-                  hasReloaded: true
+                  hasReloaded: true,
                 });
               }
-            }
+            },
           );
         } else {
           this.props.fetcher(
@@ -317,29 +317,29 @@ class ProcessableCrudTable extends React.Component<IProcessableCrudTableProps, I
                 operator: 'and',
                 queries: (this.props.baseFilter()
                   ? [
-                    this.props.baseFilter()
+                    this.props.baseFilter(),
                   ] : []
-                )
+                ),
               }),
-              ...this.props.extendedFilter()
+              ...this.props.extendedFilter(),
             },
             (e) => {
               if (e.mounted && !e.done) {
                 this.setState({
                   synced: false,
                   isFetching: true,
-                  hasReloaded: false
+                  hasReloaded: false,
                 });
               } else if (e.mounted && e.done) {
                 this.setState({
                   isFetching: false,
-                  hasReloaded: true
+                  hasReloaded: true,
                 });
               }
-            }
+            },
           );
         }
-      }
+      },
     );
   }
 
@@ -347,7 +347,7 @@ class ProcessableCrudTable extends React.Component<IProcessableCrudTableProps, I
     if (sortName && sortOrder) {
       this.setState(
         {
-          currentOffset: 0
+          currentOffset: 0,
         },
         () => {
           this.props.fetcher(
@@ -355,24 +355,24 @@ class ProcessableCrudTable extends React.Component<IProcessableCrudTableProps, I
               mode: 'reload',
               offset: this.state.currentOffset,
               first: this.state.currentFirst,
-              orderBy: JSON.stringify({ attributes: [{ attribute: sortName, order: sortOrder }] })
+              orderBy: JSON.stringify({ attributes: [{ attribute: sortName, order: sortOrder }] }),
             },
             (e) => {
               if (e.mounted && !e.done) {
                 this.setState({
                   synced: false,
                   isFetching: true,
-                  hasReloaded: false
+                  hasReloaded: false,
                 });
               } else if (e.mounted && e.done) {
                 this.setState({
                   isFetching: false,
-                  hasReloaded: true
+                  hasReloaded: true,
                 });
               }
-            }
+            },
           );
-        }
+        },
       );
     }
   }
@@ -386,30 +386,30 @@ class ProcessableCrudTable extends React.Component<IProcessableCrudTableProps, I
       const newFirst = (this.props.pageSize + newOffset);
       this.setState(
         {
-          currentFirst: newFirst
+          currentFirst: newFirst,
         },
         () => {
           this.props.fetcher(
             {
               mode: 'more',
-              offset: newOffset
+              offset: newOffset,
             },
             (e) => {
               if (e.mounted && !e.done) {
                 this.setState({
                   synced: false,
                   isFetching: true,
-                  hasLoadedMore: false
+                  hasLoadedMore: false,
                 });
               } else if (e.mounted && e.done) {
                 this.setState({
                   isFetching: false,
-                  hasLoadedMore: true
+                  hasLoadedMore: true,
                 });
               }
-            }
+            },
           );
-        }
+        },
       );
     }
   }
@@ -425,24 +425,24 @@ class ProcessableCrudTable extends React.Component<IProcessableCrudTableProps, I
     this.props.fetcher(
       {
         mode: 'reload',
-        offset: this.state.currentOffset
+        offset: this.state.currentOffset,
       },
       (e) => {
         if (e.mounted && !e.done) {
           this.setState({
             synced: false,
             isFetching: true,
-            hasReloaded: false
+            hasReloaded: false,
           });
         } else if (e.mounted && e.done) {
           this.setState(
             {
               isFetching: false,
-              hasReloaded: true
-            }
+              hasReloaded: true,
+            },
           );
         }
-      }
+      },
     );
   }
 
@@ -450,29 +450,29 @@ class ProcessableCrudTable extends React.Component<IProcessableCrudTableProps, I
     this.props.fetcher(
       {
         mode: 'reload',
-        offset: this.state.currentOffset
+        offset: this.state.currentOffset,
       },
       (e) => {
         if (e.mounted && !e.done) {
           this.setState({
             synced: false,
             isFetching: true,
-            hasReloaded: false
+            hasReloaded: false,
           });
         } else if (e.mounted && e.done) {
           this.setState(
             {
               isFetching: false,
-              hasReloaded: true
+              hasReloaded: true,
             },
             () => {
               if (processKey === ('Delete' + this.props.entityTypeName)) {
                 this.cleanSelectedEntities();
               }
-            }
+            },
           );
         }
-      }
+      },
     );
   }
 
@@ -483,7 +483,7 @@ class ProcessableCrudTable extends React.Component<IProcessableCrudTableProps, I
       theme: this.props.theme,
       sourceRbtProps: this.props.rbtProps,
       sourceQflProps: this.props.qflProps,
-      componentName: 'Table'
+      componentName: 'Table',
     });
 
     let tableElement = null;
@@ -545,12 +545,12 @@ class ProcessableCrudTable extends React.Component<IProcessableCrudTableProps, I
               options: {
                 onRowDoubleClick: (row) => this.handleRowDoubleClick(row),
                 onSortChange: (sortName, sortOrder) => this.handleSortChange(sortName, sortOrder),
-                onLoadMore: () => this.handleLoadMore()
+                onLoadMore: () => this.handleLoadMore(),
               },
-              ...rbtProps
+              ...rbtProps,
             },
             thcSchema: this.props.columnSchema,
-            ...qflProps
+            ...qflProps,
           }}
         />
       );

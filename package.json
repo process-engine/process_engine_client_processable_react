@@ -3,7 +3,7 @@
   "publishConfig": {
     "registry": "https://www.npmjs.com"
   },
-  "version": "1.0.13",
+  "version": "2.0.0",
   "description": "Provides an implementation of a processable in React!",
   "license": "MIT",
   "main": "dist/commonjs/index.js",
@@ -14,9 +14,9 @@
     "Simon Reymann <simon.reymann@quantusflow.com>"
   ],
   "dependencies": {
-    "@process-engine-js/core_contracts": "^1.0.48-0",
-    "@process-engine-js/frontend_mui": "^1.0.1",
-    "@process-engine-js/process_engine_client_api": "^1.0.10",
+    "@process-engine-js/core_contracts": "^2.0.0",
+    "@process-engine-js/frontend_mui": "^2.0.0",
+    "@process-engine-js/process_engine_client_api": "^2.0.0",
     "babel-plugin-add-module-exports": "^0.2.1",
     "babel-plugin-syntax-async-functions": "^6.13.0",
     "babel-plugin-transform-decorators-legacy": "^1.3.4",
@@ -32,13 +32,24 @@
     "react-tap-event-plugin": "^2.0.1"
   },
   "devDependencies": {
+    "@process-engine-js/tslint-config": "^1.0.1",
+    "@types/react": "^16.0.5",
+    "@types/react-dom": "^15.5.4",
     "gulp": "^3.9.1",
     "gulptraum": "^2.2.1",
     "gulptraum-typescript": "^1.3.2",
-    "tsconfig": "^6.0.0"
+    "tsconfig": "^7.0.0",
+    "tslint": "^5.7.0",
+    "typescript": "^2.5.2"
   },
   "peerDependencies": {
     "react": "^15.6.1",
     "react-dom": "^15.6.1"
+  },
+  "scripts": {
+    "build": "gulp build",
+    "prepublishOnly": "npm run build && npm run build-schemas && npm run build-doc",
+    "build-doc": "gulp doc",
+    "build-schemas": "gulp typescript-schema"
   }
 }
