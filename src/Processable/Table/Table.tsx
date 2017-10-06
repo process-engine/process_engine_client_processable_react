@@ -32,13 +32,14 @@ export interface ITableProps extends IMUIProps {
   createButtonMuiProps?: {};
   createButtonQflProps?: {};
   createButtonProps?: {};
-
   createButtonTheme?: {};
-  createDialogTheme?: {};
-  createFormItemTheme?: {};
-  createConfirmTheme?: {};
-  createWidgetTheme?: {};
-  createTheme?: {};
+
+  processButtonTheme?: {};
+  processDialogTheme?: {};
+  processFormItemTheme?: {};
+  processConfirmTheme?: {};
+  processWidgetTheme?: {};
+  processTheme?: {};
 
   itemBasedButtonTheme?: {};
   listBasedButtonTheme?: {};
@@ -81,6 +82,10 @@ export interface ITableProps extends IMUIProps {
   };
 
   tableStyles?: {
+    checkBoxClassName?: string;
+    headerContainerClassName?: string;
+    itemBasedElementsClassName?: string;
+    filterMenuElementsClassName?: string;
     tableWithFrameClassName?: string;
     tableWithoutFrameClassName?: string;
     createButtonClassName?: string;
@@ -124,6 +129,10 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
     frame: true,
     searchKeyDelay: 250,
     tableStyles: {
+      checkBoxClassName: null,
+      headerContainerClassName: null,
+      itemBasedElementsClassName: null,
+      filterMenuElementsClassName: null,
       tableWithFrameClassName: null,
       tableWithoutFrameClassName: null,
       createButtonClassName: null,
@@ -149,13 +158,14 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
     createButtonMuiProps: null,
     createButtonQflProps: null,
     createButtonProps: null,
-
     createButtonTheme: null,
-    createDialogTheme: null,
-    createFormItemTheme: null,
-    createConfirmTheme: null,
-    createWidgetTheme: null,
-    createTheme: null,
+
+    processButtonTheme: null,
+    processDialogTheme: null,
+    processFormItemTheme: null,
+    processConfirmTheme: null,
+    processWidgetTheme: null,
+    processTheme: null,
 
     itemBasedButtonTheme: null,
     listBasedButtonTheme: null,
@@ -214,11 +224,20 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
   }
 
   private renderProcessContainer(processInstance: IProcessInstance, uiName: string, uiConfig?: any, uiData?: any) {
+    const themes = {
+      buttonTheme: this.props.processButtonTheme,
+      dialogTheme: this.props.processDialogTheme,
+      formItemTheme: this.props.processFormItemTheme,
+      confirmTheme: this.props.processConfirmTheme,
+      widgetTheme: this.props.processWidgetTheme,
+      theme: this.props.processTheme
+    };
+
     switch (processInstance.processKey) {
       case (this.props.createProcessKey + this.props.dataClassName):
         const createProcessableContainer = (
           <ProcessableContainer modal={true} key={processInstance.nextTaskEntity.id}
-                                processInstance={processInstance} executionContext={this.props.executionContext} uiName={uiName} uiConfig={uiConfig} uiData={uiData}/>
+                                processInstance={processInstance} executionContext={this.props.executionContext} uiName={uiName} uiConfig={uiConfig} uiData={uiData} {...themes}/>
         );
         this.setState({
           createProcessableContainer,
@@ -227,7 +246,7 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
       case (this.state.currentItemProcessKey):
         const itemProcessableContainer = (
           <ProcessableContainer modal={true} key={processInstance.nextTaskEntity.id}
-                                processInstance={processInstance} executionContext={this.props.executionContext} uiName={uiName} uiConfig={uiConfig} uiData={uiData}/>
+                                processInstance={processInstance} executionContext={this.props.executionContext} uiName={uiName} uiConfig={uiConfig} uiData={uiData} {...themes}/>
         );
         this.setState({
           itemProcessableContainer,
@@ -407,22 +426,12 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
             label: '+',
             primary: true,
             className: this.props.tableStyles.createButtonClassName,
-            style: {
-              borderRadius: '0px',
-            },
             onClick: (e) => {
               this.handleStartCreate(this.props.createStartToken, this.props.onCreateProcessEnded);
             },
             ...this.props.createButtonMuiProps,
           }}
           qflProps={{
-            style: {
-              paddingTop: '9px',
-              width: 'auto',
-              display: 'inline-block',
-              top: '-14px',
-              position: 'relative',
-            },
             ...this.props.createButtonQflProps,
           }}
           {...this.props.createButtonProps}
@@ -446,18 +455,16 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
             primaryText={dropDownItem.label}
           />)}
           muiProps={{
+            anchorOrigin: {
+              vertical: 'bottom',
+              horizontal: 'left'
+            },
             floatingLabelText: filterMenuSchemaItem.label,
             ...filterMenuSchemaItem.muiProps,
           }}
           onChange={(event, index, oldValue, newValue) => this.handleFilterItemChange(
             filterMenuSchemaItem.key, oldValue, newValue, filterMenuSchemaItem.items[index], filterMenuSchemaItem)}
           qflProps={{
-            style: {
-              paddingTop: this.props.theme.distances.primary,
-              display: 'inline-block',
-              width: '150px',
-              marginLeft: this.props.theme.distances.primary,
-            },
             ...filterMenuSchemaItem.qflProps,
           }}
         />
@@ -483,9 +490,6 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
                 icon: buttonSchemaItem.icon,
                 primary: true,
                 className: this.props.tableStyles.itemBasedButtonClassName,
-                style: {
-                  borderRadius: '0px',
-                },
                 onClick: (e) => {
                   this.handleItemClicked.bind(this, buttonSchemaItem)();
                 },
@@ -497,7 +501,6 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
                   width: 'auto',
                   display: 'inline-block',
                   position: 'relative',
-                  top: '-2px',
                   marginLeft: this.props.theme.distances.halfPrimary,
                 },
                 ...this.props.itemBasedButtonQflProps,
@@ -622,10 +625,9 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
           }}
           qflProps={{
             style: {
-              paddingTop: '9px',
+              verticalAlign: 'top',
               display: 'inline-block',
-              position: 'relative',
-              top: '-13px',
+              position: 'relative'
             },
             ...this.props.searchFieldQflProps,
           }}
@@ -645,37 +647,14 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
     }
 
     return (
-      <div
-        className={newClassName}
-        style={{
-          padding: '0px',
-          verticalAlign: 'top',
-          lineHeight: 1.2,
-          position: 'relative',
-        }}
-      >
+      <div className={newClassName}>
         <div className={this.props.tableStyles.itemHeaderClassName}>
           {this.props.title}
         </div>
-        <div style={{
-          paddingTop: '9px',
-        }} className={this.props.tableStyles.tableBarClassName}>
+        <div className={this.props.tableStyles.tableBarClassName}>
           {createButton}{searchField}
-          <div style={{
-            display: 'inline-block',
-            width: 'auto',
-            position: 'relative',
-            top: '-12px',
-          }}>{filterMenuElements}</div>
-          <div
-            style={{
-              position: 'relative',
-              display: 'inline-block',
-              marginLeft: this.props.theme.distances.halfPrimary,
-              top: '-12px',
-            }}
-          >{itemBasedElements}</div>
-
+          <div className={this.props.tableStyles.filterMenuElementsClassName}>{filterMenuElements}</div>
+          <div className={this.props.tableStyles.itemBasedElementsClassName}>{itemBasedElements}</div>
         </div>
 
         <div
@@ -693,8 +672,10 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
             this.handleSelectedRowsChanged(selectedRows);
           }}
           {...this.props.tableProps}
+          checkBoxClassName={this.props.tableStyles.checkBoxClassName}
           rbtProps={{
             data: this.props.data,
+            headerContainerClass: this.props.tableStyles.headerContainerClassName,
             columnFilter: false,
             search: false,
             striped: true,

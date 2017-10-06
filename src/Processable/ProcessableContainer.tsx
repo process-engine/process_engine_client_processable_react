@@ -18,12 +18,14 @@ export interface IProcessableContainerProps extends IMUIProps {
   executionContext: ExecutionContext;
   uiName: string;
 
+  modal?: boolean;
+
   buttonTheme?: any;
   dialogTheme?: any;
-  modal?: boolean;
   formItemTheme?: any;
-  widgetTheme?: any;
   confirmItemTheme?: any;
+  widgetTheme?: any;
+
   processableClassName?: string;
   modalProcessableClassName?: string;
   dialogMuiProps?: {};

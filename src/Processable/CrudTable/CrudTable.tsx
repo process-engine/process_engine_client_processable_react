@@ -32,11 +32,13 @@ export interface IProcessableCrudTableProps extends IMUIProps {
   createButtonQflProps?: {};
   createButtonProps?: {};
   createButtonTheme?: {};
-  createDialogTheme?: {};
-  createFormItemTheme?: {};
-  createConfirmTheme?: {};
-  createWidgetTheme?: {};
-  createTheme?: {};
+
+  processButtonTheme?: {};
+  processDialogTheme?: {};
+  processFormItemTheme?: {};
+  processConfirmTheme?: {};
+  processWidgetTheme?: {};
+  processTheme?: {};
 
   itemBasedButtonSchema?: Array<{}>;
   listBasedButtonSchema?: Array<{}>;
@@ -93,11 +95,13 @@ class ProcessableCrudTable extends React.Component<IProcessableCrudTableProps, I
     createButtonQflProps: null,
     createButtonProps: null,
     createButtonTheme: null,
-    createDialogTheme: null,
-    createFormItemTheme: null,
-    createConfirmTheme: null,
-    createWidgetTheme: null,
-    createTheme: null,
+
+    processButtonTheme: null,
+    processDialogTheme: null,
+    processFormItemTheme: null,
+    processConfirmTheme: null,
+    processWidgetTheme: null,
+    processTheme: null,
 
     itemBasedButtonSchema: [],
     listBasedButtonSchema: [],
@@ -510,13 +514,14 @@ class ProcessableCrudTable extends React.Component<IProcessableCrudTableProps, I
           createButtonMuiProps={this.props.createButtonMuiProps}
           createButtonQflProps={this.props.createButtonQflProps}
           createButtonProps={this.props.createButtonProps}
-
           createButtonTheme={this.props.createButtonTheme}
-          createDialogTheme={this.props.createDialogTheme}
-          createFormItemTheme={this.props.createFormItemTheme}
-          createConfirmTheme={this.props.createConfirmTheme}
-          createWidgetTheme={this.props.createWidgetTheme}
-          createTheme={this.props.createTheme}
+
+          processButtonTheme={this.props.processButtonTheme}
+          processDialogTheme={this.props.processDialogTheme}
+          processFormItemTheme={this.props.processFormItemTheme}
+          processConfirmTheme={this.props.processConfirmTheme}
+          processWidgetTheme={this.props.processWidgetTheme}
+          processTheme={this.props.processTheme}
 
           itemBasedButtonTheme={this.props.itemBasedButtonTheme}
           listBasedButtonTheme={this.props.listBasedButtonTheme}
