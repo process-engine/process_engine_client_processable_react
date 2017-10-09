@@ -118,8 +118,15 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
                                break;
         case 'Form': {
           let formElements = [];
-          if (processInstance.nextTaskDef.extensions.formFields && processInstance.nextTaskDef.extensions.formFields.length > 0) {
-            formElements = processInstance.nextTaskDef.extensions.formFields.map((formField) => {
+          let extensions = null;
+
+          if (processInstance.nextTaskDef.extensions && typeof processInstance.nextTaskDef.extensions === 'string') {
+            extensions = JSON.parse(processInstance.nextTaskDef.extensions);
+          } else {
+            extensions = processInstance.nextTaskDef.extensions;
+          }
+          if (extensions.formFields && extensions.formFields.length > 0) {
+            formElements = extensions.formFields.map((formField) => {
               let parsedType = null;
               const options: any = {};
               let formFieldWidgetNameArr;
