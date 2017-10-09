@@ -1,11 +1,11 @@
 import * as React from 'react';
 
-import ToolBar from '@process-engine-js/frontend_mui/dist/commonjs/Bars/ToolBar/ToolBar.js';
-import Link from '@process-engine-js/frontend_mui/dist/commonjs/Buttons/Link/Link.js';
-import CheckBox from '@process-engine-js/frontend_mui/dist/commonjs/InputForms/CheckBox/CheckBox.js';
-import {IMUIProps} from '@process-engine-js/frontend_mui/dist/interfaces';
+import ToolBar from '@process-engine/frontend_mui/dist/commonjs/Bars/ToolBar/ToolBar.js';
+import Link from '@process-engine/frontend_mui/dist/commonjs/Buttons/Link/Link.js';
+import CheckBox from '@process-engine/frontend_mui/dist/commonjs/InputForms/CheckBox/CheckBox.js';
+import {IMUIProps} from '@process-engine/frontend_mui/dist/interfaces';
 
-import {buildTheme} from '@process-engine-js/frontend_mui/dist/commonjs/themeBuilder.js';
+import {buildTheme} from '@process-engine/frontend_mui/dist/commonjs/themeBuilder.js';
 
 import {ToolbarGroup, ToolbarSeparator} from 'material-ui/Toolbar/index.js';
 

@@ -1,9 +1,9 @@
 import * as React from 'react';
 
-import RaisedButton from '@process-engine-js/frontend_mui/dist/commonjs/Buttons/RaisedButton/RaisedButton.js';
-import DropDown from '@process-engine-js/frontend_mui/dist/commonjs/InputForms/DropDown/DropDown.js';
-import TextField from '@process-engine-js/frontend_mui/dist/commonjs/InputForms/TextField/TextField.js';
-import Table from '@process-engine-js/frontend_mui/dist/commonjs/Tables/Table/Table.js';
+import RaisedButton from '@process-engine/frontend_mui/dist/commonjs/Buttons/RaisedButton/RaisedButton.js';
+import DropDown from '@process-engine/frontend_mui/dist/commonjs/InputForms/DropDown/DropDown.js';
+import TextField from '@process-engine/frontend_mui/dist/commonjs/InputForms/TextField/TextField.js';
+import Table from '@process-engine/frontend_mui/dist/commonjs/Tables/Table/Table.js';
 import ProcessableContainer from '../ProcessableContainer';
 
 import MenuItem from 'material-ui/MenuItem/MenuItem.js';
@@ -12,9 +12,9 @@ import TableOverlay from './TableOverlay';
 
 const $ = require('jquery'); // tslint:disable-line no-var-requires
 
-import {ExecutionContext} from '@process-engine-js/core_contracts';
-import {IMUIProps} from '@process-engine-js/frontend_mui/dist/interfaces';
-import {IProcessable, IProcessEngineClientApi, IProcessInstance} from '@process-engine-js/process_engine_client_api';
+import {ExecutionContext} from '@essential-projects/core_contracts';
+import {IMUIProps} from '@process-engine/frontend_mui/dist/interfaces';
+import {IProcessable, IProcessEngineClientApi, IProcessInstance} from '@process-engine/process_engine_client_api';
 
 export interface ITableProps extends IMUIProps {
   dataClassName: string;
