@@ -14,9 +14,9 @@
     "Simon Reymann <simon.reymann@quantusflow.com>"
   ],
   "dependencies": {
-  "@essential-projects/core_contracts": "^0.1.0",
-  "@process-engine/frontend_mui": "^0.1.0",
-  "@process-engine/process_engine_client_api": "^0.1.0",
+    "@essential-projects/core_contracts": "^0.1.0",
+    "@process-engine/frontend_mui": "^0.1.0",
+    "@process-engine/process_engine_client_api": "^0.1.0",
     "babel-plugin-add-module-exports": "^0.2.1",
     "babel-plugin-syntax-async-functions": "^6.13.0",
     "babel-plugin-transform-decorators-legacy": "^1.3.4",
@@ -32,7 +32,7 @@
     "react-tap-event-plugin": "^2.0.1"
   },
   "devDependencies": {
-  "@essential-projects/tslint-config": "^0.1.0",
+    "@essential-projects/tslint-config": "^0.1.0",
     "@types/react": "^16.0.5",
     "@types/react-dom": "15.5.5",
     "gulp": "^3.9.1",
