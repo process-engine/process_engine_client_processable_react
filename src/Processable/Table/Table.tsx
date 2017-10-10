@@ -496,13 +496,6 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
                 ...this.props.itemBasedButtonMuiProps,
               }}
               qflProps={{
-                style: {
-                  paddingTop: this.props.theme.distances.primary,
-                  width: 'auto',
-                  display: 'inline-block',
-                  position: 'relative',
-                  marginLeft: this.props.theme.distances.halfPrimary,
-                },
                 ...this.props.itemBasedButtonQflProps,
               }}
               {...this.props.itemBasedButtonProps}

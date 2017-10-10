@@ -45,6 +45,8 @@ export interface IProcessableCrudTableProps extends IMUIProps {
   filterMenuSchema?: Array<{}>;
   baseFilterMenuSchema?: Array<{}>;
 
+  onFilterChange?: Function;
+
   itemBasedButtonTheme?: {};
   listBasedButtonTheme?: {};
   filterMenuTheme?: {};
@@ -540,6 +542,28 @@ class ProcessableCrudTable extends React.Component<IProcessableCrudTableProps, I
           listBasedButtonSchema={this.props.listBasedButtonSchema}
           filterMenuSchema={this.props.filterMenuSchema}
           baseFilterMenuSchema={this.props.baseFilterMenuSchema}
+
+          onFilterChange={(key, newValue, choosenElement, element) => {
+            if (this.props.onFilterChange) {
+              this.props.onFilterChange(key, newValue, choosenElement, element, (query) => {
+                this.props.fetcher(query, (e) => {
+                  if (e.mounted && !e.done) {
+                    this.setState({
+                      synced: false,
+                      isFetching: true,
+                      hasReloaded: false,
+                    });
+                  } else if (e.mounted && e.done) {
+                    this.setState({
+                      isFetching: false,
+                      hasReloaded: true,
+                    });
+                  }
+                });
+              });
+            }
+          }}
+
           tableProps={{
             rbtProps: {
               remote: true,
