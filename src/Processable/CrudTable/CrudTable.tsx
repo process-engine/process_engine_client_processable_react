@@ -1,11 +1,11 @@
 import * as React from 'react';
 
-import {buildTheme} from '@process-engine-js/frontend_mui/dist/commonjs/themeBuilder.js';
-import {IMUIProps} from '@process-engine-js/frontend_mui/dist/interfaces';
+import {buildTheme} from '@process-engine/frontend_mui/dist/commonjs/themeBuilder.js';
+import {IMUIProps} from '@process-engine/frontend_mui/dist/interfaces';
 import ProcessableTable from '../Table/Table';
 
-import {ExecutionContext} from '@process-engine-js/core_contracts';
-import {IProcessEngineClientApi} from '@process-engine-js/process_engine_client_api';
+import {ExecutionContext} from '@essential-projects/core_contracts';
+import {IProcessEngineClientApi} from '@process-engine/process_engine_client_api';
 import {IColumnSchema} from '../../interfaces';
 
 export interface IProcessableCrudTableProps extends IMUIProps {

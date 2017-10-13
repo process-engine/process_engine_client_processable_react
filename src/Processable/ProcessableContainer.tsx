@@ -1,16 +1,16 @@
 import * as React  from 'react';
 
-import RaisedButton from '@process-engine-js/frontend_mui/dist/commonjs/Buttons/RaisedButton/RaisedButton.js';
-import Dialog from '@process-engine-js/frontend_mui/dist/commonjs/Dialogs/Dialog/Dialog.js';
-import Confirm from '@process-engine-js/frontend_mui/dist/commonjs/InputForms/Confirm/Confirm.js';
-import Form from '@process-engine-js/frontend_mui/dist/commonjs/InputForms/Form/Form.js';
-import Table from '@process-engine-js/frontend_mui/dist/commonjs/Tables/Table/Table.js';
+import RaisedButton from '@process-engine/frontend_mui/dist/commonjs/Buttons/RaisedButton/RaisedButton.js';
+import Dialog from '@process-engine/frontend_mui/dist/commonjs/Dialogs/Dialog/Dialog.js';
+import Confirm from '@process-engine/frontend_mui/dist/commonjs/InputForms/Confirm/Confirm.js';
+import Form from '@process-engine/frontend_mui/dist/commonjs/InputForms/Form/Form.js';
+import Table from '@process-engine/frontend_mui/dist/commonjs/Tables/Table/Table.js';
 
-import {buildTheme} from '@process-engine-js/frontend_mui/dist/commonjs/themeBuilder.js';
+import {buildTheme} from '@process-engine/frontend_mui/dist/commonjs/themeBuilder.js';
 
-import {ExecutionContext} from '@process-engine-js/core_contracts';
-import {IMUIProps} from '@process-engine-js/frontend_mui/dist/interfaces';
-import {IProcessInstance} from '@process-engine-js/process_engine_client_api';
+import {ExecutionContext} from '@essential-projects/core_contracts';
+import {IMUIProps} from '@process-engine/frontend_mui/dist/interfaces';
+import {IProcessInstance} from '@process-engine/process_engine_client_api';
 import * as mustache from 'mustache';
 
 export interface IProcessableContainerProps extends IMUIProps {
