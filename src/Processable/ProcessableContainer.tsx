@@ -1,16 +1,16 @@
-import * as React  from 'react';
+import * as React from 'react';
 
-import RaisedButton from '@process-engine/frontend_mui/dist/commonjs/Buttons/RaisedButton/RaisedButton.js';
-import Dialog from '@process-engine/frontend_mui/dist/commonjs/Dialogs/Dialog/Dialog.js';
-import Confirm from '@process-engine/frontend_mui/dist/commonjs/InputForms/Confirm/Confirm.js';
-import Form from '@process-engine/frontend_mui/dist/commonjs/InputForms/Form/Form.js';
-import Table from '@process-engine/frontend_mui/dist/commonjs/Tables/Table/Table.js';
+import RaisedButton from '@quantusflow/frontend_mui/dist/commonjs/Buttons/RaisedButton/RaisedButton.js';
+import Dialog from '@quantusflow/frontend_mui/dist/commonjs/Dialogs/Dialog/Dialog.js';
+import Confirm from '@quantusflow/frontend_mui/dist/commonjs/InputForms/Confirm/Confirm.js';
+import Form from '@quantusflow/frontend_mui/dist/commonjs/InputForms/Form/Form.js';
+import Table from '@quantusflow/frontend_mui/dist/commonjs/Tables/Table/Table.js';
 
-import {buildTheme} from '@process-engine/frontend_mui/dist/commonjs/themeBuilder.js';
+import {buildTheme} from '@quantusflow/frontend_mui/dist/commonjs/themeBuilder.js';
 
 import {ExecutionContext} from '@essential-projects/core_contracts';
-import {IMUIProps} from '@process-engine/frontend_mui/dist/interfaces';
-import {IProcessInstance} from '@process-engine/process_engine_client_api';
+import {IMUIProps} from '@quantusflow/frontend_mui/dist/interfaces';
+import {IProcessInstance} from '@quantusflow/process_engine_client_api';
 import * as mustache from 'mustache';
 
 export interface IProcessableContainerProps extends IMUIProps {
@@ -48,7 +48,7 @@ export interface IProcessableContainerChildContext {
 
 export class ProcessableContainer extends React.Component<IProcessableContainerProps, IProcessableContainerState> {
 
-  public static defaultProps = {
+  public static defaultProps: {} = {
     theme: 'Default',
     muiProps: {},
     qflProps: {},
@@ -82,16 +82,16 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
   public componentWillMount(): void {
     const { processInstance } = this.props;
 
-    let widget = null;
-    const widgetName = this.props.uiName;
+    let widget: {} = null;
+    const widgetName: string = this.props.uiName;
 
     if (widgetName) {
-      const tokenData = (processInstance && processInstance.tokenData) || {};
+      const tokenData: {} = (processInstance && processInstance.tokenData) || {};
 
       switch (widgetName) {
-        case 'SelectableList': {
-          let selectableListDataSource = null;
-          let selectableListColumnSchema = null;
+        case 'SelectableList':
+          let selectableListDataSource: any = null;
+          let selectableListColumnSchema: any = null;
           if (typeof this.props.uiConfig === 'object' && this.props.uiConfig) {
             if (this.props.uiConfig.hasOwnProperty('dataSource')) {
               selectableListDataSource = this.props.uiConfig.dataSource;
@@ -114,11 +114,10 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
               },
             },
           };
-        }
-                               break;
-        case 'Form': {
-          let formElements = [];
-          let extensions = null;
+          break;
+        case 'Form':
+          let formElements: Array<any> = [];
+          let extensions: any = null;
 
           if (processInstance.nextTaskDef.extensions && typeof processInstance.nextTaskDef.extensions === 'string') {
             extensions = JSON.parse(processInstance.nextTaskDef.extensions);
@@ -126,14 +125,14 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
             extensions = processInstance.nextTaskDef.extensions;
           }
           if (extensions.formFields && extensions.formFields.length > 0) {
-            formElements = extensions.formFields.map((formField) => {
-              let parsedType = null;
+            formElements = extensions.formFields.map((formField: any) => {
+              let parsedType: string = null;
               const options: any = {};
-              let formFieldWidgetNameArr;
-              let formFieldMuiPropsArr;
-              let muiProps = {};
+              let formFieldWidgetNameArr: Array<any>;
+              let formFieldMuiPropsArr: Array<any>;
+              let muiProps: {} = {};
 
-              formFieldMuiPropsArr = formField.formProperties.filter((formFieldProperty) => formFieldProperty.name === 'muiProps');
+              formFieldMuiPropsArr = formField.formProperties.filter((formFieldProperty: any) => formFieldProperty.name === 'muiProps');
               if (formField.formProperties && formFieldMuiPropsArr && formFieldMuiPropsArr.length === 1 && formFieldMuiPropsArr[0].value) {
                 muiProps = JSON.parse(formFieldMuiPropsArr[0].value.replace(/\&\#34\;/gi, '"'));
               }
@@ -151,7 +150,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
                   break;
                 case 'enum':
                   parsedType = 'DropDown';
-                  formFieldWidgetNameArr = formField.formProperties.filter((formFieldProperty) => formFieldProperty.name === 'widgetName');
+                  formFieldWidgetNameArr = formField.formProperties.filter((formFieldProperty: any) => formFieldProperty.name === 'widgetName');
                   if (formField.formProperties && formFieldWidgetNameArr && formFieldWidgetNameArr.length === 1) {
                     parsedType = formFieldWidgetNameArr[0].value;
                   }
@@ -165,9 +164,9 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
                   }
 
                   if (formField.formValues && formField.formValues.length > 0) {
-                    options.items = formField.formValues.map((formValue) => {
-                      const value = formValue.id;
-                      const label = formValue.name;
+                    options.items = formField.formValues.map((formValue: any) => {
+                      const value: string = formValue.id;
+                      const label: string = formValue.name;
                       if (value && label) {
                         return {
                           value,
@@ -176,7 +175,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
                       }
 
                       return null;
-                    }).filter((formValue) => (formValue !== null));
+                    }).filter((formValue: any) => (formValue !== null));
                   }
                   if (formField.defaultValue) {
                     options.initialValue = formField.defaultValue;
@@ -196,7 +195,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
                 };
               }
               return null;
-            }).filter((formField) => (formField !== null));
+            }).filter((formField: any) => (formField !== null));
           }
 
           widget = {
@@ -207,15 +206,14 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
               layout: formElements,
             },
           };
-        }
-                     break;
-        case 'Confirm': {
-          let confirmElements = [];
-          let confirmMessage = '';
-          let confirmImageUrl = null;
+          break;
+        case 'Confirm':
+          let confirmElements: Array<any> = [];
+          let confirmMessage: string = '';
+          let confirmImageUrl: string = null;
 
-          const convertLayout = (confirmLayout) => {
-            return confirmLayout.map((element) => {
+          const convertLayout: any = (confirmLayout: any): Array<any> => {
+            return confirmLayout.map((element: any) => {
               const elementObj: any = {
                 theme: this.props.confirmItemTheme,
                 key: element.key,
@@ -244,8 +242,12 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
               confirmImageUrl = this.props.uiConfig.imageUrl;
             }
           } else {
-            const confirmLayoutArr = processInstance.nextTaskDef.extensions.properties.filter((property) => property.name === 'confirmLayout');
-            const confirmMessageArr = processInstance.nextTaskDef.extensions.properties.filter((property) => property.name === 'confirmMessage');
+            const confirmLayoutArr: Array<any> = processInstance.nextTaskDef.extensions.properties.filter(
+              (property: any) => property.name === 'confirmLayout',
+            );
+            const confirmMessageArr: Array<any> = processInstance.nextTaskDef.extensions.properties.filter(
+              (property: any) => property.name === 'confirmMessage',
+            );
 
             if (processInstance.nextTaskDef && processInstance.nextTaskDef.extensions && processInstance.nextTaskDef.extensions.properties &&
               confirmMessageArr && confirmLayoutArr.length === 1) {
@@ -257,8 +259,8 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
             }
           }
 
-          let widgetChildren = null;
-          if (confirmImageUrl) {
+          let widgetChildren: any = null;
+          if (confirmImageUrl) {
             widgetChildren = <img src={confirmImageUrl}/>;
           }
 
@@ -272,8 +274,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
               children: [widgetChildren],
             },
           };
-        }
-                        break;
+          break;
         default:
           break;
       }
@@ -284,12 +285,12 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
     }
   }
 
-  private widgetConfig = null;
+  private widgetConfig: any = null;
 
-  private handleCancel(executionContext) {
+  private handleCancel(executionContext: ExecutionContext): void {
     const { processInstance } = this.props;
 
-    const fireCancel = () => {
+    const fireCancel: any = (): void => {
       if (processInstance) {
         processInstance.doCancel(executionContext).then(() => {
           this.setState({
@@ -308,10 +309,10 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
     );
   }
 
-  private handleProceed(executionContext) {
+  private handleProceed(executionContext: ExecutionContext): void {
     const { processInstance } = this.props;
 
-    const fireProceed = () => {
+    const fireProceed: any = (): void => {
       if (processInstance) {
         processInstance.doProceed(executionContext).then(() => {
           this.setState({
@@ -335,7 +336,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
     }
   }
 
-  public render() {
+  public render(): JSX.Element | Array<JSX.Element> | string | number | null | false {
     const { qflProps } = buildTheme({
       theme: this.props.theme,
       sourceMuiProps: this.props.muiProps,
@@ -345,10 +346,10 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
 
     const { processInstance } = this.props;
 
-    let proceedButton = null;
-    let cancelButton = null;
+    let proceedButton: any = null;
+    let cancelButton: any = null;
 
-    let widget = null;
+    let widget: any = null;
     if (this.widgetConfig && this.widgetConfig.component && this.widgetConfig.component.name === 'Table') {
       proceedButton = (
         <RaisedButton
@@ -358,22 +359,22 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
             primary: true,
           }}
           qflProps={{
-            onClick: (e) => {
+            onClick: (e: Event): void => {
               this.handleProceed(this.props.executionContext);
             },
           }}
         />
       );
 
-      const onSelect = (selectedItems) => {
-        let selectedItem = null;
+      const onSelect: any = (selectedItems: any): void => {
+        let selectedItem: any = null;
         if (selectedItems) {
-          Object.keys(selectedItems).map((item) => {
+          Object.keys(selectedItems).map((item: any) => {
             selectedItem = selectedItems[item];
           });
 
           if (selectedItem) {
-            const mergedUiData = Object.assign(this.state.uiData, selectedItem);
+            const mergedUiData: any = Object.assign(this.state.uiData, selectedItem);
             this.setState({
               uiData: mergedUiData,
             });
@@ -391,7 +392,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
             primary: true,
           }}
           qflProps={{
-            onClick: (e) => {
+            onClick: (e: Event): void => {
               this.handleProceed(this.props.executionContext);
             },
           }}
@@ -407,7 +408,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
               primary: true,
             }}
             qflProps={{
-              onClick: (e) => {
+              onClick: (e: Event): void => {
                 this.handleCancel(this.props.executionContext);
               },
             }}
@@ -415,19 +416,19 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
         );
       }
 
-      const onChange = (formData) => {
-        const mergedUiData = Object.assign(this.state.uiData, formData);
+      const onChange: any = (formData: any): void => {
+        const mergedUiData: any = Object.assign(this.state.uiData, formData);
         this.setState({
           uiData: mergedUiData,
         });
       };
       widget = <this.widgetConfig.component onChange={(formData) => onChange(formData)} {...this.widgetConfig.props}/>;
     } else if (this.widgetConfig && this.widgetConfig.component && this.widgetConfig.component.name === 'Confirm') {
-      const onChoose = (key) => {
-        const confirmData = {
+      const onChoose: any = (key: string): any => {
+        const confirmData: any = {
           key,
         };
-        const mergedUiData = Object.assign(this.state.uiData, confirmData);
+        const mergedUiData: any = Object.assign(this.state.uiData, confirmData);
         this.setState(
         {
           uiData: mergedUiData,
@@ -437,18 +438,23 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
         });
       };
 
-      let childs = [];
+      let childs: Array<any> = [];
       if (this.widgetConfig.props && this.widgetConfig.props.children) {
         childs = childs.concat(this.widgetConfig.props.children);
       }
 
-      widget = <this.widgetConfig.component onChoose={(key) => onChoose(key)} {...this.widgetConfig.props}>{childs}</this.widgetConfig.component>;
+      widget = (
+        <this.widgetConfig.component onChoose={(key: string) => onChoose(key)} {...this.widgetConfig.props}>
+          {childs}
+        </this.widgetConfig.component>
+      );
     }
 
     if (processInstance) {
-      let tokenDataElement = null;
-      let tokenData = null;
-      if (processInstance && processInstance.nextTaskEntity && processInstance.nextTaskEntity.processToken && processInstance.nextTaskEntity.processToken.data) {
+      let tokenDataElement: any = null;
+      let tokenData: any = null;
+      if (processInstance && processInstance.nextTaskEntity && processInstance.nextTaskEntity.processToken &&
+          processInstance.nextTaskEntity.processToken.data) {
         tokenData = processInstance.nextTaskEntity.processToken.data;
       }
 
@@ -514,7 +520,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
         );
       }
 
-      let processingComponent = (<span>Bitte warten...</span>);
+      let processingComponent: any = (<span>Bitte warten...</span>);
       if (this.state.canceled) {
         processingComponent = null;
       }
@@ -545,5 +551,3 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
     return null;
   }
 }
-
-export default ProcessableContainer;

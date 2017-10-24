@@ -1,20 +1,20 @@
 import * as React from 'react';
 
-import RaisedButton from '@process-engine/frontend_mui/dist/commonjs/Buttons/RaisedButton/RaisedButton.js';
-import DropDown from '@process-engine/frontend_mui/dist/commonjs/InputForms/DropDown/DropDown.js';
-import TextField from '@process-engine/frontend_mui/dist/commonjs/InputForms/TextField/TextField.js';
-import Table from '@process-engine/frontend_mui/dist/commonjs/Tables/Table/Table.js';
-import ProcessableContainer from '../ProcessableContainer';
+import RaisedButton from '@quantusflow/frontend_mui/dist/commonjs/Buttons/RaisedButton/RaisedButton.js';
+import DropDown from '@quantusflow/frontend_mui/dist/commonjs/InputForms/DropDown/DropDown.js';
+import TextField from '@quantusflow/frontend_mui/dist/commonjs/InputForms/TextField/TextField.js';
+import Table from '@quantusflow/frontend_mui/dist/commonjs/Tables/Table/Table.js';
+import {ProcessableContainer} from '../ProcessableContainer';
 
 import MenuItem from 'material-ui/MenuItem/MenuItem.js';
 import ExpandMoreIcon from 'material-ui/svg-icons/navigation/expand-more.js';
-import TableOverlay from './TableOverlay';
+import {TableOverlay} from './TableOverlay';
 
-const $ = require('jquery'); // tslint:disable-line no-var-requires
+const $: any = require('jquery'); // tslint:disable-line no-require-imports no-var-requires
 
 import {ExecutionContext} from '@essential-projects/core_contracts';
-import {IMUIProps} from '@process-engine/frontend_mui/dist/interfaces';
-import {IProcessable, IProcessEngineClientApi, IProcessInstance} from '@process-engine/process_engine_client_api';
+import {IMUIProps} from '@quantusflow/frontend_mui/dist/interfaces';
+import {IProcessable, IProcessEngineClientApi, IProcessInstance} from '@quantusflow/process_engine_client_api';
 
 export interface ITableProps extends IMUIProps {
   dataClassName: string;
@@ -119,8 +119,8 @@ export interface ITableState {
   itemProcessableContainer?: React.ReactNode;
 }
 
-class ProcessableTable extends React.Component<ITableProps, ITableState> implements IProcessable {
-  public static defaultProps = {
+export class ProcessableTable extends React.Component<ITableProps, ITableState> implements IProcessable {
+  public static defaultProps: {} = {
     theme: null,
     muiProps: {},
     qflProps: {},
@@ -206,7 +206,18 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
     tableSelectorTheme: null,
   };
 
-  constructor(props) {
+  private delay: any = ((): any => {
+    let timer: NodeJS.Timer = null;
+
+    return (callback: (...args: Array<any>) => void, ms: number): void => {
+      clearTimeout(timer);
+      timer = setTimeout(callback, ms);
+    };
+  })();
+
+  public itemBasedMoreMenuId: string = 'itemBasedMoreMenu';
+
+  constructor(props: ITableProps) {
     super(props);
 
     this.state = {
@@ -223,30 +234,32 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
     };
   }
 
-  private renderProcessContainer(processInstance: IProcessInstance, uiName: string, uiConfig?: any, uiData?: any) {
-    const themes = {
+  private renderProcessContainer(processInstance: IProcessInstance, uiName: string, uiConfig?: any, uiData?: any): void {
+    const themes: any = {
       buttonTheme: this.props.processButtonTheme,
       dialogTheme: this.props.processDialogTheme,
       formItemTheme: this.props.processFormItemTheme,
       confirmTheme: this.props.processConfirmTheme,
       widgetTheme: this.props.processWidgetTheme,
-      theme: this.props.processTheme
+      theme: this.props.processTheme,
     };
 
     switch (processInstance.processKey) {
       case (this.props.createProcessKey + this.props.dataClassName):
-        const createProcessableContainer = (
+        const createProcessableContainer: any = (
           <ProcessableContainer modal={true} key={processInstance.nextTaskEntity.id}
-                                processInstance={processInstance} executionContext={this.props.executionContext} uiName={uiName} uiConfig={uiConfig} uiData={uiData} {...themes}/>
+                                processInstance={processInstance} executionContext={this.props.executionContext}
+                                uiName={uiName} uiConfig={uiConfig} uiData={uiData} {...themes}/>
         );
         this.setState({
           createProcessableContainer,
         });
         break;
       case (this.state.currentItemProcessKey):
-        const itemProcessableContainer = (
+        const itemProcessableContainer: any = (
           <ProcessableContainer modal={true} key={processInstance.nextTaskEntity.id}
-                                processInstance={processInstance} executionContext={this.props.executionContext} uiName={uiName} uiConfig={uiConfig} uiData={uiData} {...themes}/>
+                                processInstance={processInstance} executionContext={this.props.executionContext}
+                                uiName={uiName} uiConfig={uiConfig} uiData={uiData} {...themes}/>
         );
         this.setState({
           itemProcessableContainer,
@@ -256,25 +269,23 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
     }
   }
 
-  public async handleUserTask(processInstance: IProcessInstance, uiName: string, uiConfig?: any, uiData?: any) {
+  public async handleUserTask(processInstance: IProcessInstance, uiName: string, uiConfig?: any, uiData?: any): Promise<void> {
     this.renderProcessContainer(processInstance, uiName, uiConfig, uiData);
   }
 
-  public async handleManualTask(processInstance: IProcessInstance, uiName: string, uiConfig?: any, uiData?: any) {
+  public async handleManualTask(processInstance: IProcessInstance, uiName: string, uiConfig?: any, uiData?: any): Promise<void> {
     return;
   }
 
-  public async handleEvent(processInstance: IProcessInstance, eventType: string, eventData?: any) {
-    console.log('got event: ', eventData);
-    // Todo: implement rerender
+  public async handleEvent(processInstance: IProcessInstance, eventType: string, eventData?: any): Promise<void> {
+    return;
   }
 
-  public async handleCancel(processInstance: IProcessInstance) {
-    console.log('got event cancel');
-    // Todo: implement rerender
+  public async handleCancel(processInstance: IProcessInstance): Promise<void> {
+    return;
   }
 
-  public async handleEndEvent(processInstance: IProcessInstance, endEventData?: any) {
+  public async handleEndEvent(processInstance: IProcessInstance, endEventData?: any): Promise<void> {
     switch (processInstance.processKey) {
       case (this.props.createProcessKey + this.props.dataClassName):
         this.setState(
@@ -307,7 +318,7 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
     }
   }
 
-  private async handleStartCreate(startToken, onProcessEnded?: Function, done?: Function) {
+  private async handleStartCreate(startToken: any, onProcessEnded?: Function, done?: Function): Promise<void> {
     if (this.props.processEngineClientApi) {
       await this.props.processEngineClientApi.startProcess(
         (this.props.createProcessKey + this.props.dataClassName),
@@ -324,7 +335,7 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
     }
   }
 
-  private async handleStartItem(processKey, startToken, onProcessEnded?: Function, done?: Function) {
+  private async handleStartItem(processKey: string, startToken: any, onProcessEnded?: Function, done?: Function): Promise<void> {
     if (this.props.processEngineClientApi) {
       await this.props.processEngineClientApi.startProcess(
         processKey,
@@ -342,38 +353,31 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
     }
   }
 
-  private delay = (() => {
-    let timer: NodeJS.Timer = null;
-    return (callback: (...args: Array<any>) => void, ms: number) => {
-      clearTimeout(timer);
-      timer = setTimeout(callback, ms);
-    };
-  })();
-
-  private handleItemClicked(item) {
+  private handleItemClicked(item: any): void {
     this.setState({
       isItemBasedMoreMenuOpened: false,
     });
 
-    const selectedItems = [];
+    const selectedItems: Array<any> = [];
     if (this.state.selectedRows) {
-      Object.keys(this.state.selectedRows).forEach((key) => {
+      Object.keys(this.state.selectedRows).forEach((key: string) => {
         selectedItems.push(this.state.selectedRows[key]);
       });
     }
     if (selectedItems && selectedItems.length > 0 && item && item.processableKey) {
-      let startToken = null;
+      let startToken: any = null;
       if (selectedItems.length === 1) {
         startToken = { id: selectedItems[0].id };
         if (item.startTokenTransformer) {
           startToken = item.startTokenTransformer(startToken, selectedItems[0]);
         }
       } else {
-        startToken = selectedItems.map((selectedItem) => {
-          let resultToken = { id: selectedItem.id };
+        startToken = selectedItems.map((selectedItem: any) => {
+          let resultToken: any = { id: selectedItem.id };
           if (item.startTokenTransformer) {
             resultToken = item.startTokenTransformer(resultToken, selectedItem);
           }
+
           return resultToken;
         });
       }
@@ -381,29 +385,27 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
     }
   }
 
-  private handleSelectedRowsChanged(selectedRows) {
+  private handleSelectedRowsChanged(selectedRows: any): void {
     this.setState({
       selectedRows,
     });
   }
 
-  public cleanSelected() {
+  public cleanSelected(): void {
     const refs: any = this.refs;
     if (refs && refs.listBoxTable && refs.listBoxTable.cleanSelected) {
       refs.listBoxTable.cleanSelected();
     }
   }
 
-  private handleFilterItemChange(key, oldValue, newValue, choosenElement, element) {
+  private handleFilterItemChange(key: string, oldValue: any, newValue: any, choosenElement: any, element: any): void {
     if (this.props.onFilterChange) {
       this.props.onFilterChange(key, newValue, choosenElement, element);
     }
   }
 
-  public itemBasedMoreMenuId = 'itemBasedMoreMenu';
-
-  public render() {
-    let newClassName = null;
+  public render(): JSX.Element | Array<JSX.Element> | string | number | null | false {
+    let newClassName: string = null;
     if (this.props.frame === true) {
       newClassName = this.props.tableStyles.tableWithFrameClassName;
     } else {
@@ -415,9 +417,9 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
       delete this.props.tableProps.rbtProps;
     }
 
-    const processables = [];
+    const processables: Array<any> = [];
 
-    let createButton = null;
+    let createButton: any = null;
     if (this.props.createProcessKey) {
       createButton = (
         <RaisedButton
@@ -426,7 +428,7 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
             label: '+',
             primary: true,
             className: this.props.tableStyles.createButtonClassName,
-            onClick: (e) => {
+            onClick: (e: Event): void => {
               this.handleStartCreate(this.props.createStartToken, this.props.onCreateProcessEnded);
             },
             ...this.props.createButtonMuiProps,
@@ -438,31 +440,31 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
         />
       );
 
-      const createProcessContainer = this.state.createProcessableContainer;
+      const createProcessContainer: any = this.state.createProcessableContainer;
       processables.push(createProcessContainer);
     }
 
-    let filterMenuElements = [];
+    let filterMenuElements: Array<any> = [];
     if (this.props.filterMenuSchema && this.props.filterMenuSchema.length > 0) {
-      filterMenuElements = this.props.filterMenuSchema.map((filterMenuSchemaItem) => (
+      filterMenuElements = this.props.filterMenuSchema.map((filterMenuSchemaItem: any) => (
         <DropDown
           key={filterMenuSchemaItem.key}
           theme={filterMenuSchemaItem.theme}
           value={filterMenuSchemaItem.currentValue}
-          items={filterMenuSchemaItem.items.map((dropDownItem, dropDownItemIdx) => <MenuItem
-            key={filterMenuSchemaItem.key + '-' + dropDownItemIdx}
+          items={filterMenuSchemaItem.items.map((dropDownItem: any, dropDownItemIdx: number) => <MenuItem
+            key={`${filterMenuSchemaItem.key}-${dropDownItemIdx}`}
             value={dropDownItem.value}
             primaryText={dropDownItem.label}
           />)}
           muiProps={{
             anchorOrigin: {
               vertical: 'bottom',
-              horizontal: 'left'
+              horizontal: 'left',
             },
             floatingLabelText: filterMenuSchemaItem.label,
             ...filterMenuSchemaItem.muiProps,
           }}
-          onChange={(event, index, oldValue, newValue) => this.handleFilterItemChange(
+          onChange={(event: any, index: number, oldValue: any, newValue: any): any => this.handleFilterItemChange(
             filterMenuSchemaItem.key, oldValue, newValue, filterMenuSchemaItem.items[index], filterMenuSchemaItem)}
           qflProps={{
             ...filterMenuSchemaItem.qflProps,
@@ -471,16 +473,17 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
       ));
     }
 
-    let itemBasedElements = [];
+    let itemBasedElements: Array<any> = [];
     if (Object.keys(this.state.selectedRows).length > 0) {
       if (this.props.itemBasedButtonSchema && this.props.itemBasedButtonSchema.length > 0) {
-        itemBasedElements = itemBasedElements.concat(this.props.itemBasedButtonSchema.filter((buttonSchemaItem) => {
+        itemBasedElements = itemBasedElements.concat(this.props.itemBasedButtonSchema.filter((buttonSchemaItem: any) => {
           if (!buttonSchemaItem.multiple && Object.keys(this.state.selectedRows).length > 1) {
             return false;
           }
+
           return !buttonSchemaItem.isMore;
-        }).map((buttonSchemaItem, buttonSchemaIdx) => {
-          const itemBasedButtonProcessContainer = this.state.itemProcessableContainer;
+        }).map((buttonSchemaItem: any, buttonSchemaIdx: number) => {
+          const itemBasedButtonProcessContainer: any = this.state.itemProcessableContainer;
           processables.push(itemBasedButtonProcessContainer);
 
           return (
@@ -490,7 +493,7 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
                 icon: buttonSchemaItem.icon,
                 primary: true,
                 className: this.props.tableStyles.itemBasedButtonClassName,
-                onClick: (e) => {
+                onClick: (e: Event): void => {
                   this.handleItemClicked.bind(this, buttonSchemaItem)();
                 },
                 ...this.props.itemBasedButtonMuiProps,
@@ -503,17 +506,18 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
           );
         }));
 
-        const itemBasedMoreButtons = this.props.itemBasedButtonSchema.filter((buttonSchemaItem) => {
+        const itemBasedMoreButtons: any = this.props.itemBasedButtonSchema.filter((buttonSchemaItem: any) => {
           if (!buttonSchemaItem.multiple && Object.keys(this.state.selectedRows).length > 1) {
             return false;
           }
+
           return buttonSchemaItem.isMore;
         });
         if (itemBasedMoreButtons.length > 0) {
-          const menuSchema = [{
+          const menuSchema: Array<any> = [{
             sectionName: null,
-            items: itemBasedMoreButtons.map((buttonSchemaItem) => {
-              const itemBasedButtonProcessContainer = this.state.itemProcessableContainer;
+            items: itemBasedMoreButtons.map((buttonSchemaItem: any) => {
+              const itemBasedButtonProcessContainer: any = this.state.itemProcessableContainer;
               processables.push(itemBasedButtonProcessContainer);
 
               return {
@@ -541,10 +545,10 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
                   style: {
                     borderRadius: '0px',
                   },
-                  onClick: (e) => {
+                  onClick: (e: Event): void => {
                     if (!this.state.isItemBasedMoreMenuOpened) {
-                      $(window.document).on('click', (ce) => {
-                        if (ce.originalEvent && ce.originalEvent.path.filter((item) => item.id === this.itemBasedMoreMenuId).length === 0) {
+                      $(window.document).on('click', (ce: any): void => {
+                        if (ce.originalEvent && ce.originalEvent.path.filter((item: any) => item.id === this.itemBasedMoreMenuId).length === 0) {
                           $(window.document).off('click');
                           this.setState({
                             isItemBasedMoreMenuOpened: false,
@@ -586,9 +590,11 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
                   menuSchema={menuSchema}
                   tableOverlayStyles={this.props.tableOverlayStyles}
                   theme={this.props.tableOverlayTheme}
-                  onMenuItemClicked={(key) => {
-                    const matchedButtonSchemaItems = itemBasedMoreButtons.filter((buttonSchemaItem) => (buttonSchemaItem.key === key));
-                    let buttonSchemaItem = null;
+                  onMenuItemClicked={(key: string): void => {
+                    const matchedButtonSchemaItems: any = itemBasedMoreButtons.filter(
+                      (itemBasedMoreButtonItem: any) => (itemBasedMoreButtonItem.key === key),
+                    );
+                    let buttonSchemaItem: any = null;
                     if (matchedButtonSchemaItems.length === 1) {
                       buttonSchemaItem = matchedButtonSchemaItems[0];
                     }
@@ -604,7 +610,7 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
       }
     }
 
-    let searchField = null;
+    let searchField: any = null;
     if (this.props.onSearch) {
       searchField = (
         <TextField
@@ -620,18 +626,18 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
             style: {
               verticalAlign: 'top',
               display: 'inline-block',
-              position: 'relative'
+              position: 'relative',
             },
             ...this.props.searchFieldQflProps,
           }}
           {...this.props.searchFieldProps}
-          onChange={(oldValue, newValue, e) => {
+          onChange={(oldValue: any, newValue: any, e: React.KeyboardEvent<HTMLInputElement>): void => {
             if (this.props.onSearch) {
               this.delay(
                 () => {
                   this.props.onSearch(newValue);
                 },
-                (e && e.keyCode === 13 ? 0 : this.props.searchKeyDelay),
+                (e && e.keyCode === 13 ? 0 : this.props.searchKeyDelay), // tslint:disable-line no-magic-numbers
               );
             }
           }}
@@ -661,7 +667,7 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
           ref='listBoxTable'
           theme={this.props.tableTheme}
           selectorTheme={this.props.tableSelectorTheme}
-          onSelectedRowsChanged={(selectedRows) => {
+          onSelectedRowsChanged={(selectedRows: any): any => {
             this.handleSelectedRowsChanged(selectedRows);
           }}
           {...this.props.tableProps}
@@ -685,16 +691,16 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
           }}
           stylingProps={{
             containerStyle: {
-              height: this.props.controlledHeight + 'px',
+              height: `${this.props.controlledHeight}px`,
             },
             tableStyle: {
-              height: (this.props.controlledHeight - 10) + 'px',
+              height: `${(this.props.controlledHeight - 10)}px`, // tslint:disable-line no-magic-numbers
             },
             headerStyle: {
               height: '35px',
             },
             bodyStyle: {
-              height: (this.props.controlledHeight - 10 - 35) + 'px',
+              height: `${(this.props.controlledHeight - 10 - 35)}px`, // tslint:disable-line no-magic-numbers
             },
           }}
 
@@ -705,5 +711,3 @@ class ProcessableTable extends React.Component<ITableProps, ITableState> impleme
     );
   }
 }
-
-export default ProcessableTable;

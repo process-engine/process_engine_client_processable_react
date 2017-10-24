@@ -1,11 +1,11 @@
 import * as React from 'react';
 
-import {buildTheme} from '@process-engine/frontend_mui/dist/commonjs/themeBuilder.js';
-import {IMUIProps} from '@process-engine/frontend_mui/dist/interfaces';
-import ProcessableTable from '../Table/Table';
+import {buildTheme} from '@quantusflow/frontend_mui/dist/commonjs/themeBuilder.js';
+import {IMUIProps} from '@quantusflow/frontend_mui/dist/interfaces';
+import {ProcessableTable} from '../Table/Table';
 
 import {ExecutionContext} from '@essential-projects/core_contracts';
-import {IProcessEngineClientApi} from '@process-engine/process_engine_client_api';
+import {IProcessEngineClientApi} from '@quantusflow/process_engine_client_api';
 import {IColumnSchema} from '../../interfaces';
 
 export interface IProcessableCrudTableProps extends IMUIProps {
@@ -76,15 +76,15 @@ export interface IProcessableCrudTableState {
   entityCollection?: Array<{}>;
 }
 
-class ProcessableCrudTable extends React.Component<IProcessableCrudTableProps, IProcessableCrudTableState> {
-  public static defaultProps = {
+export class ProcessableCrudTable extends React.Component<IProcessableCrudTableProps, IProcessableCrudTableState> {
+  public static defaultProps: any = {
     rbtProps: {},
     entityCollection: {},
 
     title: null,
     fetchingMode: 'initial',
     baseFilter: null,
-    extendedFilter: () => ({}),
+    extendedFilter: (): {} => ({}),
 
     pageSize: 16,
     entityTypeName: 'Entity',
@@ -128,7 +128,7 @@ class ProcessableCrudTable extends React.Component<IProcessableCrudTableProps, I
     tableSelectorTheme: null,
   };
 
-  constructor(props) {
+  constructor(props: IProcessableCrudTableProps) {
     super(props);
 
     this.state = {
@@ -143,7 +143,7 @@ class ProcessableCrudTable extends React.Component<IProcessableCrudTableProps, I
     };
   }
 
-  public componentDidMount() {
+  public componentDidMount(): void {
     this.props.fetcher(
       {
         mode: 'load',
@@ -159,7 +159,7 @@ class ProcessableCrudTable extends React.Component<IProcessableCrudTableProps, I
         }),
         ...this.props.extendedFilter(),
       },
-      (e) => {
+      (e: any): void => {
         if (e.mounted && !e.done) {
           this.setState({
             isFetching: true,
@@ -176,10 +176,10 @@ class ProcessableCrudTable extends React.Component<IProcessableCrudTableProps, I
     );
   }
 
-  public getGlobalSearchFilter(searchValue, ignoreCase) {
-    const searchFilter = this.props.columnSchema.filter((element) => (element.searchable)).map((element) => {
+  public getGlobalSearchFilter(searchValue: string, ignoreCase: boolean): void {
+    const searchFilter: any = this.props.columnSchema.filter((element: any) => (element.searchable)).map((element: any) => {
       if (element.searchableType === 'float' || element.searchableType === 'integer') {
-        const parsedSearchValue = (element.searchableType === 'float' ? parseFloat(searchValue) : parseInt(searchValue));
+        const parsedSearchValue: any = (element.searchableType === 'float' ? parseFloat(searchValue) : parseInt(searchValue));
         if (isNaN(parsedSearchValue)) {
           return null;
         }
@@ -199,17 +199,17 @@ class ProcessableCrudTable extends React.Component<IProcessableCrudTableProps, I
         value: searchValue,
         ignoreCase,
       };
-    }).filter((element) => (element !== null && element !== undefined));
+    }).filter((element: any) => (element !== null && element !== undefined));
 
     return searchFilter;
   }
 
-  private initCollection(firstCall) {
-    let newEntityCollection = (this.state.entityCollection || []);
+  private initCollection(firstCall: any): any {
+    let newEntityCollection: any = (this.state.entityCollection || []);
     const { entityCollection } = this.props;
 
     if (entityCollection && entityCollection.edges) {
-      newEntityCollection = entityCollection.edges.map((item) => item.node);
+      newEntityCollection = entityCollection.edges.map((item: any) => item.node);
     }
 
     setTimeout(
@@ -225,12 +225,12 @@ class ProcessableCrudTable extends React.Component<IProcessableCrudTableProps, I
     return newEntityCollection;
   }
 
-  private extendCollection() {
-    const currentEntityCollection = (this.state.entityCollection || []);
-    let newEntityCollection = currentEntityCollection;
+  private extendCollection(): any {
+    const currentEntityCollection: any = (this.state.entityCollection || []);
+    let newEntityCollection: any = currentEntityCollection;
     const { entityCollection } = this.props;
     if (entityCollection && entityCollection.edges) {
-      newEntityCollection = currentEntityCollection.concat(entityCollection.edges.map((item) => item.node));
+      newEntityCollection = currentEntityCollection.concat(entityCollection.edges.map((item: any) => item.node));
     }
 
     setTimeout(
@@ -247,7 +247,7 @@ class ProcessableCrudTable extends React.Component<IProcessableCrudTableProps, I
     return newEntityCollection;
   }
 
-  private prepareCollection() {
+  private prepareCollection(): any {
     if (!this.state.synced) {
       if (!this.state.isFetching) {
         if (this.state.hasLoaded && this.props.fetchingMode === 'load') {
@@ -265,13 +265,13 @@ class ProcessableCrudTable extends React.Component<IProcessableCrudTableProps, I
     return (this.state.entityCollection || []);
   }
 
-  private handleRowDoubleClick(row) {
+  private handleRowDoubleClick(row: any): void {
     if (this.props.onRowDoubleClick) {
       this.props.onRowDoubleClick(row);
     }
   }
 
-  private handleSearch(searchValue) {
+  private handleSearch(searchValue: any): void {
     this.setState(
       {
         currentOffset: 0,
@@ -298,7 +298,7 @@ class ProcessableCrudTable extends React.Component<IProcessableCrudTableProps, I
               }),
               ...this.props.extendedFilter(),
             },
-            (e) => {
+            (e: any) => {
               if (e.mounted && !e.done) {
                 this.setState({
                   synced: false,
@@ -329,7 +329,7 @@ class ProcessableCrudTable extends React.Component<IProcessableCrudTableProps, I
               }),
               ...this.props.extendedFilter(),
             },
-            (e) => {
+            (e: any) => {
               if (e.mounted && !e.done) {
                 this.setState({
                   synced: false,
@@ -349,7 +349,7 @@ class ProcessableCrudTable extends React.Component<IProcessableCrudTableProps, I
     );
   }
 
-  private handleSortChange(sortName, sortOrder) {
+  private handleSortChange(sortName: any, sortOrder: any): void {
     if (sortName && sortOrder) {
       this.setState(
         {
@@ -363,7 +363,7 @@ class ProcessableCrudTable extends React.Component<IProcessableCrudTableProps, I
               first: this.state.currentFirst,
               orderBy: JSON.stringify({ attributes: [{ attribute: sortName, order: sortOrder }] }),
             },
-            (e) => {
+            (e: any) => {
               if (e.mounted && !e.done) {
                 this.setState({
                   synced: false,
@@ -383,13 +383,13 @@ class ProcessableCrudTable extends React.Component<IProcessableCrudTableProps, I
     }
   }
 
-  private handleLoadMore() {
+  private handleLoadMore(): void {
     const { entityCollection } = this.props;
 
     if (!this.state.isFetching && entityCollection && entityCollection.pageInfo && entityCollection.pageInfo.hasNextPage) {
-      const currentOffset = this.state.currentOffset;
-      const newOffset = (currentOffset + this.props.pageSize);
-      const newFirst = (this.props.pageSize + newOffset);
+      const currentOffset: any = this.state.currentOffset;
+      const newOffset: any = (currentOffset + this.props.pageSize);
+      const newFirst: any = (this.props.pageSize + newOffset);
       this.setState(
         {
           currentFirst: newFirst,
@@ -400,7 +400,7 @@ class ProcessableCrudTable extends React.Component<IProcessableCrudTableProps, I
               mode: 'more',
               offset: newOffset,
             },
-            (e) => {
+            (e: any) => {
               if (e.mounted && !e.done) {
                 this.setState({
                   synced: false,
@@ -420,20 +420,20 @@ class ProcessableCrudTable extends React.Component<IProcessableCrudTableProps, I
     }
   }
 
-  public cleanSelectedEntities() {
+  public cleanSelectedEntities(): void {
     const refs: any = this.refs;
     if (refs && refs.entitiesTable && refs.entitiesTable.cleanSelected) {
       refs.entitiesTable.cleanSelected();
     }
   }
 
-  private handleCreateProcessEnded(processKey, data) {
+  private handleCreateProcessEnded(processKey: any, data: any): void {
     this.props.fetcher(
       {
         mode: 'reload',
         offset: this.state.currentOffset,
       },
-      (e) => {
+      (e: any) => {
         if (e.mounted && !e.done) {
           this.setState({
             synced: false,
@@ -452,13 +452,13 @@ class ProcessableCrudTable extends React.Component<IProcessableCrudTableProps, I
     );
   }
 
-  private handleItemProcessEnded(processKey, data) {
+  private handleItemProcessEnded(processKey: any, data: any): void {
     this.props.fetcher(
       {
         mode: 'reload',
         offset: this.state.currentOffset,
       },
-      (e) => {
+      (e: any) => {
         if (e.mounted && !e.done) {
           this.setState({
             synced: false,
@@ -472,7 +472,7 @@ class ProcessableCrudTable extends React.Component<IProcessableCrudTableProps, I
               hasReloaded: true,
             },
             () => {
-              if (processKey === ('Delete' + this.props.entityTypeName)) {
+              if (processKey === (`Delete${this.props.entityTypeName}`)) {
                 this.cleanSelectedEntities();
               }
             },
@@ -482,7 +482,7 @@ class ProcessableCrudTable extends React.Component<IProcessableCrudTableProps, I
     );
   }
 
-  public render() {
+  public render(): JSX.Element | Array<JSX.Element> | string | number | null | false {
     const { children } = this.props;
 
     const { qflProps, rbtProps } = buildTheme({
@@ -492,7 +492,7 @@ class ProcessableCrudTable extends React.Component<IProcessableCrudTableProps, I
       componentName: 'Table',
     });
 
-    let tableElement = null;
+    let tableElement: any = null;
     if (this.state.hasLoaded) {
       tableElement = (
         <ProcessableTable
@@ -507,9 +507,9 @@ class ProcessableCrudTable extends React.Component<IProcessableCrudTableProps, I
           ref='entitiesTable'
           dataClassName={this.props.entityTypeName}
           frame={false}
-          onSearch={(searchValue) => this.handleSearch(searchValue)}
-          onCreateProcessEnded={(processKey, data) => this.handleCreateProcessEnded(processKey, data)}
-          onItemProcessEnded={(processKey, data) => this.handleItemProcessEnded(processKey, data)}
+          onSearch={(searchValue: any): any => this.handleSearch(searchValue)}
+          onCreateProcessEnded={(processKey: any, data: any): any => this.handleCreateProcessEnded(processKey, data)}
+          onItemProcessEnded={(processKey: any, data: any): any => this.handleItemProcessEnded(processKey, data)}
           createProcessKey='Create'
           createStartToken={this.props.createStartToken}
 
@@ -543,10 +543,10 @@ class ProcessableCrudTable extends React.Component<IProcessableCrudTableProps, I
           filterMenuSchema={this.props.filterMenuSchema}
           baseFilterMenuSchema={this.props.baseFilterMenuSchema}
 
-          onFilterChange={(key, newValue, choosenElement, element) => {
+          onFilterChange={(key: any, newValue: any, choosenElement: any, element: any): void => {
             if (this.props.onFilterChange) {
-              this.props.onFilterChange(key, newValue, choosenElement, element, (query) => {
-                this.props.fetcher(query, (e) => {
+              this.props.onFilterChange(key, newValue, choosenElement, element, (query: any) => {
+                this.props.fetcher(query, (e: any) => {
                   if (e.mounted && !e.done) {
                     this.setState({
                       synced: false,
@@ -572,9 +572,9 @@ class ProcessableCrudTable extends React.Component<IProcessableCrudTableProps, I
               defaultSortName: this.props.defaultSortName,
               defaultSortOrder: this.props.defaultSortOrder,
               options: {
-                onRowDoubleClick: (row) => this.handleRowDoubleClick(row),
-                onSortChange: (sortName, sortOrder) => this.handleSortChange(sortName, sortOrder),
-                onLoadMore: () => this.handleLoadMore(),
+                onRowDoubleClick: (row: any): any => this.handleRowDoubleClick(row),
+                onSortChange: (sortName: any, sortOrder: any): any => this.handleSortChange(sortName, sortOrder),
+                onLoadMore: (): any => this.handleLoadMore(),
               },
               ...rbtProps,
             },
@@ -593,5 +593,3 @@ class ProcessableCrudTable extends React.Component<IProcessableCrudTableProps, I
     );
   }
 }
-
-export default ProcessableCrudTable;

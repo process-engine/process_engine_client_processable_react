@@ -1,11 +1,11 @@
 import * as React from 'react';
 
-import ToolBar from '@process-engine/frontend_mui/dist/commonjs/Bars/ToolBar/ToolBar.js';
-import Link from '@process-engine/frontend_mui/dist/commonjs/Buttons/Link/Link.js';
-import CheckBox from '@process-engine/frontend_mui/dist/commonjs/InputForms/CheckBox/CheckBox.js';
-import {IMUIProps} from '@process-engine/frontend_mui/dist/interfaces';
+import ToolBar from '@quantusflow/frontend_mui/dist/commonjs/Bars/ToolBar/ToolBar.js';
+import Link from '@quantusflow/frontend_mui/dist/commonjs/Buttons/Link/Link.js';
+import CheckBox from '@quantusflow/frontend_mui/dist/commonjs/InputForms/CheckBox/CheckBox.js';
+import {IMUIProps} from '@quantusflow/frontend_mui/dist/interfaces';
 
-import {buildTheme} from '@process-engine/frontend_mui/dist/commonjs/themeBuilder.js';
+import {buildTheme} from '@quantusflow/frontend_mui/dist/commonjs/themeBuilder.js';
 
 import {ToolbarGroup, ToolbarSeparator} from 'material-ui/Toolbar/index.js';
 
@@ -32,8 +32,8 @@ export interface ITableOverlayChildContext {
   muiTheme?: {};
 }
 
-class TableOverlay extends React.Component<ITableOverlayProps, ITableOverlayState> {
-  public static defaultProps = {
+export class TableOverlay extends React.Component<ITableOverlayProps, ITableOverlayState> {
+  public static defaultProps: any = {
     theme: null,
     muiProps: {},
     qflProps: {},
@@ -55,9 +55,9 @@ class TableOverlay extends React.Component<ITableOverlayProps, ITableOverlayStat
     };
   }
 
-  private handleChange(e, oldValue, newValue, dataKey) {
+  private handleChange(e: Event, oldValue: any, newValue: any, dataKey: string): void {
     if (oldValue !== newValue) {
-      const currentSelectedMenuItems = this.state.selectedMenuItems;
+      const currentSelectedMenuItems: any = this.state.selectedMenuItems;
       if (newValue) {
         currentSelectedMenuItems[dataKey] = true;
       } else {
@@ -76,13 +76,13 @@ class TableOverlay extends React.Component<ITableOverlayProps, ITableOverlayStat
     }
   }
 
-  private handleItemMenuClicked(e, dataKey) {
+  private handleItemMenuClicked(e: React.MouseEvent<HTMLSpanElement>, dataKey: string): void {
     if (this.props.onMenuItemClicked) {
       this.props.onMenuItemClicked(dataKey);
     }
   }
 
-  public render() {
+  public render(): JSX.Element | Array<JSX.Element> | string | number | null | false {
     const {theme, qflProps, muiProps} = buildTheme({
       theme: this.props.theme,
       sourceMuiProps: this.props.muiProps,
@@ -93,9 +93,9 @@ class TableOverlay extends React.Component<ITableOverlayProps, ITableOverlayStat
     return (
       <div {...qflProps}>
           <ToolBar theme={this.props.theme} muiProps={muiProps}>
-          {this.props.menuSchema.map((section, sectionIdx) => {
-            const elements = [];
-            let menuHeaderElement = null;
+          {this.props.menuSchema.map((section: any, sectionIdx: number) => {
+            const elements: Array<any> = [];
+            let menuHeaderElement: any = null;
             if (section.sectionName) {
               menuHeaderElement = (
                 <h1 className={this.props.tableOverlayStyles.menuHeaderClassName}>{section.sectionName}</h1>);
@@ -111,8 +111,8 @@ class TableOverlay extends React.Component<ITableOverlayProps, ITableOverlayStat
               >
                 {menuHeaderElement}
                 <span className={this.props.menuItemClassName}>
-                  {section.items.map((item, itemIdx) => {
-                    let content = null;
+                  {section.items.map((item: any, itemIdx: number) => {
+                    let content: any = null;
                     if (item.isCheckBox === true) {
                       content = (
                         <CheckBox
@@ -121,13 +121,13 @@ class TableOverlay extends React.Component<ITableOverlayProps, ITableOverlayStat
                           muiProps={{label: item.label}}
                           dataKey={item.key}
                           value={this.state.selectedMenuItems[item.key]}
-                          onChange={(e, oldValue, newValue, dataKey) => {
+                          onChange={(e: Event, oldValue: any, newValue: any, dataKey: string): void => {
                             this.handleChange(e, oldValue, newValue, dataKey);
                           }}
                         />
                       );
                     } else if (item.isLink === true) {
-                      let to = item.to;
+                      let to: string = item.to;
                       if (item.to && typeof item.to === 'function') {
                         to = item.to();
                       }
@@ -141,14 +141,15 @@ class TableOverlay extends React.Component<ITableOverlayProps, ITableOverlayStat
                           style={{
                             cursor: 'pointer',
                           }}
-                          onClick={(e) => {
+                          onClick={(e: React.MouseEvent<HTMLSpanElement>): void => {
                             this.handleItemMenuClicked(e, item.key);
                           }}
                         >
-                                  {item.label}
-                              </span>
+                          {item.label}
+                        </span>
                       );
                     }
+
                     return content;
                   })}
                 </span>
@@ -158,7 +159,7 @@ class TableOverlay extends React.Component<ITableOverlayProps, ITableOverlayStat
             if (sectionIdx < this.props.menuSchema.length - 1) {
               elements.push(
                 <ToolbarSeparator
-                  key={sectionIdx + '_seperator'}
+                  key={`${sectionIdx}_seperator`}
                   style={{
                     top: '0px',
                     bottom: '0px',
@@ -172,6 +173,7 @@ class TableOverlay extends React.Component<ITableOverlayProps, ITableOverlayStat
                 />,
               );
             }
+
             return (elements);
           })}
         </ToolBar>
@@ -179,5 +181,3 @@ class TableOverlay extends React.Component<ITableOverlayProps, ITableOverlayStat
     );
   }
 }
-
-export default TableOverlay;
