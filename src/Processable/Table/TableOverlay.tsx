@@ -145,8 +145,8 @@ class TableOverlay extends React.Component<ITableOverlayProps, ITableOverlayStat
                             this.handleItemMenuClicked(e, item.key);
                           }}
                         >
-                                  {item.label}
-                              </span>
+                          {item.label}
+                        </span>
                       );
                     }
                     return content;
