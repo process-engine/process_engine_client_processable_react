@@ -68,6 +68,8 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
     uiData: {},
   };
 
+  private widgetConfig: any = null;
+
   constructor(props: IProcessableContainerProps) {
     super(props);
 
@@ -194,6 +196,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
                   ...options,
                 };
               }
+
               return null;
             }).filter((formField: any) => (formField !== null));
           }
@@ -284,8 +287,6 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
       this.widgetConfig = widget;
     }
   }
-
-  private widgetConfig: any = null;
 
   private handleCancel(executionContext: ExecutionContext): void {
     const { processInstance } = this.props;
@@ -382,7 +383,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
         }
 
       };
-      widget = <this.widgetConfig.component onSelectedRowsChanged={(selectedItem) => onSelect(selectedItem)} {...this.widgetConfig.props}/>;
+      widget = <this.widgetConfig.component onSelectedRowsChanged={(selectedItem: any): any => onSelect(selectedItem)} {...this.widgetConfig.props}/>;
     } else if (this.widgetConfig && this.widgetConfig.component && this.widgetConfig.component.name === 'Form') {
       proceedButton = (
         <RaisedButton
@@ -422,7 +423,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
           uiData: mergedUiData,
         });
       };
-      widget = <this.widgetConfig.component onChange={(formData) => onChange(formData)} {...this.widgetConfig.props}/>;
+      widget = <this.widgetConfig.component onChange={(formData: any): any => onChange(formData)} {...this.widgetConfig.props}/>;
     } else if (this.widgetConfig && this.widgetConfig.component && this.widgetConfig.component.name === 'Confirm') {
       const onChoose: any = (key: string): any => {
         const confirmData: any = {
@@ -444,7 +445,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
       }
 
       widget = (
-        <this.widgetConfig.component onChoose={(key: string) => onChoose(key)} {...this.widgetConfig.props}>
+        <this.widgetConfig.component onChoose={(key: string): any => onChoose(key)} {...this.widgetConfig.props}>
           {childs}
         </this.widgetConfig.component>
       );

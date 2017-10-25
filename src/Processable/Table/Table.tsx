@@ -1,14 +1,12 @@
 import * as React from 'react';
 
 import RaisedButton from '@quantusflow/frontend_mui/dist/commonjs/Buttons/RaisedButton/RaisedButton.js';
-import FlatButton from '@quantusflow/frontend_mui/dist/commonjs/Buttons/FlatButton/FlatButton.js';
 import DropDown from '@quantusflow/frontend_mui/dist/commonjs/InputForms/DropDown/DropDown.js';
 import TextField from '@quantusflow/frontend_mui/dist/commonjs/InputForms/TextField/TextField.js';
 import Table from '@quantusflow/frontend_mui/dist/commonjs/Tables/Table/Table.js';
 import {ProcessableContainer} from '../ProcessableContainer';
 
 import MenuItem from 'material-ui/MenuItem/MenuItem.js';
-import ExpandMoreIcon from 'material-ui/svg-icons/navigation/expand-more.js';
 import {TableOverlay} from './TableOverlay';
 
 const $: any = require('jquery'); // tslint:disable-line no-require-imports no-var-requires
@@ -609,33 +607,35 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
       }
     }
 
-    let baseFilterElements = [];
+    let baseFilterElements: Array<any> = [];
     if (this.props.baseFilterMenuSchema && this.props.baseFilterMenuSchema.length > 0) {
-      baseFilterElements = baseFilterElements.concat(this.props.baseFilterMenuSchema.map((baseFilterSchemaItem, baseFilterSchemaItemIdx) => (
-        <DropDown
-          key={baseFilterSchemaItem.key}
-          theme={baseFilterSchemaItem.theme}
-          value={baseFilterSchemaItem.currentValue}
-          items={baseFilterSchemaItem.items.map((dropDownItem, dropDownItemIdx) => <MenuItem
-            key={baseFilterSchemaItem.key + '-' + dropDownItemIdx}
-            value={dropDownItem.value}
-            primaryText={dropDownItem.label}
-          />)}
-          muiProps={{
-            anchorOrigin: {
-              vertical: 'bottom',
-              horizontal: 'left'
-            },
-            floatingLabelText: baseFilterSchemaItem.label,
-            ...baseFilterSchemaItem.muiProps,
-          }}
-          onChange={(event, index, oldValue, newValue) => this.handleFilterItemChange(
-            baseFilterSchemaItem.key, oldValue, newValue, baseFilterSchemaItem.items[index], baseFilterSchemaItem)}
-          qflProps={{
-            ...baseFilterSchemaItem.qflProps,
-          }}
-        />
-      )));
+      baseFilterElements = baseFilterElements.concat(
+        this.props.baseFilterMenuSchema.map((baseFilterSchemaItem: any, baseFilterSchemaItemIdx: number): any => (
+          <DropDown
+            key={baseFilterSchemaItem.key}
+            theme={baseFilterSchemaItem.theme}
+            value={baseFilterSchemaItem.currentValue}
+            items={baseFilterSchemaItem.items.map((dropDownItem: any, dropDownItemIdx: number): any => <MenuItem
+              key={`${baseFilterSchemaItem.key}-${dropDownItemIdx}`}
+              value={dropDownItem.value}
+              primaryText={dropDownItem.label}
+            />)}
+            muiProps={{
+              anchorOrigin: {
+                vertical: 'bottom',
+                horizontal: 'left',
+              },
+              floatingLabelText: baseFilterSchemaItem.label,
+              ...baseFilterSchemaItem.muiProps,
+            }}
+            onChange={(event: Event, index: number, oldValue: any, newValue: any): any => this.handleFilterItemChange(
+              baseFilterSchemaItem.key, oldValue, newValue, baseFilterSchemaItem.items[index], baseFilterSchemaItem)}
+            qflProps={{
+              ...baseFilterSchemaItem.qflProps,
+            }}
+          />
+        )),
+      );
     }
 
     let searchField: any = null;
