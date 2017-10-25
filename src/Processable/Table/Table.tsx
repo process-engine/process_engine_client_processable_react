@@ -1,6 +1,7 @@
 import * as React from 'react';
 
 import RaisedButton from '@quantusflow/frontend_mui/dist/commonjs/Buttons/RaisedButton/RaisedButton.js';
+import FlatButton from '@quantusflow/frontend_mui/dist/commonjs/Buttons/FlatButton/FlatButton.js';
 import DropDown from '@quantusflow/frontend_mui/dist/commonjs/InputForms/DropDown/DropDown.js';
 import TextField from '@quantusflow/frontend_mui/dist/commonjs/InputForms/TextField/TextField.js';
 import Table from '@quantusflow/frontend_mui/dist/commonjs/Tables/Table/Table.js';
@@ -18,6 +19,7 @@ import {IProcessable, IProcessEngineClientApi, IProcessInstance} from '@quantusf
 
 export interface ITableProps extends IMUIProps {
   dataClassName: string;
+  dataClassesName: string;
 
   executionContext: ExecutionContext;
   processEngineClientApi: IProcessEngineClientApi;
@@ -42,6 +44,7 @@ export interface ITableProps extends IMUIProps {
   processTheme?: {};
 
   itemBasedButtonTheme?: {};
+  itemBasedMoreButtonTheme?: {};
   listBasedButtonTheme?: {};
   filterMenuTheme?: {};
   baseFilterMenuTheme?: {};
@@ -63,6 +66,7 @@ export interface ITableProps extends IMUIProps {
   itemBasedButtonMuiProps?: {};
   itemBasedButtonQflProps?: {};
   itemBasedButtonProps?: {};
+
   itemBasedMoreButtonMuiProps?: {};
   itemBasedMoreButtonQflProps?: {};
   itemBasedMoreButtonProps?: {};
@@ -85,7 +89,9 @@ export interface ITableProps extends IMUIProps {
     checkBoxClassName?: string;
     headerContainerClassName?: string;
     itemBasedElementsClassName?: string;
+    headerElementsPlaceHolderClassName?: string;
     filterMenuElementsClassName?: string;
+    baseFilterMenuElementsClassName?: string;
     tableWithFrameClassName?: string;
     tableWithoutFrameClassName?: string;
     createButtonClassName?: string;
@@ -94,6 +100,7 @@ export interface ITableProps extends IMUIProps {
     itemHeaderClassName?: string;
     searchFieldClassName?: string;
     itemBasedMoreButtonClassName?: string;
+    itemBasedMoreMenuClassName?: string;
     itemBasedButtonClassName?: string;
     tableRowClassName?: string;
     tableHeaderRowClassName?: string;
@@ -132,7 +139,9 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
       checkBoxClassName: null,
       headerContainerClassName: null,
       itemBasedElementsClassName: null,
+      headerElementsPlaceHolderClassName: null,
       filterMenuElementsClassName: null,
+      baseFilterMenuElementsClassName: null,
       tableWithFrameClassName: null,
       tableWithoutFrameClassName: null,
       createButtonClassName: null,
@@ -141,6 +150,7 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
       itemHeaderClassName: null,
       searchFieldClassName: null,
       itemBasedMoreButtonClassName: null,
+      itemBasedMoreMenuClassName: null,
       itemBasedButtonClassName: null,
       tableRowClassName: null,
       tableHeaderRowClassName: null,
@@ -168,6 +178,7 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
     processTheme: null,
 
     itemBasedButtonTheme: null,
+    itemBasedMoreButtonTheme: null,
     listBasedButtonTheme: null,
     filterMenuTheme: null,
     baseFilterMenuTheme: null,
@@ -188,6 +199,7 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
     itemBasedButtonMuiProps: null,
     itemBasedButtonQflProps: null,
     itemBasedButtonProps: null,
+
     itemBasedMoreButtonMuiProps: null,
     itemBasedMoreButtonQflProps: null,
     itemBasedMoreButtonProps: null,
@@ -425,7 +437,6 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
         <RaisedButton
           theme={this.props.createButtonTheme}
           muiProps={{
-            label: '+',
             primary: true,
             className: this.props.tableStyles.createButtonClassName,
             onClick: (e: Event): void => {
@@ -535,16 +546,12 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
               }}
             >
               <RaisedButton
-                theme={this.props.itemBasedButtonTheme}
+                theme={this.props.itemBasedMoreButtonTheme}
                 muiProps={{
-                  icon: <ExpandMoreIcon/>,
                   labelPosition: 'before',
                   label: 'MEHR',
                   primary: true,
                   className: this.props.tableStyles.itemBasedMoreButtonClassName,
-                  style: {
-                    borderRadius: '0px',
-                  },
                   onClick: (e: Event): void => {
                     if (!this.state.isItemBasedMoreMenuOpened) {
                       $(window.document).on('click', (ce: any): void => {
@@ -564,10 +571,8 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
                 }}
                 qflProps={{
                   style: {
-                    paddingTop: this.props.theme.distances.primary,
                     width: 'auto',
-                    display: 'inline-block',
-                    marginLeft: this.props.theme.distances.halfPrimary,
+                    display: 'inline-block'
                   },
                   ...this.props.itemBasedMoreButtonQflProps,
                 }}
@@ -575,15 +580,9 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
               />
               <div
                 id={this.itemBasedMoreMenuId}
+                className={this.props.tableStyles.itemBasedMoreMenuClassName}
                 style={{
-                  display: (this.state.isItemBasedMoreMenuOpened ? 'block' : 'none'),
-                  position: 'absolute',
-                  zIndex: 10,
-                  whiteSpace: 'nowrap',
-                  color: 'black',
-                  backgroundColor: 'white',
-                  padding: this.props.theme.distances.halfPrimary,
-                  marginLeft: this.props.theme.distances.halfPrimary,
+                  display: (this.state.isItemBasedMoreMenuOpened ? 'block' : 'none')
                 }}
               >
                 <TableOverlay
@@ -608,6 +607,35 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
           ]);
         }
       }
+    }
+
+    let baseFilterElements = [];
+    if (this.props.baseFilterMenuSchema && this.props.baseFilterMenuSchema.length > 0) {
+      baseFilterElements = baseFilterElements.concat(this.props.baseFilterMenuSchema.map((baseFilterSchemaItem, baseFilterSchemaItemIdx) => (
+        <DropDown
+          key={baseFilterSchemaItem.key}
+          theme={baseFilterSchemaItem.theme}
+          value={baseFilterSchemaItem.currentValue}
+          items={baseFilterSchemaItem.items.map((dropDownItem, dropDownItemIdx) => <MenuItem
+            key={baseFilterSchemaItem.key + '-' + dropDownItemIdx}
+            value={dropDownItem.value}
+            primaryText={dropDownItem.label}
+          />)}
+          muiProps={{
+            anchorOrigin: {
+              vertical: 'bottom',
+              horizontal: 'left'
+            },
+            floatingLabelText: baseFilterSchemaItem.label,
+            ...baseFilterSchemaItem.muiProps,
+          }}
+          onChange={(event, index, oldValue, newValue) => this.handleFilterItemChange(
+            baseFilterSchemaItem.key, oldValue, newValue, baseFilterSchemaItem.items[index], baseFilterSchemaItem)}
+          qflProps={{
+            ...baseFilterSchemaItem.qflProps,
+          }}
+        />
+      )));
     }
 
     let searchField: any = null;
@@ -654,6 +682,8 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
           {createButton}{searchField}
           <div className={this.props.tableStyles.filterMenuElementsClassName}>{filterMenuElements}</div>
           <div className={this.props.tableStyles.itemBasedElementsClassName}>{itemBasedElements}</div>
+          <div className={this.props.tableStyles.headerElementsPlaceHolderClassName}/>
+          <div className={this.props.tableStyles.baseFilterMenuElementsClassName}>{baseFilterElements}</div>
         </div>
 
         <div

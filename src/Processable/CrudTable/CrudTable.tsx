@@ -23,6 +23,8 @@ export interface IProcessableCrudTableProps extends IMUIProps {
 
   pageSize?: number;
   entityTypeName?: string;
+  entityTypesName?: string;
+
   defaultSortName?: string;
   defaultSortOrder?: string;
   onRowDoubleClick?: Function;
@@ -48,9 +50,18 @@ export interface IProcessableCrudTableProps extends IMUIProps {
   onFilterChange?: Function;
 
   itemBasedButtonTheme?: {};
+  itemBasedMoreButtonTheme?: {};
   listBasedButtonTheme?: {};
   filterMenuTheme?: {};
   baseFilterMenuTheme?: {};
+
+  itemBasedButtonMuiProps?: {};
+  itemBasedButtonQflProps?: {};
+  itemBasedButtonProps?: {};
+
+  itemBasedMoreButtonMuiProps?: {};
+  itemBasedMoreButtonQflProps?: {};
+  itemBasedMoreButtonProps?: {};
 
   searchFieldTheme?: {};
 
@@ -87,7 +98,9 @@ export class ProcessableCrudTable extends React.Component<IProcessableCrudTableP
     extendedFilter: (): {} => ({}),
 
     pageSize: 16,
-    entityTypeName: 'Entity',
+    entityTypeName: null,
+    entityTypesName: null,
+
     defaultSortName: 'id',
     defaultSortOrder: 'asc',
     onRowDoubleClick: null,
@@ -111,9 +124,18 @@ export class ProcessableCrudTable extends React.Component<IProcessableCrudTableP
     baseFilterMenuSchema: [],
 
     itemBasedButtonTheme: null,
+    itemBasedMoreButtonTheme: null,
     listBasedButtonTheme: null,
     filterMenuTheme: null,
     baseFilterMenuTheme: null,
+
+    itemBasedButtonMuiProps: null,
+    itemBasedButtonQflProps: null,
+    itemBasedButtonProps: null,
+
+    itemBasedMoreButtonMuiProps: null,
+    itemBasedMoreButtonQflProps: null,
+    itemBasedMoreButtonProps: null,
 
     searchFieldTheme: null,
 
@@ -506,6 +528,8 @@ export class ProcessableCrudTable extends React.Component<IProcessableCrudTableP
 
           ref='entitiesTable'
           dataClassName={this.props.entityTypeName}
+          dataClassesName={this.props.entityTypesName}
+
           frame={false}
           onSearch={(searchValue: any): any => this.handleSearch(searchValue)}
           onCreateProcessEnded={(processKey: any, data: any): any => this.handleCreateProcessEnded(processKey, data)}
@@ -526,9 +550,18 @@ export class ProcessableCrudTable extends React.Component<IProcessableCrudTableP
           processTheme={this.props.processTheme}
 
           itemBasedButtonTheme={this.props.itemBasedButtonTheme}
+          itemBasedMoreButtonTheme={this.props.itemBasedMoreButtonTheme}
           listBasedButtonTheme={this.props.listBasedButtonTheme}
           filterMenuTheme={this.props.filterMenuTheme}
           baseFilterMenuTheme={this.props.baseFilterMenuTheme}
+
+          itemBasedButtonMuiProps={this.props.itemBasedButtonMuiProps}
+          itemBasedButtonQflProps={this.props.itemBasedButtonQflProps}
+          itemBasedButtonProps={this.props.itemBasedButtonProps}
+
+          itemBasedMoreButtonMuiProps={this.props.itemBasedMoreButtonMuiProps}
+          itemBasedMoreButtonQflProps={this.props.itemBasedMoreButtonQflProps}
+          itemBasedMoreButtonProps={this.props.itemBasedMoreButtonProps}
 
           searchFieldTheme={this.props.searchFieldTheme}
 
@@ -538,6 +571,7 @@ export class ProcessableCrudTable extends React.Component<IProcessableCrudTableP
 
           title={this.props.title}
           data={this.prepareCollection()}
+
           itemBasedButtonSchema={this.props.itemBasedButtonSchema}
           listBasedButtonSchema={this.props.listBasedButtonSchema}
           filterMenuSchema={this.props.filterMenuSchema}
