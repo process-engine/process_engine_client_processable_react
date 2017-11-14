@@ -104,6 +104,7 @@ export interface ITableProps extends IMUIProps {
     tableHeaderRowClassName?: string;
     tableColumnSelectorClassName?: string;
     tableHeaderColumnSelectorClassName?: string;
+    tableClassName?: string;
   };
 
   tableTheme?: {};
@@ -673,11 +674,18 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
       );
     }
 
-    return (
-      <div className={newClassName}>
+    let titleElement: JSX.Element = null;
+    if (this.props.title) {
+      titleElement = (
         <div className={this.props.tableStyles.itemHeaderClassName}>
           {this.props.title}
         </div>
+      );
+    }
+
+    return (
+      <div className={newClassName}>
+        {titleElement}
         <div className={this.props.tableStyles.tableBarClassName}>
           {createButton}{searchField}
           <div className={this.props.tableStyles.filterMenuElementsClassName}>{filterMenuElements}</div>
@@ -717,6 +725,7 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
             tableHeaderClass: this.props.tableStyles.tableHeaderRowClassName,
             selectRowTdClassName: this.props.tableStyles.tableColumnSelectorClassName,
             selectRowHeaderTdClassName: this.props.tableStyles.tableHeaderColumnSelectorClassName,
+            tableBodyClass: this.props.tableStyles.tableClassName,
             ...rbtProps,
           }}
           stylingProps={{
