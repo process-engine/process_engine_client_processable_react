@@ -430,9 +430,6 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
     }
 
     const { rbtProps } = (this.props.tableProps || { rbtProps: {} });
-    if (this.props.tableProps) {
-      delete this.props.tableProps.rbtProps;
-    }
 
     const processables: Array<any> = [];
 

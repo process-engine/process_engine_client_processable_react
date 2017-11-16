@@ -525,6 +525,7 @@ export class ProcessableCrudTable extends React.Component<IProcessableCrudTableP
     });
 
     let tableElement: any = null;
+
     if (this.state.hasLoaded) {
       tableElement = (
         <ProcessableTable
@@ -618,12 +619,13 @@ export class ProcessableCrudTable extends React.Component<IProcessableCrudTableP
               sortOrder: this.props.defaultSortOrder,
               defaultSortName: this.props.defaultSortName,
               defaultSortOrder: this.props.defaultSortOrder,
+              ...rbtProps,
               options: {
-                onRowDoubleClick: (row: any): any => this.handleRowDoubleClick(row),
+                onRowClick: (row: any): any => this.handleRowDoubleClick(row),
                 onSortChange: (sortName: any, sortOrder: any): any => this.handleSortChange(sortName, sortOrder),
                 onLoadMore: (): any => this.handleLoadMore(),
+                ...rbtProps.options,
               },
-              ...rbtProps,
             },
             thcSchema: this.props.columnSchema,
             ...qflProps,
