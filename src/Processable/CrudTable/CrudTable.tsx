@@ -9,6 +9,8 @@ import {IProcessEngineClientApi} from '@quantusflow/process_engine_client_api';
 import {IColumnSchema} from '../../interfaces';
 
 export interface IProcessableCrudTableProps extends IMUIProps {
+  tableKey: string;
+
   fetcher: Function;
   executionContext: ExecutionContext;
   processEngineClientApi: IProcessEngineClientApi;
@@ -64,6 +66,7 @@ export interface IProcessableCrudTableProps extends IMUIProps {
   itemBasedMoreButtonQflProps?: {};
   itemBasedMoreButtonProps?: {};
 
+  search?: Boolean;
   searchFieldTheme?: {};
 
   columnSchema?: Array<IColumnSchema>;
@@ -78,6 +81,8 @@ export interface IProcessableCrudTableProps extends IMUIProps {
 }
 
 export interface IProcessableCrudTableState {
+  tableId?: number;
+
   currentOffset?: number;
   currentFirst?: number;
   isFetching?: boolean;
@@ -90,6 +95,8 @@ export interface IProcessableCrudTableState {
 
 export class ProcessableCrudTable extends React.Component<IProcessableCrudTableProps, IProcessableCrudTableState> {
   public static defaultProps: any = {
+    tableKey: (new Date()).getTime(),
+
     rbtProps: {},
     entityCollection: {},
 
@@ -139,6 +146,7 @@ export class ProcessableCrudTable extends React.Component<IProcessableCrudTableP
     itemBasedMoreButtonQflProps: null,
     itemBasedMoreButtonProps: null,
 
+    search: true,
     searchFieldTheme: null,
 
     columnSchema: [],
@@ -184,13 +192,13 @@ export class ProcessableCrudTable extends React.Component<IProcessableCrudTableP
         ...this.props.extendedFilter(),
       },
       (e: any): void => {
-        if (e.mounted && !e.done) {
+        if (e.mounted && !e.done && !e.aborted) {
           this.setState({
             isFetching: true,
             hasLoaded: false,
             synced: false,
           });
-        } else if (e.mounted && e.done) {
+        } else if (e.mounted && (e.done || e.aborted)) {
           this.setState({
             isFetching: false,
             hasLoaded: true,
@@ -323,13 +331,13 @@ export class ProcessableCrudTable extends React.Component<IProcessableCrudTableP
               ...this.props.extendedFilter(),
             },
             (e: any) => {
-              if (e.mounted && !e.done) {
+              if (e.mounted && !e.done && !e.aborted) {
                 this.setState({
                   synced: false,
                   isFetching: true,
                   hasReloaded: false,
                 });
-              } else if (e.mounted && e.done) {
+              } else if (e.mounted && (e.done || e.aborted)) {
                 this.setState({
                   isFetching: false,
                   hasReloaded: true,
@@ -354,13 +362,13 @@ export class ProcessableCrudTable extends React.Component<IProcessableCrudTableP
               ...this.props.extendedFilter(),
             },
             (e: any) => {
-              if (e.mounted && !e.done) {
+              if (e.mounted && !e.done && !e.aborted) {
                 this.setState({
                   synced: false,
                   isFetching: true,
                   hasReloaded: false,
                 });
-              } else if (e.mounted && e.done) {
+              } else if (e.mounted && (e.done || e.aborted)) {
                 this.setState({
                   isFetching: false,
                   hasReloaded: true,
@@ -388,13 +396,13 @@ export class ProcessableCrudTable extends React.Component<IProcessableCrudTableP
               orderBy: JSON.stringify({ attributes: [{ attribute: sortName, order: sortOrder }] }),
             },
             (e: any) => {
-              if (e.mounted && !e.done) {
+              if (e.mounted && !e.done && !e.aborted) {
                 this.setState({
                   synced: false,
                   isFetching: true,
                   hasReloaded: false,
                 });
-              } else if (e.mounted && e.done) {
+              } else if (e.mounted && (e.done || e.aborted)) {
                 this.setState({
                   isFetching: false,
                   hasReloaded: true,
@@ -425,13 +433,13 @@ export class ProcessableCrudTable extends React.Component<IProcessableCrudTableP
               offset: newOffset,
             },
             (e: any) => {
-              if (e.mounted && !e.done) {
+              if (e.mounted && !e.done && !e.aborted) {
                 this.setState({
                   synced: false,
                   isFetching: true,
                   hasLoadedMore: false,
                 });
-              } else if (e.mounted && e.done) {
+              } else if (e.mounted && (e.done || e.aborted)) {
                 this.setState({
                   isFetching: false,
                   hasLoadedMore: true,
@@ -446,8 +454,8 @@ export class ProcessableCrudTable extends React.Component<IProcessableCrudTableP
 
   public cleanSelectedEntities(): void {
     const refs: any = this.refs;
-    if (refs && refs.entitiesTable && refs.entitiesTable.cleanSelected) {
-      refs.entitiesTable.cleanSelected();
+    if (refs && refs[`entitiesTable_${this.props.tableKey}`] && refs[`entitiesTable_${this.props.tableKey}`].cleanSelected) {
+      refs[`entitiesTable_${this.props.tableKey}`].cleanSelected();
     }
   }
 
@@ -458,13 +466,13 @@ export class ProcessableCrudTable extends React.Component<IProcessableCrudTableP
         offset: this.state.currentOffset,
       },
       (e: any) => {
-        if (e.mounted && !e.done) {
+        if (e.mounted && !e.done && !e.aborted) {
           this.setState({
             synced: false,
             isFetching: true,
             hasReloaded: false,
           });
-        } else if (e.mounted && e.done) {
+        } else if (e.mounted && (e.done || e.aborted)) {
           this.setState(
             {
               isFetching: false,
@@ -483,13 +491,13 @@ export class ProcessableCrudTable extends React.Component<IProcessableCrudTableP
         offset: this.state.currentOffset,
       },
       (e: any) => {
-        if (e.mounted && !e.done) {
+        if (e.mounted && !e.done && !e.aborted) {
           this.setState({
             synced: false,
             isFetching: true,
             hasReloaded: false,
           });
-        } else if (e.mounted && e.done) {
+        } else if (e.mounted && (e.done || e.aborted)) {
           this.setState(
             {
               isFetching: false,
@@ -520,6 +528,9 @@ export class ProcessableCrudTable extends React.Component<IProcessableCrudTableP
     if (this.state.hasLoaded) {
       tableElement = (
         <ProcessableTable
+          ref={`entitiesTable_${this.props.tableKey}`}
+          tableKey={this.props.tableKey}
+
           tableOverlayStyles={this.props.tableOverlayStyles}
           tableStyles={this.props.tableStyles}
 
@@ -528,7 +539,6 @@ export class ProcessableCrudTable extends React.Component<IProcessableCrudTableP
 
           theme={this.props.theme}
 
-          ref='entitiesTable'
           dataClassName={this.props.entityTypeName}
           dataClassesName={this.props.entityTypesName}
 
@@ -565,6 +575,7 @@ export class ProcessableCrudTable extends React.Component<IProcessableCrudTableP
           itemBasedMoreButtonQflProps={this.props.itemBasedMoreButtonQflProps}
           itemBasedMoreButtonProps={this.props.itemBasedMoreButtonProps}
 
+          search={this.props.search}
           searchFieldTheme={this.props.searchFieldTheme}
 
           tableTheme={this.props.tableTheme}
@@ -583,13 +594,13 @@ export class ProcessableCrudTable extends React.Component<IProcessableCrudTableP
             if (this.props.onFilterChange) {
               this.props.onFilterChange(key, newValue, choosenElement, element, (query: any) => {
                 this.props.fetcher(query, (e: any) => {
-                  if (e.mounted && !e.done) {
+                  if (e.mounted && !e.done && !e.aborted) {
                     this.setState({
                       synced: false,
                       isFetching: true,
                       hasReloaded: false,
                     });
-                  } else if (e.mounted && e.done) {
+                  } else if (e.mounted && (e.done || e.aborted)) {
                     this.setState({
                       isFetching: false,
                       hasReloaded: true,

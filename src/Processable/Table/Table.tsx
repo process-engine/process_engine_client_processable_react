@@ -16,6 +16,8 @@ import {IMUIProps} from '@quantusflow/frontend_mui/dist/interfaces';
 import {IProcessable, IProcessEngineClientApi, IProcessInstance} from '@quantusflow/process_engine_client_api';
 
 export interface ITableProps extends IMUIProps {
+  tableKey: string;
+
   dataClassName: string;
   dataClassesName: string;
 
@@ -46,6 +48,7 @@ export interface ITableProps extends IMUIProps {
   listBasedButtonTheme?: {};
   filterMenuTheme?: {};
   baseFilterMenuTheme?: {};
+  search?: Boolean;
   searchFieldTheme?: {};
 
   onSearch?: Function;
@@ -127,6 +130,8 @@ export interface ITableState {
 
 export class ProcessableTable extends React.Component<ITableProps, ITableState> implements IProcessable {
   public static defaultProps: {} = {
+    tableKey: (new Date()).getTime(),
+
     theme: null,
     muiProps: {},
     qflProps: {},
@@ -181,6 +186,7 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
     listBasedButtonTheme: null,
     filterMenuTheme: null,
     baseFilterMenuTheme: null,
+    search: true,
     searchFieldTheme: null,
 
     onSearch: null,
@@ -404,8 +410,8 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
 
   public cleanSelected(): void {
     const refs: any = this.refs;
-    if (refs && refs.listBoxTable && refs.listBoxTable.cleanSelected) {
-      refs.listBoxTable.cleanSelected();
+    if (refs && refs[`listBoxTable_${this.props.tableKey}`] && refs[`listBoxTable_${this.props.tableKey}`].cleanSelected) {
+      refs[`listBoxTable_${this.props.tableKey}`].cleanSelected();
     }
   }
 
@@ -640,7 +646,7 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
     }
 
     let searchField: any = null;
-    if (this.props.onSearch) {
+    if (this.props.search && this.props.onSearch) {
       searchField = (
         <TextField
           watch
@@ -702,7 +708,9 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
         />
 
         <Table
-          ref='listBoxTable'
+          ref={`listBoxTable_${this.props.tableKey}`}
+          tableKey={this.props.tableKey}
+
           theme={this.props.tableTheme}
           selectorTheme={this.props.tableSelectorTheme}
           onSelectedRowsChanged={(selectedRows: any): any => {
