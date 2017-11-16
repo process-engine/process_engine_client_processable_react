@@ -15,7 +15,7 @@
   ],
   "dependencies": {
     "@essential-projects/core_contracts": "^0.1.0",
-    "@quantusflow/frontend_mui": "^0.1.0",
+    "@quantusflow/frontend_mui": "^0.1.1",
     "@quantusflow/process_engine_client_api": "^0.1.0",
     "babel-plugin-add-module-exports": "^0.2.1",
     "babel-plugin-syntax-async-functions": "^6.13.0",
