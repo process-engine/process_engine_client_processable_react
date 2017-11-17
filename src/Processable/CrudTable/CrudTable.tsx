@@ -55,6 +55,8 @@ export interface IProcessableCrudTableProps extends IMUIProps {
   itemBasedButtonTheme?: {};
   itemBasedMoreButtonTheme?: {};
   listBasedButtonTheme?: {};
+  listBasedMoreButtonTheme?: {};
+
   filterMenuTheme?: {};
   baseFilterMenuTheme?: {};
 
@@ -65,6 +67,14 @@ export interface IProcessableCrudTableProps extends IMUIProps {
   itemBasedMoreButtonMuiProps?: {};
   itemBasedMoreButtonQflProps?: {};
   itemBasedMoreButtonProps?: {};
+
+  listBasedButtonMuiProps?: {};
+  listBasedButtonQflProps?: {};
+  listBasedButtonProps?: {};
+
+  listBasedMoreButtonMuiProps?: {};
+  listBasedMoreButtonQflProps?: {};
+  listBasedMoreButtonProps?: {};
 
   search?: Boolean;
   searchFieldTheme?: {};
@@ -135,6 +145,7 @@ export class ProcessableCrudTable extends React.Component<IProcessableCrudTableP
     itemBasedButtonTheme: null,
     itemBasedMoreButtonTheme: null,
     listBasedButtonTheme: null,
+    listBasedMoreButtonTheme: null,
     filterMenuTheme: null,
     baseFilterMenuTheme: null,
 
@@ -145,6 +156,14 @@ export class ProcessableCrudTable extends React.Component<IProcessableCrudTableP
     itemBasedMoreButtonMuiProps: null,
     itemBasedMoreButtonQflProps: null,
     itemBasedMoreButtonProps: null,
+
+    listBasedButtonMuiProps: null,
+    listBasedButtonQflProps: null,
+    listBasedButtonProps: null,
+
+    listBasedMoreButtonMuiProps: null,
+    listBasedMoreButtonQflProps: null,
+    listBasedMoreButtonProps: null,
 
     search: true,
     searchFieldTheme: null,
@@ -565,6 +584,7 @@ export class ProcessableCrudTable extends React.Component<IProcessableCrudTableP
           itemBasedButtonTheme={this.props.itemBasedButtonTheme}
           itemBasedMoreButtonTheme={this.props.itemBasedMoreButtonTheme}
           listBasedButtonTheme={this.props.listBasedButtonTheme}
+          listBasedMoreButtonTheme={this.props.listBasedMoreButtonTheme}
           filterMenuTheme={this.props.filterMenuTheme}
           baseFilterMenuTheme={this.props.baseFilterMenuTheme}
 
@@ -575,6 +595,14 @@ export class ProcessableCrudTable extends React.Component<IProcessableCrudTableP
           itemBasedMoreButtonMuiProps={this.props.itemBasedMoreButtonMuiProps}
           itemBasedMoreButtonQflProps={this.props.itemBasedMoreButtonQflProps}
           itemBasedMoreButtonProps={this.props.itemBasedMoreButtonProps}
+
+          listBasedButtonMuiProps={this.props.listBasedButtonMuiProps}
+          listBasedButtonQflProps={this.props.listBasedButtonQflProps}
+          listBasedButtonProps={this.props.listBasedButtonProps}
+
+          listBasedMoreButtonMuiProps={this.props.listBasedMoreButtonMuiProps}
+          listBasedMoreButtonQflProps={this.props.listBasedMoreButtonQflProps}
+          listBasedMoreButtonProps={this.props.listBasedMoreButtonProps}
 
           search={this.props.search}
           searchFieldTheme={this.props.searchFieldTheme}

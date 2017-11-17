@@ -46,6 +46,7 @@ export interface ITableProps extends IMUIProps {
   itemBasedButtonTheme?: {};
   itemBasedMoreButtonTheme?: {};
   listBasedButtonTheme?: {};
+  listBasedMoreButtonTheme?: {};
   filterMenuTheme?: {};
   baseFilterMenuTheme?: {};
   search?: Boolean;
@@ -73,6 +74,14 @@ export interface ITableProps extends IMUIProps {
   itemBasedMoreButtonProps?: {};
 
   listBasedButtonSchema?: any;
+  listBasedButtonMuiProps?: {};
+  listBasedButtonQflProps?: {};
+  listBasedButtonProps?: {};
+
+  listBasedMoreButtonMuiProps?: {};
+  listBasedMoreButtonQflProps?: {};
+  listBasedMoreButtonProps?: {};
+
   filterMenuSchema?: any;
   onFilterChange?: Function;
 
@@ -90,6 +99,7 @@ export interface ITableProps extends IMUIProps {
     checkBoxClassName?: string;
     headerContainerClassName?: string;
     itemBasedElementsClassName?: string;
+    listBasedElementsClassName?: string;
     headerElementsPlaceHolderClassName?: string;
     filterMenuElementsClassName?: string;
     baseFilterMenuElementsClassName?: string;
@@ -101,8 +111,11 @@ export interface ITableProps extends IMUIProps {
     itemHeaderClassName?: string;
     searchFieldClassName?: string;
     itemBasedMoreButtonClassName?: string;
+    listBasedMoreButtonClassName?: string;
     itemBasedMoreMenuClassName?: string;
+    listBasedMoreMenuClassName?: string;
     itemBasedButtonClassName?: string;
+    listBasedButtonClassName?: string;
     tableRowClassName?: string;
     tableHeaderRowClassName?: string;
     tableColumnSelectorClassName?: string;
@@ -117,6 +130,7 @@ export interface ITableProps extends IMUIProps {
 
 export interface ITableState {
   isItemBasedMoreMenuOpened?: boolean;
+  isListBasedMoreMenuOpened?: boolean;
   selectedRows?: {};
   searchValue?: string;
 
@@ -143,6 +157,7 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
       checkBoxClassName: null,
       headerContainerClassName: null,
       itemBasedElementsClassName: null,
+      listBasedElementsClassName: null,
       headerElementsPlaceHolderClassName: null,
       filterMenuElementsClassName: null,
       baseFilterMenuElementsClassName: null,
@@ -154,8 +169,11 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
       itemHeaderClassName: null,
       searchFieldClassName: null,
       itemBasedMoreButtonClassName: null,
+      listBasedMoreButtonClassName: null,
       itemBasedMoreMenuClassName: null,
+      listBasedMoreMenuClassName: null,
       itemBasedButtonClassName: null,
+      listBasedButtonClassName: null,
       tableRowClassName: null,
       tableHeaderRowClassName: null,
       tableColumnSelectorClassName: null,
@@ -184,6 +202,7 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
     itemBasedButtonTheme: null,
     itemBasedMoreButtonTheme: null,
     listBasedButtonTheme: null,
+    listBasedMoreButtonTheme: null,
     filterMenuTheme: null,
     baseFilterMenuTheme: null,
     search: true,
@@ -210,6 +229,14 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
     itemBasedMoreButtonProps: null,
 
     listBasedButtonSchema: null,
+    listBasedButtonMuiProps: null,
+    listBasedButtonQflProps: null,
+    listBasedButtonProps: null,
+
+    listBasedMoreButtonMuiProps: null,
+    listBasedMoreButtonQflProps: null,
+    listBasedMoreButtonProps: null,
+
     filterMenuSchema: null,
     onFilterChange: null,
 
@@ -233,12 +260,14 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
   })();
 
   public itemBasedMoreMenuId: string = 'itemBasedMoreMenu';
+  public listBasedMoreMenuId: string = 'listBasedMoreMenu';
 
   constructor(props: ITableProps) {
     super(props);
 
     this.state = {
       isItemBasedMoreMenuOpened: false,
+      isListBasedMoreMenuOpened: false,
       selectedRows: {},
       searchValue: props.searchValue,
 
@@ -373,6 +402,7 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
   private handleItemClicked(item: any): void {
     this.setState({
       isItemBasedMoreMenuOpened: false,
+      isListBasedMoreMenuOpened: false,
     });
 
     const selectedItems: Array<any> = [];
@@ -574,7 +604,7 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
                 qflProps={{
                   style: {
                     width: 'auto',
-                    display: 'inline-block'
+                    display: 'inline-block',
                   },
                   ...this.props.itemBasedMoreButtonQflProps,
                 }}
@@ -584,7 +614,7 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
                 id={this.itemBasedMoreMenuId}
                 className={this.props.tableStyles.itemBasedMoreMenuClassName}
                 style={{
-                  display: (this.state.isItemBasedMoreMenuOpened ? 'block' : 'none')
+                  display: (this.state.isItemBasedMoreMenuOpened ? 'block' : 'none'),
                 }}
               >
                 <TableOverlay
@@ -609,6 +639,206 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
           ]);
         }
       }
+    }
+
+    let listBasedElements: Array<any> = [];
+
+    if (this.props.listBasedButtonSchema &&
+        this.props.listBasedButtonSchema.items &&
+        this.props.listBasedButtonSchema.items.length > 0) {
+      listBasedElements = listBasedElements.concat(this.props.listBasedButtonSchema.items.filter((buttonSchemaItem: any) => {
+        return !buttonSchemaItem.isMore;
+      }).map((buttonSchemaItem: any, buttonSchemaIdx: number) => {
+        if (buttonSchemaItem.processableKey) {
+          const listBasedButtonProcessContainer: any = this.state.itemProcessableContainer;
+          processables.push(listBasedButtonProcessContainer);
+        }
+
+        return (
+          <RaisedButton
+            theme={this.props.listBasedButtonTheme}
+            muiProps={{
+              icon: buttonSchemaItem.icon,
+              primary: true,
+              className: this.props.tableStyles.listBasedButtonClassName,
+              onClick: (e: Event): void => {
+                this.handleItemClicked.bind(this, buttonSchemaItem)();
+              },
+              ...this.props.listBasedButtonMuiProps,
+            }}
+            qflProps={{
+              ...this.props.listBasedButtonQflProps,
+            }}
+            {...this.props.listBasedButtonProps}
+          />
+        );
+      }));
+
+      const listBasedMoreButtons: any = this.props.listBasedButtonSchema.items.filter((buttonSchemaItem: any) => {
+        return buttonSchemaItem.isMore;
+      });
+      if (listBasedMoreButtons.length > 0) {
+        const menuSchema: Array<any> = [{
+          sectionName: null,
+          items: listBasedMoreButtons.map((buttonSchemaItem: any) => {
+            if (buttonSchemaItem.processableKey) {
+              const listBasedButtonProcessContainer: any = this.state.itemProcessableContainer;
+              processables.push(listBasedButtonProcessContainer);
+            }
+
+            return {
+              label: buttonSchemaItem.name,
+              key: buttonSchemaItem.key,
+            };
+          }),
+        }];
+
+        listBasedElements = listBasedElements.concat([
+          <div
+            style={{
+              position: 'relative',
+              display: 'inline-block',
+            }}
+          >
+            <RaisedButton
+              theme={this.props.listBasedMoreButtonTheme}
+              muiProps={{
+                labelPosition: 'before',
+                label: (this.props.listBasedButtonSchema.label ? this.props.listBasedButtonSchema : 'MEHR'),
+                primary: true,
+                className: this.props.tableStyles.listBasedMoreButtonClassName,
+                onClick: (e: Event): void => {
+                  if (!this.state.isListBasedMoreMenuOpened) {
+                    $(window.document).on('click', (ce: any): void => {
+                      if (ce.originalEvent && ce.originalEvent.path.filter((item: any) => item.id === this.listBasedMoreMenuId).length === 0) {
+                        $(window.document).off('click');
+                        this.setState({
+                          isListBasedMoreMenuOpened: false,
+                        });
+                      }
+                    });
+                  }
+                  this.setState({
+                    isListBasedMoreMenuOpened: !this.state.isListBasedMoreMenuOpened,
+                  });
+                },
+                ...this.props.listBasedMoreButtonMuiProps,
+              }}
+              qflProps={{
+                style: {
+                  width: 'auto',
+                  display: 'inline-block',
+                },
+                ...this.props.listBasedMoreButtonQflProps,
+              }}
+              {...this.props.listBasedMoreButtonProps}
+            />,
+            <div
+              id={this.listBasedMoreMenuId}
+              className={this.props.tableStyles.listBasedMoreMenuClassName}
+              style={{
+                display: (this.state.isListBasedMoreMenuOpened ? 'block' : 'none'),
+              }}
+            >
+              <TableOverlay
+                menuSchema={menuSchema}
+                tableOverlayStyles={this.props.tableOverlayStyles}
+                theme={this.props.tableOverlayTheme}
+                onMenuItemClicked={(key: string): void => {
+                  const matchedButtonSchemaItems: any = listBasedMoreButtons.filter(
+                    (itemBasedMoreButtonItem: any) => (itemBasedMoreButtonItem.key === key),
+                  );
+                  let buttonSchemaItem: any = null;
+                  if (matchedButtonSchemaItems.length === 1) {
+                    buttonSchemaItem = matchedButtonSchemaItems[0];
+                  }
+                  if (buttonSchemaItem) {
+                    this.handleItemClicked.bind(this, buttonSchemaItem)();
+                  }
+                }}
+              />
+            </div>
+          </div>,
+        ]);
+      }
+    } else if (this.props.listBasedButtonSchema &&
+               !this.props.listBasedButtonSchema.items &&
+               (this.props.listBasedButtonSchema.menuSchema || this.props.listBasedButtonSchema.overlayComponent)) {
+      let overlayComponent: JSX.Element = (
+        <TableOverlay
+          menuSchema={this.props.listBasedButtonSchema.menuSchema}
+          tableOverlayStyles={this.props.tableOverlayStyles}
+          theme={this.props.tableOverlayTheme}
+          onMenuItemClicked={(item: {}): void => {
+            if (item) {
+              this.handleItemClicked.bind(this, item)();
+            }
+          }}
+        />
+      );
+
+      if (this.props.listBasedButtonSchema.overlayComponent && !this.props.listBasedButtonSchema.menuSchema) {
+        overlayComponent = this.props.listBasedButtonSchema.overlayComponent;
+      }
+
+      let menuOverlay: JSX.Element = null;
+      if (this.state.isListBasedMoreMenuOpened) {
+        menuOverlay = (
+          <div
+            id={this.listBasedMoreMenuId}
+            className={this.props.tableStyles.listBasedMoreMenuClassName}
+            style={{
+              display: 'block',
+            }}
+          >
+            {overlayComponent}
+          </div>
+        );
+      }
+
+      listBasedElements = listBasedElements.concat([
+        <div
+          style={{
+            position: 'relative',
+            display: 'inline-block',
+          }}
+        >
+          <RaisedButton
+            theme={this.props.listBasedMoreButtonTheme}
+            muiProps={{
+              labelPosition: 'before',
+              label: (this.props.listBasedButtonSchema.label ? this.props.listBasedButtonSchema.label : 'MEHR'),
+              primary: true,
+              className: this.props.tableStyles.listBasedMoreButtonClassName,
+              onClick: (e: Event): void => {
+                if (!this.state.isListBasedMoreMenuOpened) {
+                  $(window.document).on('click', (ce: any): void => {
+                    if (ce.originalEvent && ce.originalEvent.path.filter((item: any) => item.id === this.listBasedMoreMenuId).length === 0) {
+                      $(window.document).off('click');
+                      this.setState({
+                        isListBasedMoreMenuOpened: false,
+                      });
+                    }
+                  });
+                }
+                this.setState({
+                  isListBasedMoreMenuOpened: !this.state.isListBasedMoreMenuOpened,
+                });
+              },
+              ...this.props.listBasedMoreButtonMuiProps,
+            }}
+            qflProps={{
+              style: {
+                width: 'auto',
+                display: 'inline-block',
+              },
+              ...this.props.listBasedMoreButtonQflProps,
+            }}
+            {...this.props.listBasedMoreButtonProps}
+          />
+          {menuOverlay}
+        </div>,
+      ]);
     }
 
     let baseFilterElements: Array<any> = [];
@@ -693,13 +923,14 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
           {createButton}{searchField}
           <div className={this.props.tableStyles.filterMenuElementsClassName}>{filterMenuElements}</div>
           <div className={this.props.tableStyles.itemBasedElementsClassName}>{itemBasedElements}</div>
+          <div className={this.props.tableStyles.listBasedElementsClassName}>{listBasedElements}</div>
           <div className={this.props.tableStyles.headerElementsPlaceHolderClassName}/>
           <div className={this.props.tableStyles.baseFilterMenuElementsClassName}>{baseFilterElements}</div>
         </div>
 
         <div
           style={{
-            display: (this.state.isItemBasedMoreMenuOpened ? 'block' : 'none'),
+            display: (this.state.isItemBasedMoreMenuOpened || this.state.isListBasedMoreMenuOpened ? 'block' : 'none'),
           }}
           className={this.props.tableStyles.contentOverlayClassName}
         />

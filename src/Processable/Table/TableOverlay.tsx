@@ -113,7 +113,7 @@ export class TableOverlay extends React.Component<ITableOverlayProps, ITableOver
                 <span className={this.props.menuItemClassName}>
                   {section.items.map((item: any, itemIdx: number) => {
                     let content: any = null;
-                    if (item.isCheckBox === true) {
+                    if (this.props.isCheckBox === true) {
                       content = (
                         <CheckBox
                           key={itemIdx}
