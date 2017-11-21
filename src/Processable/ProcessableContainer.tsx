@@ -33,6 +33,11 @@ export interface IProcessableContainerProps extends IMUIProps {
 
   uiConfig?: any;
   uiData?: any;
+
+  isDebug?: boolean;
+
+  componentClass?: any;
+  componentProps?: {};
 }
 
 export interface IProcessableContainerState {
@@ -66,6 +71,11 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
 
     uiConfig: null,
     uiData: {},
+
+    isDebug: false,
+
+    componentClass: null,
+    componentProps: null,
   };
 
   private widgetConfig: any = null;
@@ -281,6 +291,17 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
         default:
           break;
       }
+    } else {
+      widget = {
+        componentClass: this.props.componentClass,
+        isModal: this.props.modal,
+        children: [this.props.children],
+        props: {
+          theme: this.props.widgetTheme,
+          ...this.props.uiConfig,
+          ...this.props.componentProps,
+        },
+      };
     }
 
     if (widget) {
@@ -449,6 +470,37 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
           {childs}
         </this.widgetConfig.component>
       );
+    } else {
+      let childs: Array<any> = [];
+      if (this.widgetConfig && this.widgetConfig.children) {
+        childs = childs.concat(this.widgetConfig.children);
+      }
+
+      const handleProceed: any = (componentState: any): any => {
+        debugger;
+        this.setState({
+          uiData: componentState,
+        }, () => {
+          this.handleProceed(this.props.executionContext);
+        });
+      };
+
+      const handleCancel: any = (lastComponentState: any): any => {
+        debugger;
+        this.setState({
+          uiData: lastComponentState,
+        }, () => {
+          this.handleCancel(this.props.executionContext);
+        });
+      };
+
+      widget = (
+        <this.widgetConfig.componentClass {...this.widgetConfig.props}
+                                          onProceed={(componentState: any): any => handleProceed(componentState)}
+                                          onCancel={(componentState: any): any => handleCancel(componentState)}>
+          {childs}
+        </this.widgetConfig.componentClass>
+      );
     }
 
     if (processInstance) {
@@ -459,7 +511,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
         tokenData = processInstance.nextTaskEntity.processToken.data;
       }
 
-      if (tokenData) {
+      if (tokenData && this.props.isDebug) {
         tokenDataElement = (
           <div
             style={{
@@ -512,7 +564,6 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
             }}
             {...qflProps}
           >
-            <h4>{processInstance.nextTaskDef.name}</h4>
             {widget}<br/>
             {proceedButton}<br/>
             {tokenDataElement}
