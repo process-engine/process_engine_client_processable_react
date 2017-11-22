@@ -477,18 +477,18 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
       }
 
       const handleProceed: any = (componentState: any): any => {
-        debugger;
+        const mergedUiData: any = Object.assign(this.state.uiData, componentState);
         this.setState({
-          uiData: componentState,
+          uiData: mergedUiData,
         }, () => {
           this.handleProceed(this.props.executionContext);
         });
       };
 
       const handleCancel: any = (lastComponentState: any): any => {
-        debugger;
+        const mergedUiData: any = Object.assign(this.state.uiData, lastComponentState);
         this.setState({
-          uiData: lastComponentState,
+          uiData: mergedUiData,
         }, () => {
           this.handleCancel(this.props.executionContext);
         });
