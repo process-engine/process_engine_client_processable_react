@@ -92,7 +92,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
   }
 
   public componentWillMount(): void {
-    const { processInstance } = this.props;
+    const { processInstance, uiData } = this.props;
 
     let widget: {} = null;
     const widgetName: string = this.props.uiName;
@@ -166,6 +166,10 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
                   if (formField.formProperties && formFieldWidgetNameArr && formFieldWidgetNameArr.length === 1) {
                     parsedType = formFieldWidgetNameArr[0].value;
                   }
+                  formFieldWidgetNameArr = formField.formProperties.filter((formFieldProperty: any) => formFieldProperty.name === 'widgetName');
+                  if (formField.formProperties && formFieldWidgetNameArr && formFieldWidgetNameArr.length === 1) {
+                    parsedType = formFieldWidgetNameArr[0].value;
+                  }
 
                   if (parsedType === 'RadioBox') {
                     options.radioButtonMuiProps = buildTheme({
@@ -188,6 +192,37 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
 
                       return null;
                     }).filter((formValue: any) => (formValue !== null));
+                  } else {
+                    const formFieldItemsArr: Array<any> = formField.formProperties.filter(
+                      (formFieldProperty: any) => formFieldProperty.name === 'items',
+                    );
+                    if (formField.formProperties && formFieldItemsArr && formFieldItemsArr.length === 1 && formFieldItemsArr[0].value) {
+                      if (formFieldItemsArr[0].value.indexOf('$') === 0) {
+                        const token = uiData;
+                        const dataProvider = eval(formFieldItemsArr[0].value.substring(1));
+                        if (dataProvider) {
+                          let labelKey: string = 'name';
+                          const formFieldLabelKeyArr: Array<any> = formField.formProperties.filter(
+                            (formFieldProperty: any) => formFieldProperty.name === 'labelKey',
+                          );
+                          if (formField.formProperties && formFieldLabelKeyArr && formFieldLabelKeyArr.length === 1 && formFieldItemsArr[0].value) {
+                            labelKey = formFieldLabelKeyArr[0].value;
+                          }
+                          options.items = dataProvider.map((formValue: any) => {
+                            const value: string = formValue.id;
+                            const label: string = eval(`formValue.${labelKey}`);
+                            if (value && label) {
+                              return {
+                                value,
+                                label,
+                              };
+                            }
+                          });
+                        }
+                      } else {
+                        options.items = JSON.parse(formFieldItemsArr[0].value);
+                      }
+                    }
                   }
                   if (formField.defaultValue) {
                     options.initialValue = formField.defaultValue;
