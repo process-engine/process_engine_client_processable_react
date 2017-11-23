@@ -14,7 +14,7 @@
     "Simon Reymann <simon.reymann@quantusflow.com>"
   ],
   "dependencies": {
-    "@essential-projects/core_contracts": "^0.2.1",
+    "@essential-projects/core_contracts": "^0.2.2",
     "@quantusflow/frontend_mui": "^0.1.3",
     "@quantusflow/process_engine_client_api": "^0.1.0",
     "babel-plugin-add-module-exports": "^0.2.1",
