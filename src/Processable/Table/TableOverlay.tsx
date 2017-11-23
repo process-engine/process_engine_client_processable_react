@@ -48,8 +48,8 @@ export class TableOverlay extends React.Component<ITableOverlayProps, ITableOver
     onSelectedMenuItemsChange: null,
   };
 
-  constructor() {
-    super();
+  constructor(props: ITableOverlayProps) {
+    super(props);
     this.state = {
       selectedMenuItems: {},
     };
