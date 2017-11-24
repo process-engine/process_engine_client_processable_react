@@ -226,6 +226,11 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
                   }
                   if (formField.defaultValue) {
                     options.initialValue = formField.defaultValue;
+                  } else {
+                    // default pick first
+                    if (options.items && options.items.length > 0) {
+                      options.initialValue = options.items[0].value;
+                    }
                   }
                   break;
                 default:
