@@ -256,6 +256,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
             isModal: this.props.modal,
             props: {
               theme: this.props.widgetTheme,
+              ...this.props.uiConfig,
               layout: formElements,
             },
           };
@@ -322,6 +323,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
             isModal: this.props.modal,
             props: {
               theme: this.props.widgetTheme,
+              ...this.props.uiConfig,
               layout: confirmElements,
               message: confirmMessage,
               children: [widgetChildren],
