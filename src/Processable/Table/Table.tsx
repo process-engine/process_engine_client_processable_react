@@ -138,6 +138,7 @@ export interface ITableState {
   createProcessableContainer?: React.ReactNode;
 
   currentItemProcessKey?: string;
+  currentItemProcessKeySkipClean?: boolean;
   currentItemOnProcessEnded?: Function;
   itemProcessableContainer?: React.ReactNode;
 }
@@ -275,6 +276,7 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
       createProcessableContainer: null,
 
       currentItemProcessKey: null,
+      currentItemProcessKeySkipClean: false,
       currentItemOnProcessEnded: null,
       itemProcessableContainer: null,
     };
@@ -344,7 +346,6 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
             }
           },
         );
-        break;
       case (this.state.currentItemProcessKey):
         this.setState(
           {
@@ -355,7 +356,7 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
               this.state.currentItemOnProcessEnded(this.state.currentItemProcessKey, endEventData);
             }
             if (this.props.onItemProcessEnded) {
-              this.props.onItemProcessEnded(this.state.currentItemProcessKey, endEventData);
+              this.props.onItemProcessEnded(this.state.currentItemProcessKey, endEventData, this.state.currentItemProcessKeySkipClean);
             }
           },
         );
@@ -381,7 +382,7 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
     }
   }
 
-  private async handleStartItem(processKey: string, startToken: any, onProcessEnded?: Function, done?: Function): Promise<void> {
+  private async handleStartItem(processKey: string, startToken: any, onProcessEnded?: Function, skipClean?: boolean, done?: Function): Promise<void> {
     if (this.props.processEngineClientApi) {
       await this.props.processEngineClientApi.startProcess(
         processKey,
@@ -395,6 +396,7 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
       this.setState({
         currentItemOnProcessEnded: onProcessEnded,
         currentItemProcessKey: processKey,
+        currentItemProcessKeySkipClean: skipClean,
       });
     }
   }
@@ -428,7 +430,7 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
           return resultToken;
         });
       }
-      this.handleStartItem(item.processableKey, startToken, item.onProcessEnded);
+      this.handleStartItem(item.processableKey, startToken, item.onProcessEnded, item.skipClean);
     }
   }
 

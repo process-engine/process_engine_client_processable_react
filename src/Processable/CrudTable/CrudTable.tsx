@@ -263,15 +263,10 @@ export class ProcessableCrudTable extends React.Component<IProcessableCrudTableP
       newEntityCollection = entityCollection.edges.map((item: any) => item.node);
     }
 
-    setTimeout(
-      () => {
-        this.setState({
-          entityCollection: newEntityCollection,
-          synced: true,
-        });
-      },
-      0,
-    );
+    this.setState({
+      entityCollection: newEntityCollection,
+      synced: true,
+    });
 
     return newEntityCollection;
   }
@@ -503,7 +498,7 @@ export class ProcessableCrudTable extends React.Component<IProcessableCrudTableP
     );
   }
 
-  private handleItemProcessEnded(processKey: any, data: any): void {
+  private handleItemProcessEnded(processKey: any, data: any, skipClean: boolean): void {
     this.props.fetcher(
       {
         mode: 'reload',
@@ -523,7 +518,7 @@ export class ProcessableCrudTable extends React.Component<IProcessableCrudTableP
               hasReloaded: true,
             },
             () => {
-              if (processKey === (`Delete${this.props.entityTypeName}`)) {
+              if (!skipClean) {
                 this.cleanSelectedEntities();
               }
             },
@@ -565,7 +560,7 @@ export class ProcessableCrudTable extends React.Component<IProcessableCrudTableP
           frame={false}
           onSearch={(searchValue: any): any => this.handleSearch(searchValue)}
           onCreateProcessEnded={(processKey: any, data: any): any => this.handleCreateProcessEnded(processKey, data)}
-          onItemProcessEnded={(processKey: any, data: any): any => this.handleItemProcessEnded(processKey, data)}
+          onItemProcessEnded={(processKey: any, data: any, skipClean: boolean): any => this.handleItemProcessEnded(processKey, data, skipClean)}
           createProcessKey={(this.props.createButton ? 'Create' : null)}
           createStartToken={this.props.createStartToken}
 

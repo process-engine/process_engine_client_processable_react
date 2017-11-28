@@ -1,4 +1,7 @@
 import * as React from 'react';
+import * as PropTypes from 'prop-types';
+
+import {IDatastoreService} from '@essential-projects/data_model_contracts';
 
 import RaisedButton from '@quantusflow/frontend_mui/dist/commonjs/Buttons/RaisedButton/RaisedButton.js';
 import Dialog from '@quantusflow/frontend_mui/dist/commonjs/Dialogs/Dialog/Dialog.js';
@@ -47,8 +50,9 @@ export interface IProcessableContainerState {
   processing?: boolean;
 }
 
-export interface IProcessableContainerChildContext {
-  muiTheme?: {};
+export interface IProcessableContainerContextTypes {
+  datastoreService?: IDatastoreService;
+  executionContext?: ExecutionContext;
 }
 
 export class ProcessableContainer extends React.Component<IProcessableContainerProps, IProcessableContainerState> {
@@ -76,6 +80,11 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
 
     componentClass: null,
     componentProps: null,
+  };
+
+  public static contextTypes: IProcessableContainerContextTypes = {
+    datastoreService: PropTypes.object,
+    executionContext: PropTypes.object,
   };
 
   private widgetConfig: any = null;
@@ -142,7 +151,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
               const options: any = {};
               let formFieldWidgetNameArr: Array<any>;
               let formFieldMuiPropsArr: Array<any>;
-              let muiProps: {} = {};
+              let muiProps: any = {};
 
               formFieldMuiPropsArr = formField.formProperties.filter((formFieldProperty: any) => formFieldProperty.name === 'muiProps');
               if (formField.formProperties && formFieldMuiPropsArr && formFieldMuiPropsArr.length === 1 && formFieldMuiPropsArr[0].value) {
@@ -179,6 +188,14 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
                     }).muiProps;
                   }
 
+                  if (parsedType === 'AutoComplete') {
+                    options.autoCompleteMuiProps = buildTheme({
+                      theme: this.props.formItemTheme,
+                      sourceMuiProps: {},
+                      componentName: 'AutoComplete',
+                    }).muiProps;
+                  }
+
                   if (formField.formValues && formField.formValues.length > 0) {
                     options.items = formField.formValues.map((formValue: any) => {
                       const value: string = formValue.id;
@@ -196,10 +213,13 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
                     const formFieldItemsArr: Array<any> = formField.formProperties.filter(
                       (formFieldProperty: any) => formFieldProperty.name === 'items',
                     );
+                    const formFieldDatasourceArr: Array<any> = formField.formProperties.filter(
+                      (formFieldProperty: any) => formFieldProperty.name === 'datasource',
+                    );
                     if (formField.formProperties && formFieldItemsArr && formFieldItemsArr.length === 1 && formFieldItemsArr[0].value) {
                       if (formFieldItemsArr[0].value.indexOf('$') === 0) {
-                        const token = uiData;
-                        const dataProvider = eval(formFieldItemsArr[0].value.substring(1));
+                        const token: {} = uiData;
+                        const dataProvider: Array<{}> = eval(formFieldItemsArr[0].value.substring(1));
                         if (dataProvider) {
                           let labelKey: string = 'name';
                           const formFieldLabelKeyArr: Array<any> = formField.formProperties.filter(
@@ -221,6 +241,101 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
                         }
                       } else {
                         options.items = JSON.parse(formFieldItemsArr[0].value);
+                      }
+                    } else if (formField.formProperties &&
+                               formFieldDatasourceArr &&
+                               formFieldDatasourceArr.length === 1 &&
+                               formFieldDatasourceArr[0].value) {
+                      if (formFieldDatasourceArr[0].value.indexOf('$') === 0) {
+                        const datasource: any = JSON.parse(formFieldDatasourceArr[0].value.substring(1));
+                        if (datasource) {
+                          let labelKey: string = 'name';
+                          const formFieldLabelKeyArr: Array<any> = formField.formProperties.filter(
+                            (formFieldProperty: any) => formFieldProperty.name === 'labelKey',
+                          );
+                          if (formField.formProperties && formFieldLabelKeyArr && formFieldLabelKeyArr.length === 1 && formFieldItemsArr[0].value) {
+                            labelKey = formFieldLabelKeyArr[0].value;
+                          }
+
+                          if (this.context.datastoreService && this.context.executionContext) {
+                            let datasourceOptions: any = {
+                              query: {
+                                operator: 'and',
+                                queries: [],
+                              },
+                              select: [ labelKey ],
+                              limit: 10,
+                            };
+                            if (datasource.baseFilter && datasource.baseFilter.query) {
+                              datasourceOptions.query.queries.push(datasource.baseFilter.query);
+                            } else {
+                              datasourceOptions = {};
+                            }
+
+                            const doFilter: Function = (searchString: string, component: React.Component<{}, {}>): void => {
+                              if (searchString) {
+                                const queryClause: any = {
+                                  attribute: labelKey,
+                                  operator: 'like',
+                                  value: `%${searchString.toLowerCase()}%`,
+                                  ignoreCase: true,
+                                };
+
+                                if (datasource.baseFilter && datasource.baseFilter.query) {
+                                  if (datasourceOptions.query.queries.length === 1) {
+                                    datasourceOptions.query.queries.push(queryClause);
+                                  } else {
+                                    datasourceOptions.query
+                                      .queries[datasourceOptions.query.queries.length - 1] = queryClause;
+                                  }
+
+                                  datasourceOptions.query.queries.push(queryClause);
+                                } else {
+                                  datasourceOptions.query = queryClause;
+                                }
+                              }
+                              this.context.datastoreService.getCollection(
+                                datasource.className,
+                                this.context.executionContext,
+                                datasourceOptions,
+                              ).then(async(result: any) => {
+                                if (result) {
+                                  const dataProvider: Array<{}> = result.data.map((formValue: any) => {
+                                    const value: string = formValue.id;
+                                    const label: string = eval(`formValue.${labelKey}`);
+                                    if (value && label) {
+                                      return {
+                                        value,
+                                        label,
+                                      };
+                                    }
+                                  });
+
+                                  if (component) {
+                                    component.setState({
+                                      items: dataProvider,
+                                    });
+                                  }
+                                }
+                              });
+                            };
+
+                            options.dataFetcher = (searchText: string, component: React.Component<{}, {}>): void => {
+                              doFilter(searchText, component);
+                            };
+
+                            options.items = [];
+                            muiProps.openOnFocus = true;
+                            muiProps.dataSourceConfig = {
+                              text: 'label',
+                              value: 'value',
+                            };
+                            options.noFilter = true;
+                          }
+
+                        }
+                      } else {
+                        options.items = [];
                       }
                     }
                   }
