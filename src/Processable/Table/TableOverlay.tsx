@@ -136,17 +136,19 @@ export class TableOverlay extends React.Component<ITableOverlayProps, ITableOver
                         <Link key={itemIdx} theme={this.props.linkTheme} to={to} label={item.label}/>;
                     } else {
                       content = (
-                        <span
-                          key={itemIdx}
-                          style={{
-                            cursor: 'pointer',
-                          }}
-                          onClick={(e: React.MouseEvent<HTMLSpanElement>): void => {
-                            this.handleItemMenuClicked(e, item.key);
-                          }}
-                        >
-                          {item.label}
-                        </span>
+                        <div>
+                          <span
+                              key={itemIdx}
+                              style={{
+                                  cursor: 'pointer'
+                              }}
+                              onClick={(e) => {
+                                  this.handleItemMenuClicked(e, item.key);
+                              }}
+                          >
+                            {item.label}
+                          </span><br/>
+                        </div>
                       );
                     }
 
