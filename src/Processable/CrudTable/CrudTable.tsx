@@ -195,36 +195,38 @@ export class ProcessableCrudTable extends React.Component<IProcessableCrudTableP
   }
 
   public componentDidMount(): void {
-    this.props.fetcher(
-      {
-        mode: 'load',
-        offset: this.state.currentOffset,
-        first: this.props.pageSize,
-        query: JSON.stringify({
-          operator: 'and',
-          queries: (this.props.baseFilter
+    this.forceReload();
+  }
+
+  public forceReload(): void {
+    this.props.fetcher({
+      mode: 'load',
+      offset: this.state.currentOffset,
+      first: this.props.pageSize,
+      query: JSON.stringify({
+        operator: 'and',
+        queries: (this.props.baseFilter
             ? [
               this.props.baseFilter(),
             ] : []
-          ),
-        }),
-        ...this.props.extendedFilter(),
-      },
-      (e: any): void => {
-        if (e.mounted && !e.done && !e.aborted) {
-          this.setState({
-            isFetching: true,
-            hasLoaded: false,
-            synced: false,
-          });
-        } else if (e.mounted && (e.done || e.aborted)) {
-          this.setState({
-            isFetching: false,
-            hasLoaded: true,
-          });
-        }
-      },
-    );
+        ),
+      }),
+      ...this.props.extendedFilter(),
+    },
+    (e: any): void => {
+      if (e.mounted && !e.done && !e.aborted) {
+        this.setState({
+          isFetching: true,
+          hasLoaded: false,
+          synced: false,
+        });
+      } else if (e.mounted && (e.done || e.aborted)) {
+        this.setState({
+          isFetching: false,
+          hasLoaded: true,
+        });
+      }
+    });
   }
 
   public getGlobalSearchFilter(searchValue: string, ignoreCase: boolean): void {
