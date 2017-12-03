@@ -115,6 +115,7 @@ export interface ITableProps extends IMUIProps {
     itemBasedMoreMenuClassName?: string;
     listBasedMoreMenuClassName?: string;
     itemBasedButtonClassName?: string;
+    itemBasedDisabledButtonClassName?: string;
     listBasedButtonClassName?: string;
     tableRowClassName?: string;
     tableHeaderRowClassName?: string;
@@ -522,26 +523,46 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
     if (Object.keys(this.state.selectedRows).length > 0) {
       if (this.props.itemBasedButtonSchema && this.props.itemBasedButtonSchema.length > 0) {
         itemBasedElements = itemBasedElements.concat(this.props.itemBasedButtonSchema.filter((buttonSchemaItem: any) => {
+          let visibleState: boolean = true;
+          if (buttonSchemaItem.visibleCondition) {
+            visibleState = buttonSchemaItem.visibleCondition(this.state.selectedRows);
+          }
+
           if (!buttonSchemaItem.multiple && Object.keys(this.state.selectedRows).length > 1) {
             return false;
           }
 
-          return !buttonSchemaItem.isMore;
+          return (visibleState && !buttonSchemaItem.isMore);
         }).map((buttonSchemaItem: any, buttonSchemaIdx: number) => {
           const itemBasedButtonProcessContainer: any = this.state.itemProcessableContainer;
           processables.push(itemBasedButtonProcessContainer);
+
+          let disableState: boolean = false;
+          if (buttonSchemaItem.disableCondition) {
+            disableState = buttonSchemaItem.disableCondition(this.state.selectedRows);
+          }
+
+          let icon: any = buttonSchemaItem.icon;
+          if (icon && typeof icon === 'function') {
+            icon = icon(disableState);
+          }
 
           return (
             <RaisedButton
               theme={this.props.itemBasedButtonTheme}
               muiProps={{
-                icon: buttonSchemaItem.icon,
+                icon,
                 primary: true,
-                className: this.props.tableStyles.itemBasedButtonClassName,
+                className: (
+                  !disableState
+                  ? this.props.tableStyles.itemBasedButtonClassName
+                  : this.props.tableStyles.itemBasedDisabledButtonClassName
+                ),
                 onClick: (e: Event): void => {
                   this.handleItemClicked.bind(this, buttonSchemaItem)();
                 },
                 ...this.props.itemBasedButtonMuiProps,
+                disabled: disableState,
               }}
               qflProps={{
                 ...this.props.itemBasedButtonQflProps,
@@ -552,11 +573,16 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
         }));
 
         const itemBasedMoreButtons: any = this.props.itemBasedButtonSchema.filter((buttonSchemaItem: any) => {
+          let visibleState: boolean = true;
+          if (buttonSchemaItem.visibleCondition) {
+            visibleState = buttonSchemaItem.visibleCondition(this.state.selectedRows);
+          }
+
           if (!buttonSchemaItem.multiple && Object.keys(this.state.selectedRows).length > 1) {
             return false;
           }
 
-          return buttonSchemaItem.isMore;
+          return (visibleState && buttonSchemaItem.isMore);
         });
         if (itemBasedMoreButtons.length > 0) {
           const menuSchema: Array<any> = [{
@@ -565,9 +591,15 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
               const itemBasedButtonProcessContainer: any = this.state.itemProcessableContainer;
               processables.push(itemBasedButtonProcessContainer);
 
+              let disableState: boolean = false;
+              if (buttonSchemaItem.disableCondition) {
+                disableState = buttonSchemaItem.disableCondition(this.state.selectedRows);
+              }
+
               return {
                 label: buttonSchemaItem.name,
                 key: buttonSchemaItem.key,
+                disabled: disableState,
               };
             }),
           }];
