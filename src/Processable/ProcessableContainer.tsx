@@ -3,7 +3,7 @@ import * as PropTypes from 'prop-types';
 
 import {IDatastoreService} from '@essential-projects/data_model_contracts';
 
-import RaisedButton from '@quantusflow/frontend_mui/dist/commonjs/Buttons/RaisedButton/RaisedButton.js';
+import FlatButton from '@quantusflow/frontend_mui/dist/commonjs/Buttons/FlatButton/FlatButton.js';
 import Dialog from '@quantusflow/frontend_mui/dist/commonjs/Dialogs/Dialog/Dialog.js';
 import Confirm from '@quantusflow/frontend_mui/dist/commonjs/InputForms/Confirm/Confirm.js';
 import Form from '@quantusflow/frontend_mui/dist/commonjs/InputForms/Form/Form.js';
@@ -23,11 +23,11 @@ export interface IProcessableContainerProps extends IMUIProps {
 
   modal?: boolean;
 
-  buttonTheme?: any;
-  dialogTheme?: any;
-  formItemTheme?: any;
-  confirmItemTheme?: any;
-  widgetTheme?: any;
+  buttonTheme?: {};
+  dialogTheme?: {};
+  formItemTheme?: {};
+  confirmItemTheme?: {};
+  widgetTheme?: {};
 
   processableClassName?: string;
   modalProcessableClassName?: string;
@@ -41,6 +41,7 @@ export interface IProcessableContainerProps extends IMUIProps {
 
   componentClass?: any;
   componentProps?: {};
+  customThemeContext?: string;
 }
 
 export interface IProcessableContainerState {
@@ -62,12 +63,12 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
     muiProps: {},
     qflProps: {},
 
-    buttonTheme: 'Default',
-    dialogTheme: 'Default',
+    buttonTheme: null,
+    dialogTheme: null,
     modal: false,
-    formItemTheme: 'Default',
-    widgetTheme: 'Default',
-    confirmItemTheme: 'Default',
+    formItemTheme: null,
+    widgetTheme: null,
+    confirmItemTheme: null,
     processableClassName: null,
     modalProcessableClassName: null,
     dialogMuiProps: null,
@@ -80,6 +81,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
 
     componentClass: null,
     componentProps: null,
+    customThemeContext: 'custom',
   };
 
   public static contextTypes: IProcessableContainerContextTypes = {
@@ -146,7 +148,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
             extensions = processInstance.nextTaskDef.extensions;
           }
           if (extensions.formFields && extensions.formFields.length > 0) {
-            formElements = extensions.formFields.map((formField: any) => {
+            formElements = extensions.formFields.map((formField: any, idx: number) => {
               let parsedType: string = null;
               const options: any = {};
               let formFieldWidgetNameArr: Array<any>;
@@ -190,7 +192,10 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
 
                   if (parsedType === 'AutoComplete') {
                     options.autoCompleteMuiProps = buildTheme({
-                      theme: this.props.formItemTheme,
+                      theme: {
+                        ...this.props.formItemTheme,
+                        themeContext: (idx === 0 ? 'first' : null),
+                      },
                       sourceMuiProps: {},
                       componentName: 'AutoComplete',
                     }).muiProps;
@@ -529,10 +534,15 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
     let cancelButton: any = null;
 
     let widget: any = null;
+    let themeContext = null;
     if (this.widgetConfig && this.widgetConfig.component && this.widgetConfig.component.name === 'Table') {
+      themeContext = 'selectableList';
       proceedButton = (
-        <RaisedButton
-          theme={this.props.buttonTheme}
+        <FlatButton
+          theme={{
+            ...(this.props.buttonTheme),
+            themeContext: 'proceed',
+          }}
           muiProps={{
             label: 'Auswählen',
             primary: true,
@@ -563,9 +573,13 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
       };
       widget = <this.widgetConfig.component onSelectedRowsChanged={(selectedItem: any): any => onSelect(selectedItem)} {...this.widgetConfig.props}/>;
     } else if (this.widgetConfig && this.widgetConfig.component && this.widgetConfig.component.name === 'Form') {
+      themeContext = 'form';
       proceedButton = (
-        <RaisedButton
-          theme={this.props.buttonTheme}
+        <FlatButton
+          theme={{
+            ...(this.props.buttonTheme),
+            themeContext: 'proceed',
+          }}
           muiProps={{
             label: 'Weiter',
             primary: true,
@@ -580,8 +594,11 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
 
       if (this.props.modal) {
         cancelButton = (
-          <RaisedButton
-            theme={this.props.buttonTheme}
+          <FlatButton
+            theme={{
+              ...(this.props.buttonTheme),
+              themeContext: 'cancel',
+            }}
             muiProps={{
               label: 'Abbrechen',
               primary: true,
@@ -603,6 +620,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
       };
       widget = <this.widgetConfig.component onChange={(formData: any): any => onChange(formData)} {...this.widgetConfig.props}/>;
     } else if (this.widgetConfig && this.widgetConfig.component && this.widgetConfig.component.name === 'Confirm') {
+      themeContext = 'confirm';
       const onChoose: any = (key: string): any => {
         const confirmData: any = {
           key,
@@ -628,6 +646,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
         </this.widgetConfig.component>
       );
     } else {
+      themeContext = this.props.customThemeContext;
       let childs: Array<any> = [];
       if (this.widgetConfig && this.widgetConfig.children) {
         childs = childs.concat(this.widgetConfig.children);
@@ -685,20 +704,23 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
 
       if (processInstance.nextTaskDef && !this.state.processing) {
         if (this.props.modal) {
+          const dcProps = buildTheme({
+            theme: this.props.theme,
+            sourceMuiProps: this.props.muiProps,
+            sourceQflProps: this.props.qflProps,
+            componentName: 'DialogContainer',
+          });
+
           return (
-            <div
-              style={{
-                display: 'inline-block',
-                padding: '10px',
-                textAlign: 'left',
-              }}
-              {...qflProps}
-            >
+            <div {...dcProps.qflProps}>
               <Dialog
-                theme={this.props.dialogTheme}
+                theme={{
+                  ...this.props.dialogTheme,
+                  themeContext,
+                }}
                 muiProps={{
                   title: processInstance.nextTaskDef.name,
-                  actions: [cancelButton, proceedButton],
+                  actions: [proceedButton, cancelButton],
                   modal: true,
                   open: this.state.modalOpen,
                   ...this.props.dialogMuiProps,
@@ -715,12 +737,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
         }
 
         return (
-          <div
-            style={{
-              padding: '10px',
-            }}
-            {...qflProps}
-          >
+          <div {...qflProps}>
             {widget}<br/>
             {proceedButton}<br/>
             {tokenDataElement}
@@ -735,23 +752,8 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
       }
 
       return (
-        <div
-          style={{
-            display: 'table',
-            padding: '10px',
-            margin: '0 auto',
-          }}
-          {...qflProps}
-        >
-          <div
-            style={{
-              display: 'table-cell',
-              textAlign: 'center',
-              verticalAlign: 'middle',
-            }}
-          >
-            {processingComponent}
-          </div>
+        <div {...qflProps}>
+          {processingComponent}
           <hr/>
         </div>
       );

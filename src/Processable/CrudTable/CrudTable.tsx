@@ -41,7 +41,7 @@ export interface IProcessableCrudTableProps extends IMUIProps {
   processButtonTheme?: {};
   processDialogTheme?: {};
   processFormItemTheme?: {};
-  processConfirmTheme?: {};
+  processConfirmItemTheme?: {};
   processWidgetTheme?: {};
   processTheme?: {};
 
@@ -133,7 +133,7 @@ export class ProcessableCrudTable extends React.Component<IProcessableCrudTableP
     processButtonTheme: null,
     processDialogTheme: null,
     processFormItemTheme: null,
-    processConfirmTheme: null,
+    processConfirmItemTheme: null,
     processWidgetTheme: null,
     processTheme: null,
 
@@ -574,7 +574,7 @@ export class ProcessableCrudTable extends React.Component<IProcessableCrudTableP
           processButtonTheme={this.props.processButtonTheme}
           processDialogTheme={this.props.processDialogTheme}
           processFormItemTheme={this.props.processFormItemTheme}
-          processConfirmTheme={this.props.processConfirmTheme}
+          processConfirmItemTheme={this.props.processConfirmItemTheme}
           processWidgetTheme={this.props.processWidgetTheme}
           processTheme={this.props.processTheme}
 

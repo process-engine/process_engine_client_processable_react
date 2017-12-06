@@ -39,7 +39,7 @@ export interface ITableProps extends IMUIProps {
   processButtonTheme?: {};
   processDialogTheme?: {};
   processFormItemTheme?: {};
-  processConfirmTheme?: {};
+  processConfirmItemTheme?: {};
   processWidgetTheme?: {};
   processTheme?: {};
 
@@ -197,7 +197,7 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
     processButtonTheme: null,
     processDialogTheme: null,
     processFormItemTheme: null,
-    processConfirmTheme: null,
+    processConfirmItemTheme: null,
     processWidgetTheme: null,
     processTheme: null,
 
@@ -288,7 +288,7 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
       buttonTheme: this.props.processButtonTheme,
       dialogTheme: this.props.processDialogTheme,
       formItemTheme: this.props.processFormItemTheme,
-      confirmTheme: this.props.processConfirmTheme,
+      confirmItemTheme: this.props.processConfirmItemTheme,
       widgetTheme: this.props.processWidgetTheme,
       theme: this.props.processTheme,
     };
