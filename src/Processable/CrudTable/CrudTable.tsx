@@ -208,7 +208,11 @@ export class ProcessableCrudTable extends React.Component<IProcessableCrudTableP
         queries: (this.props.baseFilter
             ? [
               this.props.baseFilter(),
-            ] : []
+            ] : [{
+              attribute: 'id',
+              operator: '!=',
+              value: null,
+            }]
         ),
       }),
       ...this.props.extendedFilter(),
@@ -372,7 +376,11 @@ export class ProcessableCrudTable extends React.Component<IProcessableCrudTableP
                 queries: (this.props.baseFilter()
                   ? [
                     this.props.baseFilter(),
-                  ] : []
+                  ] : [{
+                      attribute: 'id',
+                      operator: '!=',
+                      value: null,
+                    }]
                 ),
               }),
               ...this.props.extendedFilter(),
