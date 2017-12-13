@@ -379,7 +379,12 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
                     }
                   }
                   if (formField.defaultValue) {
-                    options.initialValue = formField.defaultValue;
+                    if (formField.defaultValue.indexOf('$') === 0) {
+                      const token: {} = uiData;
+                      options.initialValue = eval(formField.defaultValue.substring(1));
+                    } else {
+                      options.initialValue = formField.defaultValue;
+                    }
                   } else {
                     // default pick first
                     if (options.items && options.items.length > 0) {
@@ -652,11 +657,12 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
 
         if (buttonLayout && buttonLayout.length > 0) {
           for (const button of buttonLayout) {
+            debugger;
             if (button.isCancel) {
               cancelButton = null;
             }
             if (button.isProceed) {
-              cancelButton = null;
+              proceedButton = null;
             }
 
             moreButtons.push(
