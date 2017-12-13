@@ -194,6 +194,13 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
                 muiProps = JSON.parse(formFieldMuiPropsArr[0].value.replace(/\&\#34\;/gi, '"'));
               }
 
+              if (formField.defaultValue && formField.defaultValue.indexOf('$') === 0) {
+                const token: {} = uiData;
+                options.initialValue = eval(formField.defaultValue.substring(1));
+              } else {
+                options.initialValue = formField.defaultValue;
+              }
+
               switch (formField.type) {
                 case 'string':
                   parsedType = 'TextField';
@@ -379,12 +386,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
                     }
                   }
                   if (formField.defaultValue) {
-                    if (formField.defaultValue.indexOf('$') === 0) {
-                      const token: {} = uiData;
-                      options.initialValue = eval(formField.defaultValue.substring(1));
-                    } else {
-                      options.initialValue = formField.defaultValue;
-                    }
+                    options.initialValue = formField.defaultValue;
                   } else {
                     // default pick first
                     if (options.items && options.items.length > 0) {
@@ -627,8 +629,6 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
           muiProps={{
             label: 'Weiter',
             primary: true,
-          }}
-          qflProps={{
             onClick: (e: Event): void => {
               this.handleProceed(this.props.executionContext);
             },
@@ -646,8 +646,6 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
             muiProps={{
               label: 'Abbrechen',
               primary: true,
-            }}
-            qflProps={{
               onClick: (e: Event): void => {
                 this.handleCancel(this.props.executionContext);
               },
@@ -657,7 +655,6 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
 
         if (buttonLayout && buttonLayout.length > 0) {
           for (const button of buttonLayout) {
-            debugger;
             if (button.isCancel) {
               cancelButton = null;
             }
@@ -674,17 +671,11 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
                 muiProps={{
                   label: button.label,
                   ...button.muiProps,
-                }}
-                qflProps={{
                   onClick: (e: Event): void => {
                     if (button.isCancel) {
-                      this.setState({
-                        uiData: {
-                          key: button.key,
-                        },
-                      }, () => {
-                        this.handleProceed(this.props.executionContext);
-                      });
+                      this.state.uiData.key = button.key;
+                      this.handleProceed(this.props.executionContext);
+
                     } else {
                       this.handleProceed(this.props.executionContext);
                     }
