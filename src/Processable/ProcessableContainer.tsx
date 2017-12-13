@@ -147,6 +147,39 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
           } else {
             extensions = processInstance.nextTaskDef.extensions;
           }
+
+          let formMessage: string = null;
+          let formButtonElements: Array<any> = null;
+
+          const convertFormLayout: any = (formButtonLayout: any): Array<any> => {
+            return formButtonLayout.map((element: any) => {
+              const elementObj: any = {
+                theme: this.props.confirmItemTheme,
+                key: element.key,
+                label: element.label,
+                isCancel: element.isCancel,
+              };
+
+              if (element.isCancel) {
+                elementObj.muiProps = {
+                  primary: false,
+                  secondary: true,
+                };
+              }
+
+              return elementObj;
+            });
+          };
+
+          if (this.props.uiConfig) {
+            if (this.props.uiConfig.hasOwnProperty('message')) {
+              formMessage = mustache.render(this.props.uiConfig.message, tokenData);
+            }
+            if (this.props.uiConfig.hasOwnProperty('layout')) {
+              formButtonElements = convertFormLayout(this.props.uiConfig.layout);
+            }
+          }
+
           if (extensions.formFields && extensions.formFields.length > 0) {
             formElements = extensions.formFields.map((formField: any, idx: number) => {
               let parsedType: string = null;
@@ -377,8 +410,10 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
             props: {
               theme: this.props.widgetTheme,
               ...this.props.uiConfig,
-              layout: formElements,
+              layout: formElements
             },
+            buttonLayout: formButtonElements,
+            message: formMessage,
           };
           break;
         case 'Confirm':
@@ -532,9 +567,10 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
 
     let proceedButton: any = null;
     let cancelButton: any = null;
+    const moreButtons: Array<any> = [];
 
     let widget: any = null;
-    let themeContext = null;
+    let themeContext: string = null;
     if (this.widgetConfig && this.widgetConfig.component && this.widgetConfig.component.name === 'Table') {
       themeContext = 'selectableList';
       proceedButton = (
@@ -574,6 +610,8 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
       widget = <this.widgetConfig.component onSelectedRowsChanged={(selectedItem: any): any => onSelect(selectedItem)} {...this.widgetConfig.props}/>;
     } else if (this.widgetConfig && this.widgetConfig.component && this.widgetConfig.component.name === 'Form') {
       themeContext = 'form';
+      const preceedingText: string = this.widgetConfig.message;
+      const buttonLayout: Array<any> = this.widgetConfig.buttonLayout;
       proceedButton = (
         <FlatButton
           theme={{
@@ -610,6 +648,38 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
             }}
           />
         );
+
+        if (buttonLayout && buttonLayout.length > 0) {
+          for (const button of buttonLayout) {
+            if (button.isCancel) {
+              cancelButton = null;
+            }
+
+            moreButtons.push(
+              <FlatButton
+                theme={{
+                  ...(this.props.buttonTheme),
+                  themeContext: button.isCancel ? 'cancel' : '',
+                }}
+                muiProps={{
+                  label: button.label,
+                  ...button.muiProps,
+                }}
+                qflProps={{
+                  onClick: (e: Event): void => {
+                    this.setState({
+                      uiData: {
+                        key: button.key,
+                      },
+                    }, () => {
+                      this.handleProceed(this.props.executionContext);
+                    });
+                  },
+                }}
+              />,
+            );
+          }
+        }
       }
 
       const onChange: any = (formData: any): void => {
@@ -618,7 +688,12 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
           uiData: mergedUiData,
         });
       };
-      widget = <this.widgetConfig.component onChange={(formData: any): any => onChange(formData)} {...this.widgetConfig.props}/>;
+      widget = (
+        <div>
+          <div>{preceedingText}</div>
+          <this.widgetConfig.component onChange={(formData: any): any => onChange(formData)} {...this.widgetConfig.props}/>
+        </div>
+      );
     } else if (this.widgetConfig && this.widgetConfig.component && this.widgetConfig.component.name === 'Confirm') {
       themeContext = 'confirm';
       const onChoose: any = (key: string): any => {
@@ -720,7 +795,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
                 }}
                 muiProps={{
                   title: processInstance.nextTaskDef.name,
-                  actions: [proceedButton, cancelButton],
+                  actions: [proceedButton, cancelButton].concat(moreButtons),
                   modal: true,
                   open: this.state.modalOpen,
                   ...this.props.dialogMuiProps,
