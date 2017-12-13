@@ -158,6 +158,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
                 key: element.key,
                 label: element.label,
                 isCancel: element.isCancel,
+                isProceed: element.isProceed,
               };
 
               if (element.isCancel) {
@@ -654,6 +655,9 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
             if (button.isCancel) {
               cancelButton = null;
             }
+            if (button.isProceed) {
+              cancelButton = null;
+            }
 
             moreButtons.push(
               <FlatButton
@@ -667,13 +671,17 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
                 }}
                 qflProps={{
                   onClick: (e: Event): void => {
-                    this.setState({
-                      uiData: {
-                        key: button.key,
-                      },
-                    }, () => {
+                    if (button.isCancel) {
+                      this.setState({
+                        uiData: {
+                          key: button.key,
+                        },
+                      }, () => {
+                        this.handleProceed(this.props.executionContext);
+                      });
+                    } else {
                       this.handleProceed(this.props.executionContext);
-                    });
+                    }
                   },
                 }}
               />,
