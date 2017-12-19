@@ -344,7 +344,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
                           const formFieldLabelKeyArr: Array<any> = formField.formProperties.filter(
                             (formFieldProperty: any) => formFieldProperty.name === 'labelKey',
                           );
-                          if (formField.formProperties && formFieldLabelKeyArr && formFieldLabelKeyArr.length === 1 && formFieldItemsArr[0].value) {
+                          if (formField.formProperties && formFieldLabelKeyArr && formFieldLabelKeyArr.length === 1 && formFieldLabelKeyArr[0].value) {
                             labelKey = formFieldLabelKeyArr[0].value;
                           }
 
