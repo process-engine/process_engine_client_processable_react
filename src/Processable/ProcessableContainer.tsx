@@ -262,7 +262,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
                     options.autoCompleteMuiProps = buildTheme({
                       theme: {
                         ...this.props.formItemTheme,
-                        themeContext: (idx === 0 ? 'first' : null),
+                        themeContext: (idx === 0 ? 'first' : 'second'),
                       },
                       sourceMuiProps: {},
                       componentName: 'AutoComplete',
@@ -292,7 +292,19 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
                     const formFieldShowArr: Array<any> = formField.formProperties.filter(
                       (formFieldProperty: any) => formFieldProperty.name === 'show',
                     );
-                    if (formField.formProperties && formFieldItemsArr && formFieldItemsArr.length === 1 && formFieldItemsArr[0].value) {
+                    if (formField.formProperties &&
+                      formFieldShowArr &&
+                      formFieldShowArr.length === 1 &&
+                      formFieldShowArr[0].value) {
+                      if (formFieldShowArr[0].value.indexOf('$') === 0) {
+                        const token: {} = uiData;
+                        eval(`doShow = ${formFieldShowArr[0].value.substring(1)}`);
+                        if (!doShow) {
+                          break;
+                        }
+                      }
+                    }
+                    if (doShow && formField.formProperties && formFieldItemsArr && formFieldItemsArr.length === 1 && formFieldItemsArr[0].value) {
                       if (formFieldItemsArr[0].value.indexOf('$') === 0) {
                         const token: {} = uiData;
                         const dataProvider: Array<{}> = eval(formFieldItemsArr[0].value.substring(1));
@@ -319,18 +331,8 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
                       } else {
                         options.items = JSON.parse(formFieldItemsArr[0].value);
                       }
-                    } else if (formField.formProperties &&
-                               formFieldShowArr &&
-                               formFieldShowArr.length === 1 &&
-                               formFieldShowArr[0].value) {
-                      if (formFieldShowArr[0].value.indexOf('$') === 0) {
-                        const token: {} = uiData;
-                        eval(`doShow = ${formFieldShowArr[0].value.substring(1)}`);
-                        if (!doShow) {
-                          break;
-                        }
-                      }
-                    } else if (formField.formProperties &&
+                    }
+                    if (doShow && formField.formProperties &&
                                formFieldDatasourceArr &&
                                formFieldDatasourceArr.length === 1 &&
                                formFieldDatasourceArr[0].value) {
