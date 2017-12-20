@@ -293,8 +293,13 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
       theme: this.props.processTheme,
     };
 
+    const createProcessName: string = (
+      this.props.createProcessKey !== 'Create' ?
+        this.props.createProcessKey :
+        this.props.createProcessKey + this.props.dataClassName
+    );
     switch (processInstance.processKey) {
-      case (this.props.createProcessKey + this.props.dataClassName):
+      case (createProcessName):
         const createProcessableContainer: any = (
           <ProcessableContainer modal={true} key={processInstance.nextTaskEntity.id}
                                 processInstance={processInstance} executionContext={this.props.executionContext}
@@ -335,8 +340,13 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
   }
 
   public async handleEndEvent(processInstance: IProcessInstance, endEventData?: any): Promise<void> {
+    const createProcessName: string = (
+      this.props.createProcessKey !== 'Create' ?
+        this.props.createProcessKey :
+        this.props.createProcessKey + this.props.dataClassName
+    );
     switch (processInstance.processKey) {
-      case (this.props.createProcessKey + this.props.dataClassName):
+      case (createProcessName):
         this.setState(
           {
             createProcessableContainer: null,
@@ -368,8 +378,14 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
 
   private async handleStartCreate(startToken: any, onProcessEnded?: Function, done?: Function): Promise<void> {
     if (this.props.processEngineClientApi) {
+      const createProcessName: string = (
+        this.props.createProcessKey !== 'Create' ?
+          this.props.createProcessKey :
+          this.props.createProcessKey + this.props.dataClassName
+      );
+
       await this.props.processEngineClientApi.startProcess(
-        (this.props.createProcessKey + this.props.dataClassName),
+        (createProcessName),
         this,
         this.props.executionContext,
         (startToken ? (typeof startToken === 'function' ? startToken() : startToken ) : null),

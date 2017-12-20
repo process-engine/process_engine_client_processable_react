@@ -37,6 +37,7 @@ export interface IProcessableCrudTableProps extends IMUIProps {
   createButtonProps?: {};
   createButtonTheme?: {};
   createButton?: boolean;
+  createProcessKey?: string;
 
   processButtonTheme?: {};
   processDialogTheme?: {};
@@ -129,6 +130,7 @@ export class ProcessableCrudTable extends React.Component<IProcessableCrudTableP
     createButtonProps: null,
     createButtonTheme: null,
     createButton: true,
+    createProcessKey: 'Create',
 
     processButtonTheme: null,
     processDialogTheme: null,
@@ -571,7 +573,7 @@ export class ProcessableCrudTable extends React.Component<IProcessableCrudTableP
           onSearch={(searchValue: any): any => this.handleSearch(searchValue)}
           onCreateProcessEnded={(processKey: any, data: any): any => this.handleCreateProcessEnded(processKey, data)}
           onItemProcessEnded={(processKey: any, data: any, skipClean: boolean): any => this.handleItemProcessEnded(processKey, data, skipClean)}
-          createProcessKey={(this.props.createButton ? 'Create' : null)}
+          createProcessKey={(this.props.createButton ? this.props.createProcessKey : null)}
           createStartToken={this.props.createStartToken}
 
           createButtonMuiProps={this.props.createButtonMuiProps}
