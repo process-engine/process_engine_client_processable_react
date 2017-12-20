@@ -89,6 +89,10 @@ export interface IProcessableCrudTableProps extends IMUIProps {
   tableTheme?: {};
   tableOverlayTheme?: {};
   tableSelectorTheme?: {};
+
+  createComponentProps?: {};
+  createComponentMap?: {};
+  createProcessInstanceConfig?: {};
 }
 
 export interface IProcessableCrudTableState {
@@ -179,6 +183,10 @@ export class ProcessableCrudTable extends React.Component<IProcessableCrudTableP
     tableTheme: null,
     tableOverlayTheme: null,
     tableSelectorTheme: null,
+
+    createComponentProps: null,
+    createComponentMap: null,
+    createProcessInstanceConfig: null,
   };
 
   constructor(props: IProcessableCrudTableProps) {
@@ -580,6 +588,10 @@ export class ProcessableCrudTable extends React.Component<IProcessableCrudTableP
           createButtonQflProps={this.props.createButtonQflProps}
           createButtonProps={this.props.createButtonProps}
           createButtonTheme={this.props.createButtonTheme}
+
+          createComponentProps={this.props.createComponentProps}
+          createComponentMap={this.props.createComponentMap}
+          createProcessInstanceConfig={this.props.createProcessInstanceConfig}
 
           processButtonTheme={this.props.processButtonTheme}
           processDialogTheme={this.props.processDialogTheme}

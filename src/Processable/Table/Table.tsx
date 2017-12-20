@@ -127,6 +127,10 @@ export interface ITableProps extends IMUIProps {
   tableTheme?: {};
   tableOverlayTheme?: {};
   tableSelectorTheme?: {};
+
+  createComponentProps?: {};
+  createComponentMap?: {};
+  createProcessInstanceConfig?: {};
 }
 
 export interface ITableState {
@@ -139,6 +143,9 @@ export interface ITableState {
   createProcessableContainer?: React.ReactNode;
 
   currentItemProcessKey?: string;
+  currentItemComponentMap?: {};
+  currentItemComponentProps?: {};
+  currentItemProcessInstanceConfig?: {};
   currentItemProcessKeySkipClean?: boolean;
   currentItemOnProcessEnded?: Function;
   itemProcessableContainer?: React.ReactNode;
@@ -250,6 +257,10 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
     tableTheme: null,
     tableOverlayTheme: null,
     tableSelectorTheme: null,
+
+    createComponentProps: null,
+    createComponentMap: null,
+    createProcessInstanceConfig: null,
   };
 
   private delay: any = ((): any => {
@@ -277,6 +288,9 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
       createProcessableContainer: null,
 
       currentItemProcessKey: null,
+      currentItemComponentMap: null,
+      currentItemComponentProps: null,
+      currentItemProcessInstanceConfig: null,
       currentItemProcessKeySkipClean: false,
       currentItemOnProcessEnded: null,
       itemProcessableContainer: null,
@@ -298,22 +312,37 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
         this.props.createProcessKey :
         this.props.createProcessKey + this.props.dataClassName
     );
+
     switch (processInstance.processKey) {
       case (createProcessName):
+        let createProcessableComponent: any = null;
+        if (this.props.createComponentMap && this.props.createComponentMap.hasOwnProperty(uiName)) {
+          createProcessableComponent = this.props.createComponentMap[uiName];
+        }
+
         const createProcessableContainer: any = (
           <ProcessableContainer modal={true} key={processInstance.nextTaskEntity.id}
                                 processInstance={processInstance} executionContext={this.props.executionContext}
-                                uiName={uiName} uiConfig={uiConfig} uiData={uiData} {...themes}/>
+                                uiName={uiName} uiConfig={uiConfig} uiData={uiData} {...themes}
+                                componentClass={createProcessableComponent} componentProps={this.props.createComponentProps}
+                                processInstanceConfig={this.props.createProcessInstanceConfig}/>
         );
         this.setState({
           createProcessableContainer,
         });
         break;
       case (this.state.currentItemProcessKey):
+        let itemProcessableComponent: any = null;
+        if (this.state.currentItemComponentMap && this.state.currentItemComponentMap.hasOwnProperty(uiName)) {
+          itemProcessableComponent = this.state.currentItemComponentMap[uiName];
+        }
+
         const itemProcessableContainer: any = (
           <ProcessableContainer modal={true} key={processInstance.nextTaskEntity.id}
                                 processInstance={processInstance} executionContext={this.props.executionContext}
-                                uiName={uiName} uiConfig={uiConfig} uiData={uiData} {...themes}/>
+                                uiName={uiName} uiConfig={uiConfig} uiData={uiData} {...themes}
+                                componentClass={itemProcessableComponent} componentProps={this.state.currentItemComponentProps}
+                                processInstanceConfig={this.state.currentItemProcessInstanceConfig}/>
         );
         this.setState({
           itemProcessableContainer,
@@ -399,7 +428,14 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
     }
   }
 
-  private async handleStartItem(processKey: string, startToken: any, onProcessEnded?: Function, skipClean?: boolean, done?: Function): Promise<void> {
+  private async handleStartItem(processKey: string,
+                                startToken: any,
+                                onProcessEnded?: Function,
+                                skipClean?: boolean,
+                                done?: Function,
+                                componentMap?: {},
+                                componentProps?: {},
+                                processInstanceConfig?: {}): Promise<void> {
     if (this.props.processEngineClientApi) {
       await this.props.processEngineClientApi.startProcess(
         processKey,
@@ -413,6 +449,9 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
       this.setState({
         currentItemOnProcessEnded: onProcessEnded,
         currentItemProcessKey: processKey,
+        currentItemComponentMap: componentMap,
+        currentItemComponentProps: componentProps,
+        currentItemProcessInstanceConfig: processInstanceConfig,
         currentItemProcessKeySkipClean: skipClean,
       });
     }
@@ -447,7 +486,15 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
           return resultToken;
         });
       }
-      this.handleStartItem(item.processableKey, startToken, item.onProcessEnded, item.skipClean);
+      this.handleStartItem(
+        item.processableKey,
+        startToken,
+        item.onProcessEnded,
+        item.skipClean,
+        item.componentMap,
+        item.componentProps,
+        item.processInstanceConfig,
+      );
     }
   }
 
