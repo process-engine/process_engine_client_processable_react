@@ -93,6 +93,7 @@ export interface IProcessableCrudTableProps extends IMUIProps {
   createComponentProps?: {};
   createComponentMap?: {};
   createProcessInstanceConfig?: {};
+  onCreateProcessEnded?: Function;
 }
 
 export interface IProcessableCrudTableState {
@@ -187,6 +188,7 @@ export class ProcessableCrudTable extends React.Component<IProcessableCrudTableP
     createComponentProps: null,
     createComponentMap: null,
     createProcessInstanceConfig: null,
+    onCreateProcessEnded: null,
   };
 
   constructor(props: IProcessableCrudTableProps) {
@@ -511,6 +513,11 @@ export class ProcessableCrudTable extends React.Component<IProcessableCrudTableP
             {
               isFetching: false,
               hasReloaded: true,
+            },
+            () => {
+              if (this.props.onCreateProcessEnded) {
+                this.props.onCreateProcessEnded(data);
+              }
             },
           );
         }
