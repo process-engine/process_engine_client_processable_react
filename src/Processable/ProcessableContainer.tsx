@@ -419,7 +419,9 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
                             };
 
                             options.items = [];
-                            muiProps.openOnFocus = true;
+                            if (!muiProps.hasOwnProperty('openOnFocus')) {
+                              muiProps.openOnFocus = true;
+                            }
                             muiProps.dataSourceConfig = {
                               text: 'label',
                               value: 'value',
