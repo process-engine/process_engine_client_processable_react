@@ -382,7 +382,7 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
           },
           () => {
             if (this.state.createOnProcessEnded) {
-              this.state.createOnProcessEnded();
+              this.state.createOnProcessEnded(endEventData);
             }
           },
         );

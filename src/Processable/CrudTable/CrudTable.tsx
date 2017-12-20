@@ -495,7 +495,7 @@ export class ProcessableCrudTable extends React.Component<IProcessableCrudTableP
     }
   }
 
-  private handleCreateProcessEnded(processKey: any, data: any): void {
+  private handleCreateProcessEnded(data: any): void {
     this.props.fetcher(
       {
         mode: 'reload',
@@ -586,7 +586,7 @@ export class ProcessableCrudTable extends React.Component<IProcessableCrudTableP
 
           frame={false}
           onSearch={(searchValue: any): any => this.handleSearch(searchValue)}
-          onCreateProcessEnded={(processKey: any, data: any): any => this.handleCreateProcessEnded(processKey, data)}
+          onCreateProcessEnded={(data: any): any => this.handleCreateProcessEnded(data)}
           onItemProcessEnded={(processKey: any, data: any, skipClean: boolean): any => this.handleItemProcessEnded(processKey, data, skipClean)}
           createProcessKey={(this.props.createButton ? this.props.createProcessKey : null)}
           createStartToken={this.props.createStartToken}
