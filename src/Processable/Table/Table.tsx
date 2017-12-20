@@ -413,6 +413,7 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
           this.props.createProcessKey + this.props.dataClassName
       );
 
+      $(window).scrollTop(0);
       await this.props.processEngineClientApi.startProcess(
         (createProcessName),
         this,
@@ -437,6 +438,7 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
                                 componentProps?: {},
                                 processInstanceConfig?: {}): Promise<void> {
     if (this.props.processEngineClientApi) {
+      $(window).scrollTop(0);
       await this.props.processEngineClientApi.startProcess(
         processKey,
         this,
