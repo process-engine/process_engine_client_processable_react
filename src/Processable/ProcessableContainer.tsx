@@ -202,7 +202,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
 
               if (formField.defaultValue && formField.defaultValue.indexOf('$') === 0) {
                 const token: {} = uiData;
-                options.initialValue = eval(formField.defaultValue.substring(1));
+                options.initialValue = new Function('token', `return ${formField.defaultValue.substring(1)};`)(token);
               } else {
                 options.initialValue = formField.defaultValue;
               }
@@ -226,7 +226,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
                       if (formField.formProperties && formFieldConfigArr && formFieldConfigArr.length === 1) {
                         if (formFieldConfigArr[0].value.indexOf('$') === 0) {
                           const token: {} = uiData;
-                          formItemComponentProps = eval(formFieldConfigArr[0].value.substring(1));
+                          formItemComponentProps = new Function('token', `return ${formFieldConfigArr[0].value.substring(1)};`)(token);
                         }
                       }
                       parsedComponentClass = formItemComponentClass;
@@ -298,7 +298,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
                       formFieldShowArr[0].value) {
                       if (formFieldShowArr[0].value.indexOf('$') === 0) {
                         const token: {} = uiData;
-                        doShow = eval(formFieldShowArr[0].value.substring(1));
+                        doShow = new Function('token', `return ${formFieldShowArr[0].value.substring(1)};`)(token);
                         if (!doShow) {
                           break;
                         }
@@ -307,7 +307,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
                     if (doShow && formField.formProperties && formFieldItemsArr && formFieldItemsArr.length === 1 && formFieldItemsArr[0].value) {
                       if (formFieldItemsArr[0].value.indexOf('$') === 0) {
                         const token: {} = uiData;
-                        const dataProvider: Array<{}> = eval(formFieldItemsArr[0].value.substring(1));
+                        const dataProvider: Array<{}> = new Function('token', `return ${formFieldItemsArr[0].value.substring(1)};`)(token);
                         if (dataProvider) {
                           let labelKey: string = 'name';
                           const formFieldLabelKeyArr: Array<any> = formField.formProperties.filter(
@@ -319,7 +319,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
                           }
                           options.items = dataProvider.map((formValue: any) => {
                             const value: string = formValue.id;
-                            const label: string = eval(`formValue.${labelKey}`);
+                            const label: string = new Function('formValue', `return formValue.${labelKey};`)(formValue);
                             if (value && label) {
                               return {
                                 value,
@@ -340,7 +340,8 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
                         const token: {} = uiData;
                         let datasource: any = null;
 
-                        datasource = eval(formFieldDatasourceArr[0].value.substring(1));
+                        datasource = new Function('token', `return ${formFieldDatasourceArr[0].value.substring(1)};`)(token);
+
                         if (datasource) {
                           let labelKey: string = 'name';
                           const formFieldLabelKeyArr: Array<any> = formField.formProperties.filter(
@@ -396,7 +397,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
                                 if (result) {
                                   const dataProvider: Array<{}> = result.data.map((formValue: any) => {
                                     const value: string = formValue.id;
-                                    const label: string = eval(`formValue.${labelKey}`);
+                                    const label: string = new Function('formValue', `return formValue.${labelKey};`)(formValue);
                                     if (value && label) {
                                       return {
                                         value,
