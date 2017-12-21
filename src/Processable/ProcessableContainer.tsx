@@ -340,7 +340,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
                         const token: {} = uiData;
                         let datasource: any = null;
 
-                        datasource = eval(formFieldDatasourceArr[0].value);
+                        datasource = eval(formFieldDatasourceArr[0].value.substring(1));
                         if (datasource) {
                           let labelKey: string = 'name';
                           const formFieldLabelKeyArr: Array<any> = formField.formProperties.filter(
