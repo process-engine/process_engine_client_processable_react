@@ -226,7 +226,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
                       if (formField.formProperties && formFieldConfigArr && formFieldConfigArr.length === 1) {
                         if (formFieldConfigArr[0].value.indexOf('$') === 0) {
                           const token: {} = uiData;
-                          eval(`formItemComponentProps = ${formFieldConfigArr[0].value.substring(1)}`);
+                          formItemComponentProps = eval(formFieldConfigArr[0].value.substring(1));
                         }
                       }
                       parsedComponentClass = formItemComponentClass;
@@ -298,7 +298,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
                       formFieldShowArr[0].value) {
                       if (formFieldShowArr[0].value.indexOf('$') === 0) {
                         const token: {} = uiData;
-                        eval(`doShow = ${formFieldShowArr[0].value.substring(1)}`);
+                        doShow = eval(formFieldShowArr[0].value.substring(1));
                         if (!doShow) {
                           break;
                         }
@@ -340,7 +340,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
                         const token: {} = uiData;
                         let datasource: any = null;
 
-                        eval(`datasource = ${formFieldDatasourceArr[0].value.substring(1)}`);
+                        datasource = eval(formFieldDatasourceArr[0].value.substring(1));
                         if (datasource) {
                           let labelKey: string = 'name';
                           const formFieldLabelKeyArr: Array<any> = formField.formProperties.filter(
