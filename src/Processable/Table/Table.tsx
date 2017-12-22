@@ -131,6 +131,8 @@ export interface ITableProps extends IMUIProps {
   createComponentProps?: {};
   createComponentMap?: {};
   createProcessInstanceConfig?: {};
+
+  onSelectedRowsChanged?: Function;
 }
 
 export interface ITableState {
@@ -261,6 +263,8 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
     createComponentProps: null,
     createComponentMap: null,
     createProcessInstanceConfig: null,
+
+    onSelectedRowsChanged: null,
   };
 
   private delay: any = ((): any => {
@@ -325,7 +329,13 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
                                 processInstance={processInstance} executionContext={this.props.executionContext}
                                 uiName={uiName} uiConfig={uiConfig} uiData={uiData} {...themes}
                                 componentClass={createProcessableComponent} componentProps={this.props.createComponentProps}
-                                processInstanceConfig={this.props.createProcessInstanceConfig}/>
+                                processInstanceConfig={this.props.createProcessInstanceConfig}
+                                onDialogRequestClose={(buttonClicked: boolean): void => {
+                                  if (!buttonClicked) {
+                                    this.cleanUpProcessableContainer();
+                                  }
+                                }}
+          />
         );
         this.setState({
           createProcessableContainer,
@@ -342,7 +352,13 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
                                 processInstance={processInstance} executionContext={this.props.executionContext}
                                 uiName={uiName} uiConfig={uiConfig} uiData={uiData} {...themes}
                                 componentClass={itemProcessableComponent} componentProps={this.state.currentItemComponentProps}
-                                processInstanceConfig={this.state.currentItemProcessInstanceConfig}/>
+                                processInstanceConfig={this.state.currentItemProcessInstanceConfig}
+                                onDialogRequestClose={(buttonClicked: boolean): void => {
+                                  if (!buttonClicked) {
+                                    this.cleanUpProcessableContainer();
+                                  }
+                                }}
+          />
         );
         this.setState({
           itemProcessableContainer,
@@ -366,6 +382,13 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
 
   public async handleCancel(processInstance: IProcessInstance): Promise<void> {
     return;
+  }
+
+  private cleanUpProcessableContainer(): void {
+    this.setState({
+      createProcessableContainer: null,
+      itemProcessableContainer: null,
+    });
   }
 
   public async handleEndEvent(processInstance: IProcessInstance, endEventData?: any): Promise<void> {
@@ -503,6 +526,11 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
   private handleSelectedRowsChanged(selectedRows: any): void {
     this.setState({
       selectedRows,
+    }, () => {
+      if (this.props.onSelectedRowsChanged) {
+        this.props.onSelectedRowsChanged(selectedRows);
+      }
+      this.cleanUpProcessableContainer();
     });
   }
 

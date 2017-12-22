@@ -44,6 +44,7 @@ export interface IProcessableContainerProps extends IMUIProps {
   customThemeContext?: string;
 
   processInstanceConfig?: any;
+  onDialogRequestClose?: Function;
 }
 
 export interface IProcessableContainerState {
@@ -86,6 +87,8 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
     customThemeContext: 'custom',
 
     processInstanceConfig: {},
+
+    onDialogRequestClose: null,
   };
 
   public static contextTypes: IProcessableContainerContextTypes = {
@@ -616,6 +619,17 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
     }
   }
 
+  private handleDialogRequestClose(buttonClicked: boolean): void {
+    this.setState({
+      canceled: true,
+      modalOpen: false,
+    }, () => {
+      if (this.props.onDialogRequestClose) {
+        this.props.onDialogRequestClose(buttonClicked);
+      }
+    });
+  }
+
   public render(): JSX.Element | Array<JSX.Element> | string | number | null | false {
     const { qflProps } = buildTheme({
       theme: this.props.theme,
@@ -752,7 +766,9 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
           overflowY: 'auto',
           overflowX: 'hidden',
         }}>
-          <div>{preceedingText}</div>
+          <div dangerouslySetInnerHTML={{
+            __html: preceedingText,
+          }}/>
           <this.widgetConfig.component onChange={(formData: any): any => onChange(formData)} {...this.widgetConfig.props}/>
         </div>
       );
@@ -858,8 +874,8 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
                 muiProps={{
                   title: processInstance.nextTaskDef.name,
                   actions: [proceedButton, cancelButton].concat(moreButtons),
-                  modal: true,
                   open: this.state.modalOpen,
+                  onRequestClose: (buttonClicked: boolean): void => this.handleDialogRequestClose(buttonClicked),
                   ...this.props.dialogMuiProps,
                 }}
                 qflProps={{

@@ -94,6 +94,8 @@ export interface IProcessableCrudTableProps extends IMUIProps {
   createComponentMap?: {};
   createProcessInstanceConfig?: {};
   onCreateProcessEnded?: Function;
+
+  onSelectedRowsChanged?: Function;
 }
 
 export interface IProcessableCrudTableState {
@@ -189,6 +191,8 @@ export class ProcessableCrudTable extends React.Component<IProcessableCrudTableP
     createComponentMap: null,
     createProcessInstanceConfig: null,
     onCreateProcessEnded: null,
+
+    onSelectedRowsChanged: null,
   };
 
   constructor(props: IProcessableCrudTableProps) {
@@ -666,6 +670,7 @@ export class ProcessableCrudTable extends React.Component<IProcessableCrudTableP
             }
           }}
 
+          onSelectedRowsChanged={this.props.onSelectedRowsChanged}
           tableProps={{
             rbtProps: {
               remote: true,
