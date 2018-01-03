@@ -360,7 +360,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
                                 operator: 'and',
                                 queries: [],
                               },
-                              select: (datasource.baseFilter.select ? [ labelKey ].concat(datasource.baseFilter.select) : [ labelKey ]),
+                              select: (datasource.baseFilter.select ? [ 'id', labelKey ].concat(datasource.baseFilter.select) : [ 'id', labelKey ]),
                               limit: 10,
                             };
                             if (datasource.baseFilter.expand) {
