@@ -221,8 +221,8 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
                   }
                   if (parsedType !== 'TextField') {
                     if (this.props.processInstanceConfig &&
-                        this.props.processInstanceConfig.formItemComponentMap &&
-                        this.props.processInstanceConfig.formItemComponentMap.hasOwnProperty(parsedType)) {
+                      this.props.processInstanceConfig.formItemComponentMap &&
+                      this.props.processInstanceConfig.formItemComponentMap.hasOwnProperty(parsedType)) {
                       const formItemComponentClass: any = this.props.processInstanceConfig.formItemComponentMap[parsedType];
                       const formFieldConfigArr = formField.formProperties.filter((formFieldProperty: any) => formFieldProperty.name === 'config');
                       let formItemComponentProps: any = {};
@@ -238,6 +238,18 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
                       };
                     }
                   }
+                  break;
+                case 'date':
+                  parsedType = 'DatePicker';
+                  formFieldWidgetNameArr = formField.formProperties.filter((formFieldProperty: any) => formFieldProperty.name === 'widgetName');
+                  if (formField.formProperties && formFieldWidgetNameArr && formFieldWidgetNameArr.length === 1) {
+                    parsedType = formFieldWidgetNameArr[0].value;
+                  }
+                  muiProps = {
+                    cancelLabel: 'ABBRECHEN',
+                    okLabel: 'OK',
+                    locale: 'de-DE',
+                  };
                   break;
                 case 'boolean':
                   parsedType = 'CheckBox';
