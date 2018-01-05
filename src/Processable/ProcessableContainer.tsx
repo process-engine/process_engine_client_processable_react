@@ -295,6 +295,9 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
                     const formFieldShowArr: Array<any> = formField.formProperties.filter(
                       (formFieldProperty: any) => formFieldProperty.name === 'show',
                     );
+                    const formFieldKeyAttributeNameArr: Array<any> = formField.formProperties.filter(
+                      (formFieldProperty: any) => formFieldProperty.name === 'keyAttributeName',
+                    );
                     if (formField.formProperties &&
                       formFieldShowArr &&
                       formFieldShowArr.length === 1 &&
@@ -306,6 +309,10 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
                           break;
                         }
                       }
+                    }
+                    if (doShow && formField.formProperties && formFieldKeyAttributeNameArr && formFieldKeyAttributeNameArr.length === 1 &&
+                        formFieldKeyAttributeNameArr[0].value) {
+                      options.keyAttributeName = formFieldKeyAttributeNameArr[0].value;
                     }
                     if (doShow && formField.formProperties && formFieldItemsArr && formFieldItemsArr.length === 1 && formFieldItemsArr[0].value) {
                       if (formFieldItemsArr[0].value.indexOf('$') === 0) {
@@ -471,10 +478,11 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
           widget = {
             component: Form,
             isModal: this.props.modal,
+            formData: (this.props.uiConfig && this.props.uiConfig.item ? this.props.uiConfig.item : null),
             props: {
               theme: this.props.widgetTheme,
               ...this.props.uiConfig,
-              layout: formElements
+              layout: formElements,
             },
             buttonLayout: formButtonElements,
             message: formMessage,
@@ -697,7 +705,12 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
             label: 'Weiter',
             primary: true,
             onClick: (e: Event): void => {
-              this.handleProceed(this.props.executionContext);
+              const mergedUiData: any = Object.assign(this.state.uiData, (this.widgetConfig.formData ? this.widgetConfig.formData : {}));
+              this.setState({
+                uiData: mergedUiData,
+              }, () => {
+                this.handleProceed(this.props.executionContext);
+              });
             },
           }}
         />
