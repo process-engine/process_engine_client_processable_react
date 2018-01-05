@@ -594,7 +594,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
     const { processInstance } = this.props;
 
     const fireCancel: any = (): void => {
-      if (processInstance) {
+      if (false && processInstance) {
         processInstance.doCancel(executionContext).then(() => {
           this.setState({
             canceled: true,
