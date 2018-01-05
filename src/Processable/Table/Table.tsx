@@ -645,6 +645,7 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
               theme={this.props.itemBasedButtonTheme}
               muiProps={{
                 icon,
+                label: buttonSchemaItem.name,
                 primary: true,
                 className: (
                   !disableState
