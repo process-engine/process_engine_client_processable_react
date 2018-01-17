@@ -367,7 +367,7 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
                                 processInstance={processInstance} executionContext={this.props.executionContext}
                                 uiName={(itemProcessableComponent ? null : uiName)} uiConfig={uiConfig} uiData={uiData} {...themes}
                                 componentClass={itemProcessableComponent}
-                                componentProps={(itemProcessableComponent && this.state.currentItemComponentProps && this.state.currentItemComponentProps.hasOwnP ? this.state.currentItemComponentProps[uiName] : null)}
+                                componentProps={(itemProcessableComponent && this.state.currentItemComponentProps && this.state.currentItemComponentProps.hasOwnProperty(uiName) ? this.state.currentItemComponentProps[uiName] : null)}
                                 processInstanceConfig={this.state.currentItemProcessInstanceConfig}
                                 onDialogRequestClose={(buttonClicked: boolean): void => {
                                   if (!buttonClicked) {
