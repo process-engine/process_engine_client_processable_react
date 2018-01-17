@@ -102,6 +102,7 @@ export interface IProcessableCrudTableState {
   tableId?: number;
 
   currentOffset?: number;
+  currentSearch?: string;
   currentFirst?: number;
   isFetching?: boolean;
   hasLoadedMore?: boolean;
@@ -200,6 +201,7 @@ export class ProcessableCrudTable extends React.Component<IProcessableCrudTableP
 
     this.state = {
       currentOffset: 0,
+      currentSearch: null,
       currentFirst: props.pageSize,
       isFetching: true,
       hasLoadedMore: false,
@@ -343,6 +345,7 @@ export class ProcessableCrudTable extends React.Component<IProcessableCrudTableP
     this.setState(
       {
         currentOffset: 0,
+        currentSearch: searchValue,
       },
       () => {
         if (searchValue) {
@@ -590,6 +593,7 @@ export class ProcessableCrudTable extends React.Component<IProcessableCrudTableP
 
           frame={false}
           onSearch={(searchValue: any): any => this.handleSearch(searchValue)}
+          searchValue={this.state.currentSearch}
           onCreateProcessEnded={(data: any): any => this.handleCreateProcessEnded(data)}
           onItemProcessEnded={(processKey: any, data: any, skipClean: boolean): any => this.handleItemProcessEnded(processKey, data, skipClean)}
           createProcessKey={(this.props.createButton ? this.props.createProcessKey : null)}

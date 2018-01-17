@@ -332,14 +332,14 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
 
         const createProcessableContainer: any = (
           <ProcessableContainer dialogMuiProps={{
-                                  modal: (this.props.createProcessInstanceConfig ? this.props.createProcessInstanceConfig.dialogModal : true),
+                                  modal: (this.props.createProcessInstanceConfig && this.props.createProcessInstanceConfig.hasOwnProperty('dialogModal') ? this.props.createProcessInstanceConfig.dialogModal : true),
                                 }}
-                                modal={(this.props.createProcessInstanceConfig ? this.props.createProcessInstanceConfig.modal : false)}
+                                modal={(this.props.createProcessInstanceConfig && this.props.createProcessInstanceConfig.hasOwnProperty('modal') ? this.props.createProcessInstanceConfig.modal : true)}
                                 key={processInstance.nextTaskEntity.id}
                                 processInstance={processInstance} executionContext={this.props.executionContext}
                                 uiName={(createProcessableComponent ? null : uiName)} uiConfig={uiConfig} uiData={uiData} {...themes}
                                 componentClass={createProcessableComponent}
-                                componentProps={(createProcessableComponent && this.props.createComponentProps ? this.props.createComponentProps[uiName] : null)}
+                                componentProps={(createProcessableComponent && this.props.createComponentProps && this.props.createComponentProps.hasOwnProperty(uiName) ? this.props.createComponentProps[uiName] : null)}
                                 processInstanceConfig={this.props.createProcessInstanceConfig}
                                 onDialogRequestClose={(buttonClicked: boolean): void => {
                                   if (!buttonClicked) {
@@ -360,14 +360,14 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
 
         const itemProcessableContainer: any = (
           <ProcessableContainer dialogMuiProps={{
-                                  modal: (this.state.currentItemProcessInstanceConfig ? this.state.currentItemProcessInstanceConfig.dialogModal : true),
+                                  modal: (this.state.currentItemProcessInstanceConfig && this.state.currentItemProcessInstanceConfig.hasOwnProperty('dialogModal') ? this.state.currentItemProcessInstanceConfig.dialogModal : true),
                                 }}
-                                modal={(this.state.currentItemProcessInstanceConfig ? this.state.currentItemProcessInstanceConfig.modal : true)}
+                                modal={(this.state.currentItemProcessInstanceConfig && this.state.currentItemProcessInstanceConfig.hasOwnProperty('modal') ? this.state.currentItemProcessInstanceConfig.modal : true)}
                                 key={processInstance.nextTaskEntity.id}
                                 processInstance={processInstance} executionContext={this.props.executionContext}
                                 uiName={(itemProcessableComponent ? null : uiName)} uiConfig={uiConfig} uiData={uiData} {...themes}
                                 componentClass={itemProcessableComponent}
-                                componentProps={(itemProcessableComponent && this.state.currentItemComponentProps ? this.state.currentItemComponentProps[uiName] : null)}
+                                componentProps={(itemProcessableComponent && this.state.currentItemComponentProps && this.state.currentItemComponentProps.hasOwnP ? this.state.currentItemComponentProps[uiName] : null)}
                                 processInstanceConfig={this.state.currentItemProcessInstanceConfig}
                                 onDialogRequestClose={(buttonClicked: boolean): void => {
                                   if (!buttonClicked) {
@@ -1038,14 +1038,18 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
           }}
           {...this.props.searchFieldProps}
           onChange={(oldValue: any, newValue: any, e: React.KeyboardEvent<HTMLInputElement>): void => {
-            if (this.props.onSearch) {
-              this.delay(
-                () => {
-                  this.props.onSearch(newValue);
-                },
-                (e && e.keyCode === 13 ? 0 : this.props.searchKeyDelay), // tslint:disable-line no-magic-numbers
-              );
-            }
+            this.setState({
+              searchValue: newValue,
+            }, () => {
+              if (this.props.onSearch) {
+                this.delay(
+                  () => {
+                    this.props.onSearch(newValue);
+                  },
+                  (e && e.keyCode === 13 ? 0 : this.props.searchKeyDelay), // tslint:disable-line no-magic-numbers
+                );
+              }
+            });
           }}
         />
       );
