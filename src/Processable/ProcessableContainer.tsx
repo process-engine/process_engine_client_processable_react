@@ -1,5 +1,6 @@
-import * as React from 'react';
 import * as PropTypes from 'prop-types';
+import * as React from 'react';
+import * as Spinner from 'react-spinkit';
 
 import {IDatastoreService} from '@essential-projects/data_model_contracts';
 
@@ -924,7 +925,44 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
         );
       }
 
-      let processingComponent: any = (<span>Bitte warten...</span>);
+      let processingComponent: any = (
+        <div style={{
+          position: 'absolute',
+          top: '2.65vw',
+          bottom: '0',
+          left: '0.45vw',
+          right: '0.45vw',
+          backgroundColor: 'rgba(0,0,0,0.2',
+          zIndex: 100000,
+        }}>
+          <div style={{
+            display: 'table',
+            width: '100%',
+            height: '100%',
+          }}>
+            <div style={{
+              display: 'table-row-group',
+            }}>
+              <div style={{
+                display: 'table-row',
+              }}>
+                <div style={{
+                  display: 'table-cell',
+                  textAlign: 'center',
+                  verticalAlign: 'middle',
+                }}>
+                  <div style={{
+                    display: 'inline-block',
+                  }}>
+                    <Spinner name={'rotating-plane'} color={qflProps.spinnerColor}/>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+
       if (this.state.canceled) {
         processingComponent = null;
       }
@@ -932,7 +970,6 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
       return (
         <div {...qflProps}>
           {processingComponent}
-          <hr/>
         </div>
       );
     }

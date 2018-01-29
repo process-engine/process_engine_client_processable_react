@@ -4,6 +4,8 @@ import {buildTheme} from '@quantusflow/frontend_mui/dist/commonjs/themeBuilder.j
 import {IMUIProps} from '@quantusflow/frontend_mui/dist/interfaces';
 import {ProcessableTable} from '../Table/Table';
 
+import * as Spinner from 'react-spinkit';
+
 import {ExecutionContext} from '@essential-projects/core_contracts';
 import {IProcessEngineClientApi} from '@quantusflow/process_engine_client_api';
 import {IColumnSchema} from '../../interfaces';
@@ -573,6 +575,7 @@ export class ProcessableCrudTable extends React.Component<IProcessableCrudTableP
     });
 
     let tableElement: any = null;
+    let loaderElement = null;
 
     if (this.state.hasLoaded) {
       tableElement = (
@@ -695,10 +698,49 @@ export class ProcessableCrudTable extends React.Component<IProcessableCrudTableP
           }}
         />
       );
+    } else {
+      loaderElement = (
+        <div style={{
+          position: 'absolute',
+          top: '2.65vw',
+          bottom: '0',
+          left: '0.45vw',
+          right: '0.45vw',
+          backgroundColor: 'rgba(0,0,0,0.2',
+          zIndex: 100000,
+        }}>
+          <div style={{
+            display: 'table',
+            width: '100%',
+            height: '100%',
+          }}>
+            <div style={{
+              display: 'table-row-group',
+            }}>
+              <div style={{
+                display: 'table-row',
+              }}>
+                <div style={{
+                  display: 'table-cell',
+                  textAlign: 'center',
+                  verticalAlign: 'middle',
+                }}>
+                  <div style={{
+                    display: 'inline-block',
+                  }}>
+                    <Spinner name={'rotating-plane'} color={qflProps.spinnerColor}/>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
     }
 
     return (
       <div>
+        {loaderElement}
         {tableElement}
         {children}
       </div>
