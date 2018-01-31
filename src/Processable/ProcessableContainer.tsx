@@ -157,7 +157,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
           }
 
           let formMessage: string = null;
-          let formButtonElements: Array<any> = null;
+          let formButtonElements: Array<any> = [];
 
           const convertFormLayout: any = (formButtonLayout: any): Array<any> => {
             return formButtonLayout.map((element: any) => {
@@ -170,6 +170,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
               };
 
               if (element.isCancel) {
+                elementObj.isCancel = true;
                 elementObj.muiProps = {
                   primary: false,
                   secondary: true,
@@ -500,7 +501,13 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
               ...this.props.uiConfig,
               layout: formElements,
             },
-            buttonLayout: formButtonElements,
+            buttonLayout: formButtonElements.sort((itemA, itemB) => {
+              if (itemA && itemB && itemA.isCancel && !itemB.isCancel) {
+                return -1;
+              } else {
+                return 1;
+              }
+            }),
             message: formMessage,
           };
           break;
@@ -911,7 +918,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
                 }}
                 muiProps={{
                   title: processInstance.nextTaskDef.name,
-                  actions: [proceedButton, cancelButton].concat(moreButtons),
+                  actions: moreButtons.concat([cancelButton, proceedButton]),
                   open: this.state.modalOpen,
                   onRequestClose: (buttonClicked: boolean): void => this.handleDialogRequestClose(buttonClicked),
                   ...this.props.dialogMuiProps,
@@ -920,8 +927,8 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
                   ...this.props.dialogQflProps,
                 }}
               >
-                {widget}<br/>
-              </Dialog><br/>
+                {widget}
+              </Dialog>
               {tokenDataElement}
             </div>
           );
@@ -929,8 +936,8 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
 
         return (
           <div {...qflProps}>
-            {widget}<br/>
-            {proceedButton}<br/>
+            {widget}
+            {proceedButton}
             {tokenDataElement}
             <hr/>
           </div>
