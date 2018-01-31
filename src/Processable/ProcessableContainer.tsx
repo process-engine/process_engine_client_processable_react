@@ -565,7 +565,9 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
               theme: this.props.widgetTheme,
               ...this.props.uiConfig,
               layout: confirmElements,
-              message: confirmMessage,
+              message: <div dangerouslySetInnerHTML={{
+                __html: confirmMessage,
+              }}/>,
               children: [widgetChildren],
             },
           };
