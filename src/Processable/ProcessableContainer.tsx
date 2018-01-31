@@ -473,7 +473,10 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
               }
               if (parsedType && doShow) {
                 return {
-                  theme: this.props.formItemTheme,
+                  theme: {
+                    ...this.props.formItemTheme,
+                    themeContext: (muiProps && muiProps.multiLine ? 'multiLine' : null),
+                  },
                   label: formField.label,
                   type: (parsedComponentClass ? null : parsedType),
                   itemComponentClass: parsedComponentClass,
