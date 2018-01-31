@@ -518,6 +518,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
               };
 
               if (element.isCancel) {
+                elementObj.isCancel = true;
                 elementObj.muiProps = {
                   primary: false,
                   secondary: true,
@@ -567,7 +568,13 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
             props: {
               theme: this.props.widgetTheme,
               ...this.props.uiConfig,
-              layout: confirmElements,
+              layout: confirmElements.sort((itemA, itemB) => {
+                if (itemA && itemB && itemA.isCancel && !itemB.isCancel) {
+                  return -1;
+                } else {
+                  return 1;
+                }
+              }),
               message: <div dangerouslySetInnerHTML={{
                 __html: confirmMessage,
               }}/>,
