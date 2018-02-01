@@ -290,7 +290,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
                     options.items = formField.formValues.map((formValue: any) => {
                       const value: string = formValue.id;
                       const label: string = formValue.name;
-                      if (value && label) {
+                      if (value !== undefined && label) {
                         return {
                           value,
                           label,
@@ -344,7 +344,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
                           options.items = dataProvider.map((formValue: any) => {
                             const value: string = formValue.id;
                             const label: string = new Function('formValue', `return formValue.${labelKey};`)(formValue);
-                            if (value && label) {
+                            if (value !== undefined && label) {
                               return {
                                 value,
                                 label,
