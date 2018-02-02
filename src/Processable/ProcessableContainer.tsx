@@ -809,6 +809,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
         <div style={{
           maxHeight: 'inherit',
           overflowY: 'auto',
+          display: 'inline',
           overflowX: 'hidden',
         }}>
           <div dangerouslySetInnerHTML={{
