@@ -157,6 +157,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
           }
 
           let formMessage: string = null;
+          let formContext: string = null;
           let formButtonElements: Array<any> = [];
 
           const convertFormLayout: any = (formButtonLayout: any): Array<any> => {
@@ -187,6 +188,9 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
             }
             if (this.props.uiConfig.hasOwnProperty('layout')) {
               formButtonElements = convertFormLayout(this.props.uiConfig.layout);
+            }
+            if (this.props.uiConfig.hasOwnProperty('themeContext')) {
+              formContext = this.props.uiConfig.themeContext;
             }
           }
 
@@ -497,7 +501,10 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
             isModal: this.props.modal,
             formData: (this.props.uiConfig && this.props.uiConfig.item ? this.props.uiConfig.item : null),
             props: {
-              theme: this.props.widgetTheme,
+              theme: {
+                ...(this.props.widgetTheme),
+                themeContext: formContext,
+              },
               ...this.props.uiConfig,
               layout: formElements,
             },
