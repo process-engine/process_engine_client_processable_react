@@ -115,6 +115,7 @@ export interface ITableProps extends IMUIProps {
     itemBasedMoreMenuClassName?: string;
     listBasedMoreMenuClassName?: string;
     itemBasedButtonClassName?: string;
+    itemBasedButtonIconOnlyClassName?: string;
     itemBasedDisabledButtonClassName?: string;
     listBasedButtonClassName?: string;
     tableRowClassName?: string;
@@ -190,6 +191,7 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
       itemBasedMoreMenuClassName: null,
       listBasedMoreMenuClassName: null,
       itemBasedButtonClassName: null,
+      itemBasedButtonIconOnlyClassName: null,
       listBasedButtonClassName: null,
       tableRowClassName: null,
       tableHeaderRowClassName: null,
@@ -661,11 +663,11 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
               theme={this.props.itemBasedButtonTheme}
               muiProps={{
                 icon,
-                label: buttonSchemaItem.name,
+                label: (buttonSchemaItem.showName ? buttonSchemaItem.name : null),
                 primary: true,
                 className: (
                   !disableState
-                  ? this.props.tableStyles.itemBasedButtonClassName
+                  ? (buttonSchemaItem.showName ? this.props.tableStyles.itemBasedButtonClassName : this.props.tableStyles.itemBasedButtonIconOnlyClassName)
                   : this.props.tableStyles.itemBasedDisabledButtonClassName
                 ),
                 onClick: (e: Event): void => {
