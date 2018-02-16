@@ -201,6 +201,9 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
               let parsedComponentProps: any = {};
               const options: any = {};
               let formFieldWidgetNameArr: Array<any>;
+              let formFieldRequiredArr: Array<any>;
+              let formFieldMatchArr: Array<any>;
+              let formFieldMatchMessageArr: Array<any>;
               let formFieldMuiPropsArr: Array<any>;
               let muiProps: any = {};
 
@@ -217,6 +220,48 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
               }
 
               let doShow: boolean = true;
+              let isRequired: boolean = false;
+              let hasMatch: string = null;
+              let matchErrorMessage: string = null;
+              let validateRequired: Function = null;
+
+              formFieldRequiredArr = formField.formProperties.filter((formFieldProperty: any) => formFieldProperty.name === 'required');
+              if (formField.formProperties && formFieldRequiredArr && formFieldRequiredArr.length === 1) {
+                if (formFieldRequiredArr[0].value.indexOf('$') === 0) {
+                  isRequired = new Function('formData', `return ${formFieldRequiredArr[0].value.substring(1)};`)((this.props.uiConfig && this.props.uiConfig.item ? this.props.uiConfig.item : null));
+                }
+              }
+
+              formFieldMatchArr = formField.formProperties.filter((formFieldProperty: any) => formFieldProperty.name === 'match');
+              if (formField.formProperties && formFieldMatchArr && formFieldMatchArr.length === 1) {
+                hasMatch = formFieldMatchArr[0].value;
+                isRequired = true;
+              }
+
+              formFieldMatchMessageArr = formField.formProperties.filter((formFieldProperty: any) => formFieldProperty.name === 'matchErrorMessage');
+              if (formField.formProperties && formFieldMatchMessageArr && formFieldMatchMessageArr.length === 1) {
+                matchErrorMessage = formFieldMatchMessageArr[0].value;
+              }
+
+              if (isRequired) {
+                validateRequired = (newValue: any, formData: any): boolean|{} => {
+                  if (hasMatch) {
+                    if (!newValue || !newValue.match(new RegExp(hasMatch))) {
+                      return {
+                        errorMessage: matchErrorMessage || 'nicht korrekt',
+                      };
+                    }
+                  } else {
+                    if (!newValue) {
+                      return {
+                        errorMessage: 'fehlt',
+                      };
+                    }
+                  }
+
+                  return true;
+                };
+              }
 
               switch (formField.type) {
                 case 'string':
@@ -488,6 +533,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
                   itemComponentProps: parsedComponentProps,
                   muiProps,
                   key: formField.id,
+                  validate: validateRequired,
                   ...options,
                 };
               }
@@ -748,7 +794,21 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
               this.setState({
                 uiData: mergedUiData,
               }, () => {
-                this.handleProceed(this.props.executionContext);
+                let continueStep: boolean = true;
+                const form: Form = this.refs.processForm;
+                const errorData: any = Form.validateFormData(form.props, form.state, form.state.formData, true, form);
+                if (errorData && Object.keys(errorData).length > 0) {
+                  continueStep = false;
+                } else {
+                  const formErrorData: any = form.state.errorData;
+                  if (formErrorData && Object.keys(formErrorData).length > 0) {
+                    continueStep = false;
+                  }
+                }
+
+                if (continueStep) {
+                  this.handleProceed(this.props.executionContext);
+                }
               });
             },
           }}
@@ -822,7 +882,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
           <div dangerouslySetInnerHTML={{
             __html: preceedingText,
           }}/>
-          <this.widgetConfig.component onChange={(formData: any): any => onChange(formData)} {...this.widgetConfig.props}/>
+          <this.widgetConfig.component ref='processForm' onChange={(formData: any): any => onChange(formData)} {...this.widgetConfig.props}/>
         </div>
       );
     } else if (this.widgetConfig && this.widgetConfig.component && this.widgetConfig.component.name === 'Confirm') {
