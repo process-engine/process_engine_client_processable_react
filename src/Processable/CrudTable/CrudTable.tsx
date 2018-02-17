@@ -98,6 +98,8 @@ export interface IProcessableCrudTableProps extends IMUIProps {
   onCreateProcessEnded?: Function;
 
   onSelectedRowsChanged?: Function;
+
+  headerOnly?: boolean;
 }
 
 export interface IProcessableCrudTableState {
@@ -196,6 +198,8 @@ export class ProcessableCrudTable extends React.Component<IProcessableCrudTableP
     onCreateProcessEnded: null,
 
     onSelectedRowsChanged: null,
+
+    headerOnly: false,
   };
 
   constructor(props: IProcessableCrudTableProps) {
@@ -580,6 +584,7 @@ export class ProcessableCrudTable extends React.Component<IProcessableCrudTableP
     if (this.state.hasLoaded) {
       tableElement = (
         <ProcessableTable
+          headerOnly={this.props.headerOnly}
           ref={`entitiesTable_${this.props.tableKey}`}
           tableKey={this.props.tableKey}
 

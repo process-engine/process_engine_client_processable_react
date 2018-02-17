@@ -108,6 +108,12 @@ export interface ITableProps extends IMUIProps {
     createButtonClassName?: string;
     contentOverlayClassName?: string;
     tableBarClassName?: string;
+    tableBarNoHeaderClassName?: string;
+    filterElementsContainerClassName?: string;
+    filterMenuElementsNoHeaderClassName?: string;
+    itemBasedElementsNoHeaderClassName?: string;
+    listBasedElementsNoHeaderClassName?: string;
+    baseFilterMenuElementsNoHeaderClassName?: string;
     itemHeaderClassName?: string;
     searchFieldClassName?: string;
     itemBasedMoreButtonClassName?: string;
@@ -137,6 +143,8 @@ export interface ITableProps extends IMUIProps {
   };
 
   onSelectedRowsChanged?: Function;
+
+  headerOnly?: boolean;
 }
 
 export interface ITableState {
@@ -184,6 +192,12 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
       createButtonClassName: null,
       contentOverlayClassName: null,
       tableBarClassName: null,
+      tableBarNoHeaderClassName: null,
+      filterElementsContainerClassName: null,
+      filterMenuElementsNoHeaderClassName: null,
+      itemBasedElementsNoHeaderClassName: null,
+      listBasedElementsNoHeaderClassName: null,
+      baseFilterMenuElementsNoHeaderClassName: null,
       itemHeaderClassName: null,
       searchFieldClassName: null,
       itemBasedMoreButtonClassName: null,
@@ -273,6 +287,8 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
     createProcessInstanceConfig: null,
 
     onSelectedRowsChanged: null,
+
+    headerOnly: false,
   };
 
   private delay: any = ((): any => {
@@ -1066,25 +1082,9 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
       );
     }
 
-    return (
-      <div className={newClassName}>
-        {titleElement}
-        <div className={this.props.tableStyles.tableBarClassName}>
-          {createButton}{searchField}
-          <div className={this.props.tableStyles.filterMenuElementsClassName}>{filterMenuElements}</div>
-          <div className={this.props.tableStyles.itemBasedElementsClassName}>{itemBasedElements}</div>
-          <div className={this.props.tableStyles.listBasedElementsClassName}>{listBasedElements}</div>
-          <div className={this.props.tableStyles.headerElementsPlaceHolderClassName}/>
-          <div className={this.props.tableStyles.baseFilterMenuElementsClassName}>{baseFilterElements}</div>
-        </div>
-
-        <div
-          style={{
-            display: (this.state.isItemBasedMoreMenuOpened || this.state.isListBasedMoreMenuOpened ? 'block' : 'none'),
-          }}
-          className={this.props.tableStyles.contentOverlayClassName}
-        />
-
+    let tableElement = null;
+    if (!this.props.headerOnly) {
+      tableElement = (
         <Table
           ref={`listBoxTable_${this.props.tableKey}`}
           tableKey={this.props.tableKey}
@@ -1130,6 +1130,50 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
           }}
 
         />
+      );
+    }
+
+    let filterBar: any = null;
+    if (this.props.headerOnly) {
+      const filterElements: any = (
+        <div className={this.props.tableStyles.filterElementsContainerClassName}>
+          <div className={this.props.tableStyles.filterMenuElementsNoHeaderClassName}>{filterMenuElements}</div>
+          <div className={this.props.tableStyles.itemBasedElementsNoHeaderClassName}>{itemBasedElements}</div>
+          <div className={this.props.tableStyles.listBasedElementsNoHeaderClassName}>{listBasedElements}</div>
+        </div>
+      );
+      filterBar = (
+        <div className={this.props.tableStyles.tableBarNoHeaderClassName}>
+          {filterElements}
+          {createButton}{searchField}
+          <div className={this.props.tableStyles.headerElementsPlaceHolderClassName}/>
+          <div className={this.props.tableStyles.baseFilterMenuElementsNoHeaderClassName}>{baseFilterElements}</div>
+        </div>
+      );
+    } else {
+      filterBar = (
+        <div className={this.props.tableStyles.tableBarClassName}>
+          {createButton}{searchField}
+          <div className={this.props.tableStyles.filterMenuElementsClassName}>{filterMenuElements}</div>
+          <div className={this.props.tableStyles.itemBasedElementsClassName}>{itemBasedElements}</div>
+          <div className={this.props.tableStyles.listBasedElementsClassName}>{listBasedElements}</div>
+          <div className={this.props.tableStyles.headerElementsPlaceHolderClassName}/>
+          <div className={this.props.tableStyles.baseFilterMenuElementsClassName}>{baseFilterElements}</div>
+        </div>
+      );
+    }
+
+    return (
+      <div className={newClassName}>
+        {titleElement}
+        {filterBar}
+        <div
+          style={{
+            display: (this.state.isItemBasedMoreMenuOpened || this.state.isListBasedMoreMenuOpened ? 'block' : 'none'),
+          }}
+          className={this.props.tableStyles.contentOverlayClassName}
+        />
+        {tableElement}
         {this.props.children}
         {processables}
       </div>
