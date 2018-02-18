@@ -1015,10 +1015,10 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
       let processingComponent: any = (
         <div style={{
           position: 'absolute',
-          top: '2.65vw',
+          top: '2.5vw',
           bottom: '0',
-          left: '0.45vw',
-          right: '0.45vw',
+          left: '0.5vw',
+          right: '0.5vw',
           backgroundColor: 'rgba(0,0,0,0.2',
           zIndex: 100000,
         }}>
