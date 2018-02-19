@@ -496,6 +496,33 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
                 };
               }
 
+              if (element.keyCode) {
+                
+
+                const handler = function (e) {
+                  if (e.keyCode === this.keyCode) {
+
+                    // document.removeEventListener('keydown', proxyFunc);
+                    console.log(e.keyCode + ', ' + this.elementKey);
+                    this.processable.handleProceed.call(this.processable);
+                  }
+                }
+
+                const binding = {
+                  keyCode: element.keyCode,
+                  elementKey: element.key,
+                  processable: this
+                };
+
+                // const proxyFunc = function proxyFunc(e) {
+                //   handler.call(binding, e);
+                // };
+
+                document.addEventListener('keydown', (e) {
+                  handler.call(binding, e);
+                });
+              }
+
               return elementObj;
             });
           };
