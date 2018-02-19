@@ -518,7 +518,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
                 //   handler.call(binding, e);
                 // };
 
-                document.addEventListener('keydown', (e) {
+                document.addEventListener('keydown', (e) => {
                   handler.call(binding, e);
                 });
               }
