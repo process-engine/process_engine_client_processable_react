@@ -487,12 +487,14 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
                 theme: this.props.confirmItemTheme,
                 key: element.key,
                 label: element.label,
+                muiProps: { ...element.muiProps }
               };
 
               if (element.isCancel) {
                 elementObj.muiProps = {
                   primary: false,
                   secondary: true,
+                  ...element.muiProps
                 };
               }
 
@@ -504,7 +506,18 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
 
                     // document.removeEventListener('keydown', proxyFunc);
                     console.log(e.keyCode + ', ' + this.elementKey);
-                    this.processable.handleProceed.call(this.processable);
+
+                    const confirmData: any = {
+                      key: this.elementKey,
+                    };
+                    const mergedUiData: any = Object.assign(this.state.uiData, confirmData);
+                    this.processable.setState(
+                      {
+                        uiData: mergedUiData,
+                      },
+                      () => {
+                        this.processable.handleProceed.call(this.processable, this.processable.props.executionContext);
+                      });
                   }
                 }
 
@@ -513,10 +526,6 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
                   elementKey: element.key,
                   processable: this
                 };
-
-                // const proxyFunc = function proxyFunc(e) {
-                //   handler.call(binding, e);
-                // };
 
                 document.addEventListener('keydown', (e) => {
                   handler.call(binding, e);
@@ -557,7 +566,8 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
 
           let widgetChildren: any = null;
           if (confirmImageUrl) {
-            widgetChildren = <img src={confirmImageUrl}/>;
+            const imgProps = this.props.uiConfig ? this.props.uiConfig.imgProps : {};
+            widgetChildren = <img src={confirmImageUrl}  {...imgProps}/>;
           }
 
           widget = {
