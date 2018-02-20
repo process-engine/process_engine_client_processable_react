@@ -752,7 +752,9 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
             primary: true,
           }}
           qflProps={{
-            onClick: (e: Event): void => {
+            onClick: (e: MouseEvent): void => {
+              e.stopPropagation();
+              e.preventDefault();
               this.handleProceed(this.props.executionContext);
             },
           }}
@@ -789,7 +791,9 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
           muiProps={{
             label: 'Weiter',
             primary: true,
-            onClick: (e: Event): void => {
+            onClick: (e: MouseEvent): void => {
+              e.stopPropagation();
+              e.preventDefault();
               const mergedUiData: any = Object.assign(this.state.uiData, (this.widgetConfig.formData ? this.widgetConfig.formData : {}));
               this.setState({
                 uiData: mergedUiData,
@@ -825,7 +829,9 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
             muiProps={{
               label: 'Abbrechen',
               primary: true,
-              onClick: (e: Event): void => {
+              onClick: (e: MouseEvent): void => {
+                e.stopPropagation();
+                e.preventDefault();
                 this.handleCancel(this.props.executionContext);
               },
             }}
@@ -850,7 +856,9 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
                 muiProps={{
                   label: button.label,
                   ...button.muiProps,
-                  onClick: (e: Event): void => {
+                  onClick: (e: MouseEvent): void => {
+                    e.stopPropagation();
+                    e.preventDefault();
                     if (button.isCancel) {
                       this.state.uiData.key = button.key;
                       this.handleProceed(this.props.executionContext);
