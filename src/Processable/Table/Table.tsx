@@ -516,6 +516,17 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
     }
   }
 
+  private getSelectedItem(): any {
+    const selectedItems: Array<any> = [];
+    if (this.state.selectedRows) {
+      Object.keys(this.state.selectedRows).forEach((key: string) => {
+        selectedItems.push(this.state.selectedRows[key]);
+      });
+    }
+
+    return (selectedItems[0]);
+  }
+
   private handleItemClicked(item: any): void {
     this.setState({
       isItemBasedMoreMenuOpened: false,
@@ -728,6 +739,9 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
                 label: buttonSchemaItem.name,
                 key: buttonSchemaItem.key,
                 disabled: disableState,
+                onClickHandler: (e: MouseEvent): void => {
+                  buttonSchemaItem.onClickHandler(e, this.getSelectedItem());
+                },
               };
             }),
           }];
