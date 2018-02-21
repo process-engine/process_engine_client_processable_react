@@ -480,6 +480,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
           let confirmElements: Array<any> = [];
           let confirmMessage: string = '';
           let confirmImageUrl: string = null;
+          let confirmDescription: string = '';
 
           const convertLayout: any = (confirmLayout: any): Array<any> => {
             return confirmLayout.map((element: any) => {
@@ -510,7 +511,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
                     const confirmData: any = {
                       key: this.elementKey,
                     };
-                    const mergedUiData: any = Object.assign(this.state.uiData, confirmData);
+                    const mergedUiData: any = Object.assign(this.processable.state.uiData, confirmData);
                     this.processable.setState(
                       {
                         uiData: mergedUiData,
@@ -546,6 +547,9 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
             if (this.props.uiConfig.hasOwnProperty('imageUrl')) {
               confirmImageUrl = this.props.uiConfig.imageUrl;
             }
+            if (this.props.uiConfig.hasOwnProperty('description')) {
+              confirmDescription = mustache.render(this.props.uiConfig.description, tokenData);
+            }
           } else {
             const confirmLayoutArr: Array<any> = processInstance.nextTaskDef.extensions.properties.filter(
               (property: any) => property.name === 'confirmLayout',
@@ -564,10 +568,17 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
             }
           }
 
-          let widgetChildren: any = null;
+          let widgetChildren: Array<any> = [];
           if (confirmImageUrl) {
             const imgProps = this.props.uiConfig ? this.props.uiConfig.imgProps : {};
-            widgetChildren = <img src={confirmImageUrl}  {...imgProps}/>;
+            const child = <img src={confirmImageUrl}  {...imgProps}/>;
+            widgetChildren.push(child);
+          }
+
+          if (confirmDescription) {
+            const descProps = this.props.uiConfig ? this.props.uiConfig.descProps : {};
+            const child = <span {...descProps}>{confirmDescription}</span>;
+            widgetChildren.push(child);
           }
 
           widget = {
@@ -578,9 +589,10 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
               ...this.props.uiConfig,
               layout: confirmElements,
               message: confirmMessage,
-              children: [widgetChildren],
+              children: widgetChildren,
             },
           };
+
           break;
         default:
           break;
