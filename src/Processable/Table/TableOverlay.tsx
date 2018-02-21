@@ -145,6 +145,7 @@ export class TableOverlay extends React.Component<ITableOverlayProps, ITableOver
                               onClick={(e: MouseEvent) => {
                                 if (item.onClickHandler) {
                                   item.onClickHandler(e);
+                                  this.handleItemMenuClicked(e, null);
                                 } else {
                                   this.handleItemMenuClicked(e, item.key);
                                 }

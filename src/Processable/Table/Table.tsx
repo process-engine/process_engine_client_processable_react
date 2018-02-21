@@ -533,38 +533,40 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
       isListBasedMoreMenuOpened: false,
     });
 
-    const selectedItems: Array<any> = [];
-    if (this.state.selectedRows) {
-      Object.keys(this.state.selectedRows).forEach((key: string) => {
-        selectedItems.push(this.state.selectedRows[key]);
-      });
-    }
-    if (selectedItems && selectedItems.length > 0 && item && item.processableKey) {
-      let startToken: any = null;
-      if (selectedItems.length === 1) {
-        startToken = { id: selectedItems[0].id };
-        if (item.startTokenTransformer) {
-          startToken = item.startTokenTransformer(startToken, selectedItems[0]);
-        }
-      } else {
-        startToken = selectedItems.map((selectedItem: any) => {
-          let resultToken: any = { id: selectedItem.id };
-          if (item.startTokenTransformer) {
-            resultToken = item.startTokenTransformer(resultToken, selectedItem);
-          }
-
-          return resultToken;
+    if (item) {
+      const selectedItems: Array<any> = [];
+      if (this.state.selectedRows) {
+        Object.keys(this.state.selectedRows).forEach((key: string) => {
+          selectedItems.push(this.state.selectedRows[key]);
         });
       }
-      this.handleStartItem(
-        item.processableKey,
-        startToken,
-        item.onProcessEnded,
-        item.skipClean,
-        item.componentMap,
-        item.componentProps,
-        item.processInstanceConfig,
-      );
+      if (selectedItems && selectedItems.length > 0 && item && item.processableKey) {
+        let startToken: any = null;
+        if (selectedItems.length === 1) {
+          startToken = { id: selectedItems[0].id };
+          if (item.startTokenTransformer) {
+            startToken = item.startTokenTransformer(startToken, selectedItems[0]);
+          }
+        } else {
+          startToken = selectedItems.map((selectedItem: any) => {
+            let resultToken: any = { id: selectedItem.id };
+            if (item.startTokenTransformer) {
+              resultToken = item.startTokenTransformer(resultToken, selectedItem);
+            }
+
+            return resultToken;
+          });
+        }
+        this.handleStartItem(
+          item.processableKey,
+          startToken,
+          item.onProcessEnded,
+          item.skipClean,
+          item.componentMap,
+          item.componentProps,
+          item.processInstanceConfig,
+        );
+      }
     }
   }
 
@@ -807,6 +809,8 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
                     }
                     if (buttonSchemaItem) {
                       this.handleItemClicked.bind(this, buttonSchemaItem)();
+                    } else {
+                      this.handleItemClicked.bind(this, null)();
                     }
                   }}
                 />
