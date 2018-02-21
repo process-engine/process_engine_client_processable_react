@@ -142,7 +142,7 @@ export class TableOverlay extends React.Component<ITableOverlayProps, ITableOver
                               style={{
                                   cursor: 'pointer',
                               }}
-                              onClick={(e: MouseEvent) => {
+                              onClick={(e) => {
                                 if (item.onClickHandler) {
                                   item.onClickHandler(e);
                                   this.handleItemMenuClicked(e, null);
