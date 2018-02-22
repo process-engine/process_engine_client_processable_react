@@ -741,9 +741,9 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
                 label: buttonSchemaItem.name,
                 key: buttonSchemaItem.key,
                 disabled: disableState,
-                onClickHandler: (e: MouseEvent): void => {
+                onClickHandler: (buttonSchemaItem && buttonSchemaItem.onClickHandler ? (e: MouseEvent): void => {
                   buttonSchemaItem.onClickHandler(e, this.getSelectedItem());
-                },
+                } : null),
               };
             }),
           }];
@@ -934,6 +934,8 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
                   }
                   if (buttonSchemaItem) {
                     this.handleItemClicked.bind(this, buttonSchemaItem)();
+                  } else {
+                    this.handleItemClicked.bind(this, null)();
                   }
                 }}
               />
@@ -949,9 +951,18 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
           menuSchema={this.props.listBasedButtonSchema.menuSchema}
           tableOverlayStyles={this.props.tableOverlayStyles}
           theme={this.props.tableOverlayTheme}
-          onMenuItemClicked={(item: {}): void => {
-            if (item) {
-              this.handleItemClicked.bind(this, item)();
+          onMenuItemClicked={(key: string): void => {
+            const listBasedButtonSchemaItems: any = this.props.listBasedButtonSchema.items.filter(
+              (listBasedButtonSchemaItem: any) => (listBasedButtonSchemaItem.key === key),
+            );
+            let buttonSchemaItem: any = null;
+            if (listBasedButtonSchemaItems.length === 1) {
+              buttonSchemaItem = listBasedButtonSchemaItems[0];
+            }
+            if (buttonSchemaItem) {
+              this.handleItemClicked.bind(this, buttonSchemaItem)();
+            } else {
+              this.handleItemClicked.bind(this, null)();
             }
           }}
         />
