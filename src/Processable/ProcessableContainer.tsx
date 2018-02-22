@@ -154,6 +154,8 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
 
           let formMessage: string = null;
           let formButtonElements: Array<any> = null;
+          let formImageUrl: string = null;
+          let formDescription: string = '';
 
           const convertFormLayout: any = (formButtonLayout: any): Array<any> => {
             return formButtonLayout.map((element: any) => {
@@ -182,6 +184,12 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
             }
             if (this.props.uiConfig.hasOwnProperty('layout')) {
               formButtonElements = convertFormLayout(this.props.uiConfig.layout);
+            }
+            if (this.props.uiConfig.hasOwnProperty('imageUrl')) {
+              formImageUrl = this.props.uiConfig.imageUrl;
+            }
+            if (this.props.uiConfig.hasOwnProperty('description')) {
+              formDescription = mustache.render(this.props.uiConfig.description, tokenData);
             }
           }
 
@@ -474,6 +482,8 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
             },
             buttonLayout: formButtonElements,
             message: formMessage,
+            imageUrl: formImageUrl,
+            description: formDescription
           };
           break;
         case 'Confirm':
@@ -721,6 +731,9 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
       themeContext = 'form';
       const preceedingText: string = this.widgetConfig.message;
       const buttonLayout: Array<any> = this.widgetConfig.buttonLayout;
+      const formImageUrl: string = this.widgetConfig.imageUrl;
+      const formDescription: string = this.widgetConfig.description;
+
       proceedButton = (
         <FlatButton
           theme={{
@@ -794,14 +807,35 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
           uiData: mergedUiData,
         });
       };
-      widget = (
-        <div style={{
+
+      let imgWidget = null;
+      if (formImageUrl) {
+        const imgProps = this.props.uiConfig ? this.props.uiConfig.imgProps : {};
+        imgWidget = <img src={formImageUrl}  {...imgProps} />;
+      }
+
+      let descWidget = null;
+      if (formDescription) {
+        const descProps = this.props.uiConfig ? this.props.uiConfig.descProps : {};
+        descWidget = <span {...descProps}>{formDescription}</span>;
+      }
+
+      let containerProps = this.props.uiConfig && this.props.uiConfig.containerProps ? this.props.uiConfig.containerProps : {};
+      if (!containerProps.hasOwnProperty('style')) {
+        containerProps.style = {
           maxHeight: 'inherit',
           overflowY: 'auto',
           overflowX: 'hidden',
-        }}>
+        };
+      }
+
+      widget = (
+        <div {...containerProps}>
           <div>{preceedingText}</div>
+          {imgWidget}
           <this.widgetConfig.component onChange={(formData: any): any => onChange(formData)} {...this.widgetConfig.props}/>
+          {descWidget}<br />
+          {proceedButton}
         </div>
       );
     } else if (this.widgetConfig && this.widgetConfig.component && this.widgetConfig.component.name === 'Confirm') {
@@ -924,7 +958,6 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
         return (
           <div {...qflProps}>
             {widget}<br/>
-            {proceedButton}<br/>
             {tokenDataElement}
             <hr/>
           </div>
