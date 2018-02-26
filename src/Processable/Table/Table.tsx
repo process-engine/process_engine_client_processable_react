@@ -505,6 +505,7 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
       if (done) {
         done();
       }
+
       this.setState({
         currentItemOnProcessEnded: onProcessEnded,
         currentItemProcessKey: processKey,
@@ -557,11 +558,13 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
             return resultToken;
           });
         }
+
         this.handleStartItem(
           item.processableKey,
           startToken,
           item.onProcessEnded,
           item.skipClean,
+          item.doneCallback,
           item.componentMap,
           item.componentProps,
           item.processInstanceConfig,
