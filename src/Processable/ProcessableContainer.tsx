@@ -263,6 +263,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
                 };
               }
 
+              let formFieldShowArr: Array<any> = [];
               switch (formField.type) {
                 case 'string':
                   parsedType = 'TextField';
@@ -270,7 +271,25 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
                   if (formField.formProperties && formFieldWidgetNameArr && formFieldWidgetNameArr.length === 1) {
                     parsedType = formFieldWidgetNameArr[0].value;
                   }
-                  if (parsedType !== 'TextField') {
+                  formFieldShowArr = formField.formProperties.filter(
+                    (formFieldProperty: any) => formFieldProperty.name === 'show',
+                  );
+
+
+                  if (formField.formProperties &&
+                    formFieldShowArr &&
+                    formFieldShowArr.length === 1 &&
+                    formFieldShowArr[0].value) {
+                    if (formFieldShowArr[0].value.indexOf('$') === 0) {
+                      const token: {} = uiData;
+                      doShow = new Function('token', `return ${formFieldShowArr[0].value.substring(1)};`)(token);
+                      if (!doShow) {
+                        break;
+                      }
+                    }
+                  }
+
+                  if (doShow && parsedType !== 'TextField') {
                     if (this.props.processInstanceConfig &&
                       this.props.processInstanceConfig.formItemComponentMap &&
                       this.props.processInstanceConfig.formItemComponentMap.hasOwnProperty(parsedType)) {
@@ -296,6 +315,24 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
                   if (formField.formProperties && formFieldWidgetNameArr && formFieldWidgetNameArr.length === 1) {
                     parsedType = formFieldWidgetNameArr[0].value;
                   }
+                  formFieldShowArr = formField.formProperties.filter(
+                    (formFieldProperty: any) => formFieldProperty.name === 'show',
+                  );
+
+
+                  if (formField.formProperties &&
+                    formFieldShowArr &&
+                    formFieldShowArr.length === 1 &&
+                    formFieldShowArr[0].value) {
+                    if (formFieldShowArr[0].value.indexOf('$') === 0) {
+                      const token: {} = uiData;
+                      doShow = new Function('token', `return ${formFieldShowArr[0].value.substring(1)};`)(token);
+                      if (!doShow) {
+                        break;
+                      }
+                    }
+                  }
+
                   muiProps = {
                     cancelLabel: 'ABBRECHEN',
                     okLabel: 'OK',
@@ -355,8 +392,8 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
                     const formFieldDatasourceArr: Array<any> = formField.formProperties.filter(
                       (formFieldProperty: any) => formFieldProperty.name === 'datasource',
                     );
-                    const formFieldShowArr: Array<any> = formField.formProperties.filter(
-                      (formFieldProperty: any) => formFieldProperty.name === 'show',
+                    formFieldShowArr = formField.formProperties.filter(
+                        (formFieldProperty: any) => formFieldProperty.name === 'show',
                     );
                     const formFieldKeyAttributeNameArr: Array<any> = formField.formProperties.filter(
                       (formFieldProperty: any) => formFieldProperty.name === 'keyAttributeName',
