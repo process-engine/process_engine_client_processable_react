@@ -420,6 +420,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
                         const dataProvider: Array<{}> = new Function('token', `return ${formFieldItemsArr[0].value.substring(1)};`)(token);
                         if (dataProvider) {
                           let labelKey: string = 'name';
+                          let labelFormat: string = null;
                           const formFieldLabelKeyArr: Array<any> = formField.formProperties.filter(
                             (formFieldProperty: any) => formFieldProperty.name === 'labelKey',
                           );
@@ -427,9 +428,21 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
                               formFieldLabelKeyArr[0].value) {
                             labelKey = formFieldLabelKeyArr[0].value;
                           }
+
+                          const formFieldLabelFormatArr: Array<any> = formField.formProperties.filter(
+                            (formFieldProperty: any) => formFieldProperty.name === 'labelFormat',
+                          );
+                          if (formField.formProperties && formFieldLabelFormatArr && formFieldLabelFormatArr.length === 1 &&
+                              formFieldLabelFormatArr[0].value) {
+                            labelFormat = formFieldLabelFormatArr[0].value;
+                          }
+
                           options.items = dataProvider.map((formValue: any) => {
                             const value: string = formValue.id;
-                            const label: string = new Function('formValue', `return formValue.${labelKey};`)(formValue);
+                            let label: string = new Function('formValue', `return formValue.${labelKey};`)(formValue);
+                            if (labelFormat && labelFormat.indexOf('$') === 0) {
+                              label = new Function('item', `return ${labelFormat.substring(1)};`)(formValue);
+                            }
                             if (value !== undefined && label) {
                               return {
                                 value,
@@ -454,11 +467,20 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
 
                         if (datasource) {
                           let labelKey: string = 'name';
+                          let labelFormat: string = null;
                           const formFieldLabelKeyArr: Array<any> = formField.formProperties.filter(
                             (formFieldProperty: any) => formFieldProperty.name === 'labelKey',
                           );
                           if (formField.formProperties && formFieldLabelKeyArr && formFieldLabelKeyArr.length === 1 && formFieldLabelKeyArr[0].value) {
                             labelKey = formFieldLabelKeyArr[0].value;
+                          }
+
+                          const formFieldLabelFormatArr: Array<any> = formField.formProperties.filter(
+                            (formFieldProperty: any) => formFieldProperty.name === 'labelFormat',
+                          );
+                          if (formField.formProperties && formFieldLabelFormatArr && formFieldLabelFormatArr.length === 1 &&
+                            formFieldLabelFormatArr[0].value) {
+                            labelFormat = formFieldLabelFormatArr[0].value;
                           }
 
                           if (this.context.datastoreService && this.context.executionContext) {
@@ -507,7 +529,10 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
                                 if (result) {
                                   const dataProvider: Array<{}> = result.data.map((formValue: any) => {
                                     const value: string = formValue.id;
-                                    const label: string = new Function('formValue', `return formValue.${labelKey};`)(formValue);
+                                    let label: string = new Function('formValue', `return formValue.${labelKey};`)(formValue);
+                                    if (labelFormat && labelFormat.indexOf('$') === 0) {
+                                      label = new Function('item', `return ${labelFormat.substring(1)};`)(formValue);
+                                    }
                                     if (value && label) {
                                       return {
                                         value,
