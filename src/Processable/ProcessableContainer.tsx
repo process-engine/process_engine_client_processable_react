@@ -497,8 +497,6 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
                             }
                             if (datasource.baseFilter && datasource.baseFilter.query) {
                               datasourceOptions.query.queries.push(datasource.baseFilter.query);
-                            } else {
-                              datasourceOptions = {};
                             }
 
                             const doFilter: Function = (searchString: string, component: React.Component<{}, {}>): void => {
