@@ -246,7 +246,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
               if (isRequired) {
                 validateRequired = (newValue: any, formData: any): boolean|{} => {
                   if (hasMatch) {
-                    if (!newValue || !newValue.match(new RegExp(hasMatch))) {
+                    if (!newValue || (typeof newValue === 'string' && !newValue.match(new RegExp(hasMatch)))) {
                       return {
                         errorMessage: matchErrorMessage || 'nicht korrekt',
                       };
