@@ -750,7 +750,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
         />
       );
 
-      if (this.props.modal) {
+      // if (this.props.modal) {
         cancelButton = (
           <FlatButton
             theme={{
@@ -769,9 +769,8 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
 
         if (buttonLayout && buttonLayout.length > 0) {
           for (const button of buttonLayout) {
-            if (button.isCancel) {
-              cancelButton = null;
-            }
+            cancelButton = null;
+
             if (button.isProceed) {
               proceedButton = null;
             }
@@ -799,7 +798,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
             );
           }
         }
-      }
+      // }
 
       const onChange: any = (formData: any): void => {
         const mergedUiData: any = Object.assign(this.state.uiData, formData);
@@ -829,13 +828,14 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
         };
       }
 
+      const buttons = [proceedButton, cancelButton].concat(moreButtons);
       widget = (
         <div {...containerProps}>
           <div>{preceedingText}</div>
           {imgWidget}
           <this.widgetConfig.component onChange={(formData: any): any => onChange(formData)} {...this.widgetConfig.props}/>
           {descWidget}<br />
-          {proceedButton}
+          {buttons}
         </div>
       );
     } else if (this.widgetConfig && this.widgetConfig.component && this.widgetConfig.component.name === 'Confirm') {
