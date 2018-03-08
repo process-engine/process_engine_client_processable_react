@@ -552,13 +552,14 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
       }
       if (selectedItems && selectedItems.length > 0 && item && item.processableKey) {
         let startToken: any = null;
+        let startTokens: any = null;
         if (selectedItems.length === 1) {
           startToken = { id: selectedItems[0].id };
           if (item.startTokenTransformer) {
             startToken = item.startTokenTransformer(startToken, selectedItems[0]);
           }
         } else {
-          startToken = selectedItems.map((selectedItem: any) => {
+          startTokens = selectedItems.map((selectedItem: any) => {
             let resultToken: any = { id: selectedItem.id };
             if (item.startTokenTransformer) {
               resultToken = item.startTokenTransformer(resultToken, selectedItem);
@@ -568,16 +569,30 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
           });
         }
 
-        this.handleStartItem(
-          item.processableKey,
-          startToken,
-          item.onProcessEnded,
-          item.skipClean,
-          item.doneCallback,
-          item.componentMap,
-          item.componentProps,
-          item.processInstanceConfig,
-        );
+        if (startTokens) {
+          this.handleStartItem(
+            item.processableKey,
+            startTokens,
+            item.onProcessEnded,
+            item.skipClean,
+            item.doneCallback,
+            item.componentMap,
+            item.componentProps,
+            item.processInstanceConfig,
+          );
+        } else if (startToken) {
+          this.handleStartItem(
+            item.processableKey,
+            startToken,
+            item.onProcessEnded,
+            item.skipClean,
+            item.doneCallback,
+            item.componentMap,
+            item.componentProps,
+            item.processInstanceConfig,
+          );
+        }
+
       } else {
         let startToken: any = {};
         if (item.startTokenTransformer) {
