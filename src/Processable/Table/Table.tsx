@@ -100,6 +100,7 @@ export interface ITableProps extends IMUIProps {
     headerContainerClassName?: string;
     itemBasedElementsClassName?: string;
     listBasedElementsClassName?: string;
+    listBasedElementsIsLeftClassName?: string;
     headerElementsPlaceHolderClassName?: string;
     filterMenuElementsClassName?: string;
     baseFilterMenuElementsClassName?: string;
@@ -113,6 +114,7 @@ export interface ITableProps extends IMUIProps {
     filterMenuElementsNoHeaderClassName?: string;
     itemBasedElementsNoHeaderClassName?: string;
     listBasedElementsNoHeaderClassName?: string;
+    listBasedElementsIsLeftNoHeaderClassName?: string;
     baseFilterMenuElementsNoHeaderClassName?: string;
     itemHeaderClassName?: string;
     searchFieldClassName?: string;
@@ -120,6 +122,7 @@ export interface ITableProps extends IMUIProps {
     listBasedMoreButtonClassName?: string;
     itemBasedMoreMenuClassName?: string;
     listBasedMoreMenuClassName?: string;
+    listBasedMoreMenuIsLeftClassName?: string;
     itemBasedButtonClassName?: string;
     itemBasedButtonIconOnlyClassName?: string;
     listBasedButtonIconOnlyClassName?: string;
@@ -186,6 +189,7 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
       headerContainerClassName: null,
       itemBasedElementsClassName: null,
       listBasedElementsClassName: null,
+      listBasedElementsIsLeftClassName: null,
       headerElementsPlaceHolderClassName: null,
       filterMenuElementsClassName: null,
       baseFilterMenuElementsClassName: null,
@@ -199,6 +203,7 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
       filterMenuElementsNoHeaderClassName: null,
       itemBasedElementsNoHeaderClassName: null,
       listBasedElementsNoHeaderClassName: null,
+      listBasedElementsIsLeftNoHeaderClassName: null,
       baseFilterMenuElementsNoHeaderClassName: null,
       itemHeaderClassName: null,
       searchFieldClassName: null,
@@ -206,6 +211,7 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
       listBasedMoreButtonClassName: null,
       itemBasedMoreMenuClassName: null,
       listBasedMoreMenuClassName: null,
+      listBasedMoreMenuIsLeftClassName: null,
       itemBasedButtonClassName: null,
       itemBasedButtonIconOnlyClassName: null,
       listBasedButtonClassName: null,
@@ -843,6 +849,10 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
       }
     }
 
+    let moreLabel: string = '';
+    let moreIsLeft: boolean = false;
+    let overlayComponent: any = null;
+
     let listBasedElements: Array<any> = [];
     if (this.props.listBasedButtonSchema && this.props.listBasedButtonSchema.length > 0) {
       listBasedElements = listBasedElements.concat(this.props.listBasedButtonSchema.filter((buttonSchemaItem: any) => {
@@ -899,6 +909,12 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
           visibleState = buttonSchemaItem.visibleCondition(this.state.selectedRows);
         }
 
+        if (buttonSchemaItem.isMore && buttonSchemaItem.isLeft) {
+          moreLabel = buttonSchemaItem.label;
+          moreIsLeft = buttonSchemaItem.isLeft;
+          overlayComponent = buttonSchemaItem.overlayComponent;
+        }
+
         return (visibleState && buttonSchemaItem.isMore);
       });
       if (listBasedMoreButtons.length > 0) {
@@ -921,6 +937,35 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
           }),
         }];
 
+        let moreOverlayComponent: any = null;
+        if (this.state.isListBasedMoreMenuOpened) {
+          if (overlayComponent && !overlayComponent.menuSchema) {
+            moreOverlayComponent = overlayComponent;
+          } else {
+            moreOverlayComponent = (
+              <TableOverlay
+                menuSchema={menuSchema}
+                tableOverlayStyles={this.props.tableOverlayStyles}
+                theme={this.props.tableOverlayTheme}
+                onMenuItemClicked={(key: string): void => {
+                  const matchedButtonSchemaItems: any = listBasedMoreButtons.filter(
+                    (itemBasedMoreButtonItem: any) => (itemBasedMoreButtonItem.key === key),
+                  );
+                  let buttonSchemaItem: any = null;
+                  if (matchedButtonSchemaItems.length === 1) {
+                    buttonSchemaItem = matchedButtonSchemaItems[0];
+                  }
+                  if (buttonSchemaItem) {
+                    this.handleItemClicked.bind(this, buttonSchemaItem)();
+                  } else {
+                    this.handleItemClicked.bind(this, null)();
+                  }
+                }}
+              />
+            );
+          }
+        }
+
         listBasedElements = listBasedElements.concat([
           <div
             style={{
@@ -932,7 +977,7 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
               theme={this.props.listBasedMoreButtonTheme}
               muiProps={{
                 labelPosition: 'before',
-                label: '',
+                label: (moreLabel ? moreLabel : ''),
                 primary: true,
                 className: this.props.tableStyles.listBasedMoreButtonClassName,
                 onClick: (e: Event): void => {
@@ -963,30 +1008,12 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
             />
             <div
               id={this.listBasedMoreMenuId}
-              className={this.props.tableStyles.listBasedMoreMenuClassName}
+              className={(moreIsLeft ? this.props.tableStyles.listBasedMoreMenuIsLeftClassName : this.props.tableStyles.listBasedMoreMenuClassName)}
               style={{
                 display: (this.state.isListBasedMoreMenuOpened ? 'block' : 'none'),
               }}
             >
-              <TableOverlay
-                menuSchema={menuSchema}
-                tableOverlayStyles={this.props.tableOverlayStyles}
-                theme={this.props.tableOverlayTheme}
-                onMenuItemClicked={(key: string): void => {
-                  const matchedButtonSchemaItems: any = listBasedMoreButtons.filter(
-                    (itemBasedMoreButtonItem: any) => (itemBasedMoreButtonItem.key === key),
-                  );
-                  let buttonSchemaItem: any = null;
-                  if (matchedButtonSchemaItems.length === 1) {
-                    buttonSchemaItem = matchedButtonSchemaItems[0];
-                  }
-                  if (buttonSchemaItem) {
-                    this.handleItemClicked.bind(this, buttonSchemaItem)();
-                  } else {
-                    this.handleItemClicked.bind(this, null)();
-                  }
-                }}
-              />
+              {moreOverlayComponent}
             </div>
           </div>,
         ]);
@@ -1136,7 +1163,7 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
           {filterElements}
           {createButton}{searchField}
           <div className={this.props.tableStyles.headerElementsPlaceHolderClassName}/>
-          <div className={this.props.tableStyles.listBasedElementsNoHeaderClassName}>{listBasedElements}</div>
+          <div className={(moreIsLeft ? this.props.tableStyles.listBasedElementsIsLeftNoHeaderClassName : this.props.tableStyles.listBasedElementsNoHeaderClassName)}>{listBasedElements}</div>
           <div className={this.props.tableStyles.baseFilterMenuElementsNoHeaderClassName}>{baseFilterElements}</div>
         </div>
       );
@@ -1146,7 +1173,7 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
           {createButton}{searchField}
           <div className={this.props.tableStyles.filterMenuElementsClassName}>{filterMenuElements}</div>
           <div className={this.props.tableStyles.itemBasedElementsClassName}>{itemBasedElements}</div>
-          <div className={this.props.tableStyles.listBasedElementsClassName}>{listBasedElements}</div>
+          <div className={(moreIsLeft ? this.props.tableStyles.listBasedElementsIsLeftClassName : this.props.tableStyles.listBasedElementsClassName)}>{listBasedElements}</div>
           <div className={this.props.tableStyles.headerElementsPlaceHolderClassName}/>
           <div className={this.props.tableStyles.baseFilterMenuElementsClassName}>{baseFilterElements}</div>
         </div>
