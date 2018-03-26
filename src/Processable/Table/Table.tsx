@@ -1173,15 +1173,28 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
           <div className={this.props.tableStyles.itemBasedElementsNoHeaderClassName}>{itemBasedElements}</div>
         </div>
       );
-      filterBar = (
-        <div className={this.props.tableStyles.tableBarNoHeaderClassName}>
-          {filterElements}
-          {createButton}{searchField}
-          <div className={this.props.tableStyles.headerElementsPlaceHolderClassName}/>
-          <div className={(moreIsLeft ? this.props.tableStyles.listBasedElementsIsLeftNoHeaderClassName : this.props.tableStyles.listBasedElementsNoHeaderClassName)}>{listBasedElements}</div>
-          <div className={this.props.tableStyles.baseFilterMenuElementsNoHeaderClassName}>{baseFilterElements}</div>
-        </div>
-      );
+
+      if (moreIsLeft) {
+        filterBar = (
+          <div className={this.props.tableStyles.tableBarNoHeaderClassName}>
+            {filterElements}
+            {createButton}{searchField}
+            <div className={this.props.tableStyles.headerElementsPlaceHolderClassName}/>
+            <div className={this.props.tableStyles.baseFilterMenuElementsNoHeaderClassName}>{baseFilterElements}</div>
+            <div className={this.props.tableStyles.listBasedElementsIsLeftNoHeaderClassName}>{listBasedElements}</div>
+          </div>
+        );
+      } else {
+        filterBar = (
+          <div className={this.props.tableStyles.tableBarNoHeaderClassName}>
+            {filterElements}
+            {createButton}{searchField}
+            <div className={this.props.tableStyles.headerElementsPlaceHolderClassName}/>
+            <div className={this.props.tableStyles.listBasedElementsNoHeaderClassName}>{listBasedElements}</div>
+            <div className={this.props.tableStyles.baseFilterMenuElementsNoHeaderClassName}>{baseFilterElements}</div>
+          </div>
+        );
+      }
     } else {
       filterBar = (
         <div className={this.props.tableStyles.tableBarClassName}>
