@@ -99,6 +99,8 @@ export interface IProcessableCrudTableProps extends IMUIProps {
 
   onSelectedRowsChanged?: Function;
 
+  onLoaded?: Function;
+
   headerOnly?: boolean;
 }
 
@@ -199,6 +201,8 @@ export class ProcessableCrudTable extends React.Component<IProcessableCrudTableP
 
     onSelectedRowsChanged: null,
 
+    onLoaded: null,
+
     headerOnly: false,
   };
 
@@ -247,11 +251,19 @@ export class ProcessableCrudTable extends React.Component<IProcessableCrudTableP
           isFetching: true,
           hasLoaded: false,
           synced: false,
+        }, () => {
+          if (this.props.onLoaded) {
+            this.props.onLoaded(false);
+          }
         });
       } else if (e.mounted && (e.done || e.aborted)) {
         this.setState({
           isFetching: false,
           hasLoaded: true,
+        }, () => {
+          if (this.props.onLoaded) {
+            this.props.onLoaded(true);
+          }
         });
       }
     });
@@ -487,11 +499,19 @@ export class ProcessableCrudTable extends React.Component<IProcessableCrudTableP
                   synced: false,
                   isFetching: true,
                   hasLoadedMore: false,
+                }, () => {
+                  if (this.props.onLoaded) {
+                    this.props.onLoaded(false);
+                  }
                 });
               } else if (e.mounted && (e.done || e.aborted)) {
                 this.setState({
                   isFetching: false,
                   hasLoadedMore: true,
+                }, () => {
+                  if (this.props.onLoaded) {
+                    this.props.onLoaded();
+                  }
                 });
               }
             },
