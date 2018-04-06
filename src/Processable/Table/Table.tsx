@@ -739,11 +739,19 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
                 primary: true,
                 className: (
                   !disableState
-                  ? (buttonSchemaItem.showName ? this.props.tableStyles.itemBasedButtonClassName : this.props.tableStyles.itemBasedButtonIconOnlyClassName)
+                  ? (
+                      buttonSchemaItem.showName ?
+                      this.props.tableStyles.itemBasedButtonClassName :
+                      this.props.tableStyles.itemBasedButtonIconOnlyClassName
+                    )
                   : this.props.tableStyles.itemBasedDisabledButtonClassName
                 ),
                 onClick: (e: Event): void => {
-                  this.handleItemClicked.bind(this, buttonSchemaItem)();
+                  if (buttonSchemaItem.onClickHandler) {
+                    buttonSchemaItem.onClickHandler(e, this.getSelectedItem());
+                  } else {
+                    this.handleItemClicked.bind(this, buttonSchemaItem)();
+                  }
                 },
                 ...this.props.itemBasedButtonMuiProps,
                 disabled: disableState,
@@ -901,11 +909,19 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
               primary: true,
               className: (
                 !disableState
-                  ? (buttonSchemaItem.showName ? this.props.tableStyles.listBasedButtonClassName : this.props.tableStyles.listBasedButtonIconOnlyClassName)
+                  ? (
+                      buttonSchemaItem.showName ?
+                      this.props.tableStyles.listBasedButtonClassName :
+                      this.props.tableStyles.listBasedButtonIconOnlyClassName
+                    )
                   : this.props.tableStyles.listBasedDisabledButtonClassName
               ),
               onClick: (e: Event): void => {
-                this.handleItemClicked.bind(this, buttonSchemaItem)();
+                if (buttonSchemaItem.onClickHandler) {
+                  buttonSchemaItem.onClickHandler(e, null);
+                } else {
+                  this.handleItemClicked.bind(this, buttonSchemaItem)();
+                }
               },
               ...this.props.listBasedButtonMuiProps,
               disabled: disableState,
