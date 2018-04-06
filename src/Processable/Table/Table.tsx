@@ -123,6 +123,7 @@ export interface ITableProps extends IMUIProps {
     itemBasedMoreMenuClassName?: string;
     listBasedMoreMenuClassName?: string;
     listBasedMoreMenuIsLeftClassName?: string;
+    listBasedMenuIsLeftClassName?: string;
     itemBasedButtonClassName?: string;
     itemBasedButtonIconOnlyClassName?: string;
     listBasedButtonIconOnlyClassName?: string;
@@ -212,6 +213,7 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
       itemBasedMoreMenuClassName: null,
       listBasedMoreMenuClassName: null,
       listBasedMoreMenuIsLeftClassName: null,
+      listBasedMenuIsLeftClassName: null,
       itemBasedButtonClassName: null,
       itemBasedButtonIconOnlyClassName: null,
       listBasedButtonClassName: null,
@@ -873,6 +875,7 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
     }
 
     let moreLabel: string = '';
+    let isLeft: boolean = false;
     let moreIsLeft: boolean = false;
     let overlayComponent: any = null;
 
@@ -900,9 +903,16 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
           icon = icon(disableState);
         }
 
+        if (buttonSchemaItem.isLeft) {
+          isLeft = buttonSchemaItem.isLeft;
+        }
+
         return (
           <RaisedButton
-            theme={this.props.listBasedButtonTheme}
+            theme={{
+              ...this.props.listBasedButtonTheme,
+              themeContext: (isLeft ? 'left' : this.props.listBasedButtonTheme.themeContext),
+            }}
             muiProps={{
               icon,
               label: (buttonSchemaItem.showName ? buttonSchemaItem.name : null),
