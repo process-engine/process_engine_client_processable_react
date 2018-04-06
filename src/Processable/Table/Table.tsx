@@ -1227,7 +1227,7 @@ export class ProcessableTable extends React.Component<ITableProps, ITableState> 
           {createButton}{searchField}
           <div className={this.props.tableStyles.filterMenuElementsClassName}>{filterMenuElements}</div>
           <div className={this.props.tableStyles.itemBasedElementsClassName}>{itemBasedElements}</div>
-          <div className={(moreIsLeft ? this.props.tableStyles.listBasedElementsIsLeftClassName : this.props.tableStyles.listBasedElementsClassName)}>{listBasedElements}</div>
+          <div className={(moreIsLeft || isLeft ? this.props.tableStyles.listBasedElementsIsLeftClassName : this.props.tableStyles.listBasedElementsClassName)}>{listBasedElements}</div>
           <div className={this.props.tableStyles.headerElementsPlaceHolderClassName}/>
           <div className={this.props.tableStyles.baseFilterMenuElementsClassName}>{baseFilterElements}</div>
         </div>
