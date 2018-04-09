@@ -727,7 +727,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
     const { processInstance } = this.props;
 
     const fireCancel: any = (): void => {
-      if (false && processInstance) {
+      if (processInstance && processInstance.doCancel) {
         processInstance.doCancel(executionContext).then(() => {
           this.setState({
             canceled: true,
@@ -911,7 +911,7 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
               <FlatButton
                 theme={{
                   ...(this.props.buttonTheme),
-                  themeContext: button.isCancel ? 'cancel' : '',
+                  themeContext: button.isCancel ? 'cancel' : 'next',
                 }}
                 muiProps={{
                   label: button.label,
@@ -922,9 +922,13 @@ export class ProcessableContainer extends React.Component<IProcessableContainerP
                     if (button.isCancel) {
                       this.state.uiData.key = button.key;
                       this.handleProceed(this.props.executionContext);
-
                     } else {
-                      this.handleProceed(this.props.executionContext);
+                      if (button.isProceed) {
+                        this.handleProceed(this.props.executionContext);
+                      } else {
+                        this.state.uiData.key = button.key;
+                        this.handleProceed(this.props.executionContext);
+                      }
                     }
                   },
                 }}
